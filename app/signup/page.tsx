@@ -61,15 +61,20 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1428] to-[#0a0f1e] flex items-center justify-center p-4">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#4A6CFF]/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#00D9FF]/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <Image src="/logo.png" alt="GC" width={100} height={100} className="w-24 h-24 mx-auto mb-6" />
           <h1 className="text-4xl font-bold text-white mb-3">Create Account</h1>
           <p className="text-white/50 text-base">Sign up to compete and win</p>
         </div>
 
-        <div className="bg-[#151b2e]/50 backdrop-blur-sm rounded-2xl border border-white/5 p-8 shadow-2xl">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
           <Button
             onClick={handleGoogleSignup}
             disabled={isGoogleLoading}

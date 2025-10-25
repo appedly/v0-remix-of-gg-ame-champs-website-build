@@ -89,5 +89,5 @@ export async function signup(formData: FormData) {
     }
   }
 
-  redirect("/signup-success")
+  redirect("/waitlist-confirmation")
 }

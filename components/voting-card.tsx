@@ -70,25 +70,33 @@ export function VotingCard({ submission, tournamentId, userSession, onVoteUpdate
       return
     }
 
-    if (userLiked) {
-      alert("You have already liked this submission")
-      return
-    }
-
     setIsLiking(true)
     const supabase = createClient()
 
-    const { error } = await supabase.from("likes").insert({
-      submission_id: submission.id,
-      user_id: userSession.id,
-    })
+    if (userLiked) {
+      const { error } = await supabase
+        .from("likes")
+        .delete()
+        .eq("submission_id", submission.id)
+        .eq("user_id", userSession.id)
 
-    if (!error) {
-      setLikeCount(likeCount + 1)
-      setUserLiked(true)
+      if (!error) {
+        setLikeCount(Math.max(0, likeCount - 1))
+        setUserLiked(false)
+      }
     } else {
-      console.error("[v0] Like error:", error)
-      alert("Error liking: " + error.message)
+      const { error } = await supabase.from("likes").insert({
+        submission_id: submission.id,
+        user_id: userSession.id,
+      })
+
+      if (!error) {
+        setLikeCount(likeCount + 1)
+        setUserLiked(true)
+      } else {
+        console.error("[v0] Like error:", error)
+        alert("Error liking: " + error.message)
+      }
     }
 
     setIsLiking(false)
@@ -147,7 +155,7 @@ export function VotingCard({ submission, tournamentId, userSession, onVoteUpdate
         <div className="flex items-center gap-2">
           <Button
             onClick={handleLike}
-            disabled={isLiking || userLiked}
+            disabled={isLiking}
             variant="outline"
             className={`${
               userLiked
@@ -158,6 +166,7 @@ export function VotingCard({ submission, tournamentId, userSession, onVoteUpdate
             <Heart className={`w-4 h-4 ${userLiked ? "fill-current" : ""}`} />
             <span className="ml-2">{likeCount}</span>
           </Button>
+          <span className="text-white/60 text-sm ml-2">{voteCount} votes</span>
         </div>
       </div>
     </div>

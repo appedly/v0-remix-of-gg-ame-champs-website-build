@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(`${origin}/admin/dashboard`)
       }
 
-      return NextResponse.redirect(`${origin}/dashboard`)
+      return NextResponse.redirect(`${origin}/waitlist-confirmation`)
     }
   }
 

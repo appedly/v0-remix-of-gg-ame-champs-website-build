@@ -74,10 +74,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
-      <div className="absolute inset-0 z-0">
-        <Image src="/hero-bg.png" alt="Background" fill className="object-cover opacity-40" priority />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/80 via-[#0B1020]/90 to-[#0B1020]" />
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1428] to-[#0a0f1e] flex items-center justify-center p-4">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#4A6CFF]/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#00D9FF]/5 rounded-full blur-3xl" />
       </div>
 
       <div className="w-full max-w-md relative z-10">
@@ -87,7 +87,7 @@ export default function LoginPage() {
           <p className="text-white/60">Sign in to compete and win</p>
         </div>
 
-        <div className="bg-[#1a2332]/80 backdrop-blur-sm rounded-lg border border-[#2a3342] p-8">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
           <Button
             onClick={handleGoogleLogin}
             disabled={isGoogleLoading}

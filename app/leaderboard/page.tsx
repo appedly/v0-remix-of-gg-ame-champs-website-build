@@ -42,6 +42,9 @@ export default async function LeaderboardPage() {
                       Player
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
+                      Total Points
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
                       Total Votes
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-white/60 uppercase tracking-wider">
@@ -65,7 +68,10 @@ export default async function LeaderboardPage() {
                           <div className="text-sm font-medium text-white">{entry.display_name}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-[#00C2FF] font-semibold">{entry.total_votes}</div>
+                          <div className="text-sm text-[#FFD166] font-semibold">{entry.total_points || 0}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-[#00C2FF] font-semibold">{entry.total_votes || 0}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-white/70">{entry.submission_count}</div>
@@ -74,7 +80,7 @@ export default async function LeaderboardPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center text-white/60">
+                      <td colSpan={5} className="px-6 py-12 text-center text-white/60">
                         No leaderboard data yet
                       </td>
                     </tr>
