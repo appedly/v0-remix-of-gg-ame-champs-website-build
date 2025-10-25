@@ -35,7 +35,7 @@ export async function signup(formData: FormData) {
     }
   }
 
-  // Sign up user with display_name in metadata so trigger can use it
+  // Sign up user with display_name in metadata
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
@@ -64,8 +64,12 @@ export async function signup(formData: FormData) {
         .from("access_codes")
         .update({ used_by: authData.user.id, used_at: new Date().toISOString() })
         .eq("id", codeData[0].id)
+
+      // Update user with access code reference
+      await supabase.from("users").update({ access_code_id: codeData[0].id }).eq("id", authData.user.id)
     }
   } else {
+    // Add to waitlist if no access code provided
     const { data: existingWaitlist } = await supabase.from("waitlist").select("id").eq("email", email)
 
     if (existingWaitlist && existingWaitlist.length > 0) {
@@ -73,14 +77,14 @@ export async function signup(formData: FormData) {
         .from("waitlist")
         .update({
           display_name: displayName,
-          status: "pending",
+          access_code_used: false,
         })
         .eq("email", email)
     } else {
       await supabase.from("waitlist").insert({
         email,
         display_name: displayName,
-        status: "pending",
+        access_code_used: false,
       })
     }
   }
