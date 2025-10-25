@@ -152,7 +152,7 @@ export function VotingCard({ submission, tournamentId, userSession, onVoteUpdate
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <Button
             onClick={handleLike}
             disabled={isLiking}
@@ -166,7 +166,7 @@ export function VotingCard({ submission, tournamentId, userSession, onVoteUpdate
             <Heart className={`w-4 h-4 ${userLiked ? "fill-current" : ""}`} />
             <span className="ml-2">{likeCount}</span>
           </Button>
-          <span className="text-white/60 text-sm ml-2">{voteCount} votes</span>
+          <span className="text-white/60 text-sm">{voteCount} votes</span>
         </div>
       </div>
     </div>

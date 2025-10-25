@@ -59,8 +59,8 @@ export default function TournamentVotePage() {
           description,
           clip_url,
           user:users(display_name),
-          votes(id),
-          likes(id),
+          votes(id, user_id),
+          likes(id, user_id),
           comments(id)
         `,
         )

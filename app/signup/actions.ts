@@ -67,25 +67,8 @@ export async function signup(formData: FormData) {
 
       // Update user with access code reference
       await supabase.from("users").update({ access_code_id: codeData[0].id }).eq("id", authData.user.id)
-    }
-  } else {
-    // Add to waitlist if no access code provided
-    const { data: existingWaitlist } = await supabase.from("waitlist").select("id").eq("email", email)
 
-    if (existingWaitlist && existingWaitlist.length > 0) {
-      await supabase
-        .from("waitlist")
-        .update({
-          display_name: displayName,
-          access_code_used: false,
-        })
-        .eq("email", email)
-    } else {
-      await supabase.from("waitlist").insert({
-        email,
-        display_name: displayName,
-        access_code_used: false,
-      })
+      redirect("/dashboard")
     }
   }
 
