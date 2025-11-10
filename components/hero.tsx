@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import type { LucideIcon } from "lucide-react"
-import { ArrowRight, Clapperboard, Gamepad2, ShieldCheck, Sparkles, Trophy, Users, Zap } from "lucide-react"
+import { ArrowRight, Clapperboard, Coins, Film, Gamepad2, Swords, Zap } from "lucide-react"
 
 import { CountdownTimer } from "@/components/countdown-timer"
 
@@ -11,19 +11,19 @@ const launchBenefits: Array<{
   icon: LucideIcon
 }> = [
   {
-    title: "Priority Brackets",
-    description: "Reserve a launch slot and start higher on the ladder.",
-    icon: Trophy,
+    title: "Creator Reels Toolkit",
+    description: "Lock in cinematic overlays, reel frames, and highlight presets the moment we go live.",
+    icon: Clapperboard,
   },
   {
-    title: "Signature Highlight Suite",
-    description: "Unlock cinematic overlays and spotlight effects ahead of everyone else.",
-    icon: Sparkles,
+    title: "Launch Battle Pods",
+    description: "Drop into curated duel brackets and headline showcase matches with fellow founders.",
+    icon: Swords,
   },
   {
-    title: "Private Creator Lounge",
-    description: "Collaborate with elite competitors and shape the opening formats.",
-    icon: Users,
+    title: "Founders Prize Boost",
+    description: "Stack cash multipliers, sponsor loot, and referral bonuses reserved for wave-one contenders.",
+    icon: Coins,
   },
 ]
 
@@ -34,28 +34,40 @@ const heroGlyphs: Array<{
   delay: string
 }> = [
   {
-    icon: Gamepad2,
-    className: "left-[-10%] top-[28%]",
-    glow: "from-[#4fc3f7]/35 to-transparent",
+    icon: Clapperboard,
+    className: "left-[-9%] top-[22%]",
+    glow: "from-[#FFD166]/45 to-transparent",
     delay: "0s",
   },
   {
-    icon: Clapperboard,
-    className: "right-[-8%] top-[24%]",
+    icon: Film,
+    className: "right-[-6%] top-[30%]",
+    glow: "from-[#4fc3f7]/40 to-transparent",
+    delay: "0.25s",
+  },
+  {
+    icon: Gamepad2,
+    className: "left-[6%] bottom-[32%]",
+    glow: "from-[#00c2ff]/35 to-transparent",
+    delay: "0.45s",
+  },
+  {
+    icon: Swords,
+    className: "right-[10%] bottom-[24%]",
+    glow: "from-[#4a6cff]/40 to-transparent",
+    delay: "0.65s",
+  },
+  {
+    icon: Coins,
+    className: "left-[18%] top-[62%]",
     glow: "from-[#FFD166]/35 to-transparent",
-    delay: "0.35s",
+    delay: "0.85s",
   },
   {
     icon: Zap,
-    className: "left-[8%] bottom-[18%]",
-    glow: "from-[#4a6cff]/35 to-transparent",
-    delay: "0.55s",
-  },
-  {
-    icon: ShieldCheck,
-    className: "right-[12%] bottom-[16%]",
-    glow: "from-[#00c2ff]/35 to-transparent",
-    delay: "0.75s",
+    className: "right-[4%] top-[56%]",
+    glow: "from-[#29b6f6]/40 to-transparent",
+    delay: "1.05s",
   },
 ]
 
@@ -78,7 +90,7 @@ export function Hero() {
         <div className="absolute inset-x-0 bottom-[-35%] h-[480px] bg-gradient-to-t from-[#05070f] via-transparent to-transparent" />
       </div>
 
-      <div className="absolute inset-0 -z-10 pointer-events-none hidden lg:block">
+      <div className="absolute inset-0 -z-10 hidden pointer-events-none lg:block">
         {heroGlyphs.map((glyph, index) => {
           const GlyphIcon = glyph.icon
           return (
@@ -101,7 +113,7 @@ export function Hero() {
               <span className="absolute inline-flex h-full w-full rounded-full bg-white/70 blur-[2px]" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2a1602]" />
             </span>
-            Launching Soon
+            Launching Soon...
           </div>
 
           <h1 className="mt-8 text-balance text-5xl font-black leading-[1.05] tracking-tight text-[#f5f5f5] drop-shadow-[0_20px_50px_rgba(5,7,18,0.65)] md:mt-10 md:text-7xl lg:text-[5.75rem] xl:text-[6.25rem]">
@@ -123,11 +135,15 @@ export function Hero() {
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/signup"
-              className="group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-full bg-[linear-gradient(135deg,_#4fc3f7_0%,_#00c2ff_45%,_#4a6cff_100%)] px-12 py-5 text-lg font-semibold text-[#04121f] shadow-[0_25px_60px_-25px_rgba(79,195,247,0.95)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#4fc3f7]/40"
+              className="group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-full px-12 py-5 text-lg font-semibold uppercase tracking-[0.16em] text-[#04121f] shadow-[0_18px_45px_-28px_rgba(79,195,247,0.65)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:shadow-[0_38px_95px_-35px_rgba(41,182,246,0.9)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#4fc3f7]/40"
             >
-              <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.35)_0%,_transparent_65%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <span className="pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(135deg,#4fc3f7_0%,#00c2ff_40%,#4a6cff_100%)]" aria-hidden="true" />
+              <span className="pointer-events-none absolute inset-0 rounded-full bg-[linear-gradient(135deg,rgba(255,255,255,0.35)_0%,rgba(255,255,255,0)_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden="true" />
+              <span className="pointer-events-none absolute inset-[-18%] rounded-full bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.55)_0%,rgba(255,255,255,0)_70%)] opacity-0 transition-opacity duration-500 group-hover:opacity-75" aria-hidden="true" />
+              <span className="pointer-events-none absolute inset-0 rounded-full border border-white/40 opacity-0 transition-opacity duration-500 group-hover:opacity-60" aria-hidden="true" />
+              <span className="pointer-events-none absolute inset-0 rounded-full shadow-[0_28px_65px_-30px_rgba(41,182,246,0.85)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true" />
               <span className="relative z-10">Join the Waitlist</span>
-              <ArrowRight className="relative z-10 size-5 transition-transform duration-300 group-hover:translate-x-1" />
+              <ArrowRight className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <a
               href="#how-it-works"
@@ -140,9 +156,9 @@ export function Hero() {
           <div className="mt-8 flex flex-col items-center gap-2 text-sm text-white/65">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 animate-pulse rounded-full bg-[#FFD166]" aria-hidden="true" />
-              Crafted for competitive storytellers ready to headline opening day.
+              Launch window opening soon for early contenders.
             </div>
-            <span className="text-white/45">Reserve access for private scrims, creator drops, and insider intel.</span>
+            <span className="text-white/45">Secure your pass for exclusive drops, battle pods, and prize boosts.</span>
           </div>
 
           <CountdownTimer className="mx-auto mt-12 max-w-2xl" />
