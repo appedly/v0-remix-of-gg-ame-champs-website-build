@@ -84,51 +84,56 @@ export default function WaitlistPage() {
     <div className="min-h-screen bg-[#0B1020]">
       <AdminNav userName="Admin" />
 
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Waitlist ({entries.length})</h1>
+      <main className="container mx-auto px-4 py-12">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-1">Waitlist</h1>
+          <p className="text-white/40 text-sm">{entries.length} {entries.length === 1 ? "entry" : "entries"}</p>
+        </div>
 
         <div className="space-y-4">
           {entries.length === 0 ? (
-            <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-12 text-center">
+            <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-12 text-center">
               <p className="text-white/60">No waitlist entries</p>
             </div>
           ) : (
             entries.map((entry) => (
-              <div key={entry.id} className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
+              <div key={entry.id} className="bg-gradient-to-r from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#2a3342] transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/5">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-white">{entry.display_name}</h3>
-                    <p className="text-white/60 text-sm">{entry.email}</p>
-                    <p className="text-white/40 text-xs mt-2">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-lg font-semibold text-white">{entry.display_name}</h3>
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-medium border ${
+                          entry.status === "approved"
+                            ? "bg-green-500/15 text-green-400 border-green-500/30"
+                            : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30"
+                        }`}
+                      >
+                        {entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}
+                      </span>
+                    </div>
+                    <p className="text-white/60 text-sm mb-1">{entry.email}</p>
+                    <p className="text-white/40 text-xs">
                       Joined: {new Date(entry.created_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <span
-                    className={`px-3 py-1 rounded text-xs font-medium ${
-                      entry.status === "approved"
-                        ? "bg-green-500/20 text-green-400"
-                        : "bg-yellow-500/20 text-yellow-400"
-                    }`}
-                  >
-                    {entry.status}
-                  </span>
                 </div>
 
                 <div className="flex gap-2">
                   {entry.status !== "approved" && (
                     <Button
                       onClick={() => approveEntry(entry.id, entry.email)}
-                      className="bg-green-500/20 text-green-400 hover:bg-green-500/30 border-green-500/30"
+                      className="bg-green-500/15 text-green-400 hover:bg-green-500/25 border-green-500/30 transition-all"
                       variant="outline"
                       disabled={approvingId === entry.id}
                     >
-                      {approvingId === entry.id ? "Approving..." : "Approve"}
+                      {approvingId === entry.id ? "..." : "Approve"}
                     </Button>
                   )}
                   {entry.status !== "approved" && (
                     <Button
                       onClick={() => rejectEntry(entry.id)}
-                      className="bg-red-500/20 text-red-400 hover:bg-red-500/30 border-red-500/30"
+                      className="bg-red-500/15 text-red-400 hover:bg-red-500/25 border-red-500/30 transition-all"
                       variant="outline"
                     >
                       Reject

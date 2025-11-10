@@ -77,8 +77,11 @@ export default function SubmissionsPage() {
     <div className="min-h-screen bg-[#0B1020]">
       <AdminNav userName="Admin" />
 
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Submissions ({submissions.length})</h1>
+      <main className="container mx-auto px-4 py-12">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-1">Submissions</h1>
+          <p className="text-white/40 text-sm">{submissions.length} {submissions.length === 1 ? "submission" : "submissions"}</p>
+        </div>
         <SubmissionList submissions={submissions} onUpdate={refreshSubmissions} />
       </main>
     </div>

@@ -85,27 +85,27 @@ export function SettingsForm({ settings }: { settings: FeatureFlag[] }) {
 
   return (
     <div className="space-y-8">
-      <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-8 space-y-6">
+      <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-8 space-y-6">
         <div>
-          <h2 className="text-xl font-semibold text-white mb-4">Change Admin Password</h2>
-          <p className="text-white/60 text-sm mb-6">Update your admin password</p>
+          <h2 className="text-lg font-semibold text-white mb-1">Change Admin Password</h2>
+          <p className="text-white/60 text-sm">Update your admin account password</p>
         </div>
 
         {message && (
           <div
-            className={`p-3 rounded-lg border ${
+            className={`p-4 rounded-lg border ${
               message.type === "success"
-                ? "bg-green-500/10 border-green-500/20 text-green-400"
-                : "bg-red-500/10 border-red-500/20 text-red-400"
+                ? "bg-green-500/15 border-green-500/30 text-green-400"
+                : "bg-red-500/15 border-red-500/30 text-red-400"
             }`}
           >
-            {message.text}
+            <p className="text-sm font-medium">{message.text}</p>
           </div>
         )}
 
         <form onSubmit={handleChangePassword} className="space-y-4">
           <div>
-            <Label htmlFor="newPassword" className="text-white">
+            <Label htmlFor="newPassword" className="text-white/80 text-sm font-medium mb-2 block">
               New Password
             </Label>
             <Input
@@ -115,12 +115,12 @@ export function SettingsForm({ settings }: { settings: FeatureFlag[] }) {
               onChange={(e) => setNewPassword(e.target.value)}
               required
               placeholder="Enter new password"
-              className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40"
+              className="bg-[#0B1020] border-[#2a3342]/50 text-white placeholder:text-white/30 focus:border-[#4A6CFF] transition-colors"
             />
           </div>
 
           <div>
-            <Label htmlFor="confirmPassword" className="text-white">
+            <Label htmlFor="confirmPassword" className="text-white/80 text-sm font-medium mb-2 block">
               Confirm Password
             </Label>
             <Input
@@ -130,36 +130,36 @@ export function SettingsForm({ settings }: { settings: FeatureFlag[] }) {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               placeholder="Confirm new password"
-              className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40"
+              className="bg-[#0B1020] border-[#2a3342]/50 text-white placeholder:text-white/30 focus:border-[#4A6CFF] transition-colors"
             />
           </div>
 
-          <Button type="submit" className="bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white" disabled={isChangingPassword}>
-            {isChangingPassword ? "Changing..." : "Change Password"}
+          <Button type="submit" className="bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white font-medium transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/20 disabled:opacity-50" disabled={isChangingPassword}>
+            {isChangingPassword ? "..." : "Change Password"}
           </Button>
         </form>
       </div>
 
-      {/* Feature Flags Section */}
-      <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-8 space-y-6">
+      <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-8 space-y-6">
         <div>
-          <h2 className="text-xl font-semibold text-white mb-4">Feature Flags</h2>
+          <h2 className="text-lg font-semibold text-white mb-1">Feature Flags</h2>
           <p className="text-white/60 text-sm mb-6">Control which features are enabled on the platform</p>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {settings.map((flag) => (
-              <div key={flag.id} className="flex items-center justify-between p-4 bg-[#0B1020] rounded-lg">
+              <div key={flag.id} className="flex items-center justify-between p-4 bg-[#0B1020]/50 hover:bg-[#0B1020] rounded-lg transition-colors border border-[#2a3342]/30 hover:border-[#2a3342]/50">
                 <div className="flex-1">
-                  <Label htmlFor={flag.key} className="text-white font-medium">
+                  <Label htmlFor={flag.key} className="text-white/80 font-medium text-sm">
                     {flag.key ? flag.key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()) : "Unknown Flag"}
                   </Label>
-                  {flag.description && <p className="text-white/60 text-sm mt-1">{flag.description}</p>}
+                  {flag.description && <p className="text-white/50 text-xs mt-2">{flag.description}</p>}
                 </div>
                 <Switch
                   id={flag.key}
                   checked={flags[flag.key] || false}
                   onCheckedChange={(checked) => handleToggle(flag.key, checked)}
                   disabled={isLoading}
+                  className="ml-4"
                 />
               </div>
             ))}

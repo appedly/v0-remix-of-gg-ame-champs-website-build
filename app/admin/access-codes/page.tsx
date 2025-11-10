@@ -133,109 +133,118 @@ export default function AccessCodesPage() {
     <div className="min-h-screen bg-[#0B1020]">
       <AdminNav userName="Admin" />
 
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Access Codes Management</h1>
+      <main className="container mx-auto px-4 py-12">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-1">Access Codes Management</h1>
+          <p className="text-white/40 text-sm">{activeCodes.length} active • {usedCodes.length} used</p>
+        </div>
 
-        <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 mb-8">
-          <h2 className="text-xl font-semibold text-white mb-6">Generate New Access Codes</h2>
+        <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 mb-8">
+          <h2 className="text-lg font-semibold text-white mb-6">Generate New Access Codes</h2>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-white/60 text-sm block mb-2 font-medium">Expiry (days)</label>
+                <label className="text-white/60 text-xs font-medium uppercase tracking-wide block mb-2">Expiry (days)</label>
                 <Input
                   type="number"
                   value={expiryDays}
                   onChange={(e) => setExpiryDays(Number.parseInt(e.target.value))}
                   min="1"
                   max="365"
-                  className="bg-[#0B1020] border-white/10 text-white"
+                  className="bg-[#0B1020] border-[#2a3342]/50 text-white placeholder-white/30 focus:border-[#4A6CFF] transition-colors"
                 />
               </div>
               <div>
-                <label className="text-white/60 text-sm block mb-2 font-medium">Quantity</label>
+                <label className="text-white/60 text-xs font-medium uppercase tracking-wide block mb-2">Quantity</label>
                 <Input
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(Number.parseInt(e.target.value))}
                   min="1"
                   max="100"
-                  className="bg-[#0B1020] border-white/10 text-white"
+                  className="bg-[#0B1020] border-[#2a3342]/50 text-white placeholder-white/30 focus:border-[#4A6CFF] transition-colors"
                 />
               </div>
             </div>
 
             {error && (
-              <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-400 text-sm">{error}</p>
+              <div className="p-4 bg-red-500/15 border border-red-500/30 rounded-lg">
+                <p className="text-red-400 text-sm font-medium">{error}</p>
               </div>
             )}
 
             {success && (
-              <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                <p className="text-green-400 text-sm">{success}</p>
+              <div className="p-4 bg-green-500/15 border border-green-500/30 rounded-lg">
+                <p className="text-green-400 text-sm font-medium">{success}</p>
               </div>
             )}
 
             <Button
               onClick={generateCodes}
               disabled={isGenerating || quantity < 1}
-              className="w-full bg-[#4A6CFF] hover:bg-[#5A7CFF] text-white"
+              className="w-full bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white font-medium transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/20 disabled:opacity-50"
             >
-              {isGenerating ? `Generating ${quantity} code(s)...` : `Generate ${quantity} Code(s)`}
+              {isGenerating ? "..." : `Generate ${quantity}`}
             </Button>
           </div>
         </div>
 
-        {/* Active Codes */}
-        <div className="space-y-4 mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">Active Codes ({activeCodes.length})</h2>
-          {activeCodes.length === 0 ? (
-            <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 text-center">
-              <p className="text-white/60">No active codes</p>
+        <div className="space-y-8">
+          <div>
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-white mb-1">Active Codes</h2>
+              <p className="text-white/40 text-sm">{activeCodes.length} {activeCodes.length === 1 ? "code" : "codes"}</p>
             </div>
-          ) : (
-            <div className="grid gap-4">
-              {activeCodes.map((code) => (
-                <div
-                  key={code.id}
-                  className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4 flex items-center justify-between"
-                >
-                  <div>
-                    <p className="text-white font-mono text-lg font-semibold">{code.code}</p>
-                    <p className="text-white/40 text-sm">
-                      Expires: {new Date(code.expires_at || "").toLocaleDateString()}
-                    </p>
-                  </div>
-                  <Button
-                    onClick={() => revokeCode(code.id, code.code)}
-                    variant="outline"
-                    className="bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20"
+            {activeCodes.length === 0 ? (
+              <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 text-center">
+                <p className="text-white/60">No active codes</p>
+              </div>
+            ) : (
+              <div className="grid gap-3">
+                {activeCodes.map((code) => (
+                  <div
+                    key={code.id}
+                    className="bg-gradient-to-r from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-4 flex items-center justify-between hover:border-[#2a3342] transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/5"
                   >
-                    Revoke
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                    <div>
+                      <p className="text-white font-mono text-sm font-semibold">{code.code}</p>
+                      <p className="text-white/40 text-xs mt-1">
+                        Expires: {new Date(code.expires_at || "").toLocaleDateString()}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => revokeCode(code.id, code.code)}
+                      variant="outline"
+                      className="bg-red-500/15 border-red-500/30 text-red-400 hover:bg-red-500/25 transition-all text-xs"
+                    >
+                      Revoke
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-        {/* Used Codes */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-white mb-4">Used Codes ({usedCodes.length})</h2>
-          {usedCodes.length === 0 ? (
-            <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 text-center">
-              <p className="text-white/60">No used codes</p>
+          <div>
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-white mb-1">Used Codes</h2>
+              <p className="text-white/40 text-sm">{usedCodes.length} {usedCodes.length === 1 ? "code" : "codes"}</p>
             </div>
-          ) : (
-            <div className="grid gap-4">
-              {usedCodes.map((code) => (
-                <div key={code.id} className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4">
-                  <p className="text-white font-mono font-semibold">{code.code}</p>
-                  <p className="text-white/40 text-sm">Used: {new Date(code.used_at || "").toLocaleDateString()}</p>
-                </div>
-              ))}
-            </div>
-          )}
+            {usedCodes.length === 0 ? (
+              <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 text-center">
+                <p className="text-white/60">No used codes</p>
+              </div>
+            ) : (
+              <div className="grid gap-3">
+                {usedCodes.map((code) => (
+                  <div key={code.id} className="bg-gradient-to-r from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/30 p-4 opacity-75">
+                    <p className="text-white/80 font-mono text-sm font-semibold">{code.code}</p>
+                    <p className="text-white/40 text-xs mt-1">Used: {new Date(code.used_at || "").toLocaleDateString()}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

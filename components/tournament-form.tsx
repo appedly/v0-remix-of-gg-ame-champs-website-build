@@ -120,9 +120,9 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-8 space-y-6">
+    <form onSubmit={handleSubmit} className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-8 space-y-6">
       <div>
-        <Label htmlFor="title" className="text-white">
+        <Label htmlFor="title" className="text-white/80 text-sm font-medium mb-2 block">
           Tournament Title
         </Label>
         <Input
@@ -132,19 +132,19 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40"
+          className="bg-[#0B1020] border-[#2a3342]/50 text-white placeholder:text-white/30 focus:border-[#4A6CFF] transition-colors"
         />
       </div>
 
       <div>
-        <Label htmlFor="game" className="text-white">
+        <Label htmlFor="game" className="text-white/80 text-sm font-medium mb-2 block">
           Game
         </Label>
         <Select value={game} onValueChange={setGame} required>
-          <SelectTrigger className="mt-2 bg-[#0B1020] border-[#2a3342] text-white">
+          <SelectTrigger className="bg-[#0B1020] border-[#2a3342]/50 text-white focus:border-[#4A6CFF] transition-colors">
             <SelectValue placeholder="Select a game" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-[#1a2332] border-[#2a3342]">
             {games.map((g) => (
               <SelectItem key={g} value={g}>
                 {g}
@@ -155,8 +155,8 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
       </div>
 
       <div>
-        <Label htmlFor="description" className="text-white">
-          Description *
+        <Label htmlFor="description" className="text-white/80 text-sm font-medium mb-2 block">
+          Description
         </Label>
         <Textarea
           id="description"
@@ -164,13 +164,13 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
           required
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40 min-h-[100px]"
+          className="bg-[#0B1020] border-[#2a3342]/50 text-white placeholder:text-white/30 focus:border-[#4A6CFF] transition-colors min-h-[100px]"
         />
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div>
-          <Label htmlFor="prizePool" className="text-white">
+          <Label htmlFor="prizePool" className="text-white/80 text-sm font-medium mb-2 block">
             Prize Pool ($)
           </Label>
           <Input
@@ -180,12 +180,12 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
             required
             value={prizePool}
             onChange={(e) => setPrizePool(e.target.value)}
-            className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40"
+            className="bg-[#0B1020] border-[#2a3342]/50 text-white placeholder:text-white/30 focus:border-[#4A6CFF] transition-colors"
           />
         </div>
 
         <div>
-          <Label htmlFor="maxSubmissions" className="text-white">
+          <Label htmlFor="maxSubmissions" className="text-white/80 text-sm font-medium mb-2 block">
             Max Submissions (optional)
           </Label>
           <Input
@@ -194,14 +194,14 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
             placeholder="Leave empty for unlimited"
             value={maxSubmissions}
             onChange={(e) => setMaxSubmissions(e.target.value)}
-            className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40"
+            className="bg-[#0B1020] border-[#2a3342]/50 text-white placeholder:text-white/30 focus:border-[#4A6CFF] transition-colors"
           />
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div>
-          <Label htmlFor="startDate" className="text-white">
+          <Label htmlFor="startDate" className="text-white/80 text-sm font-medium mb-2 block">
             Start Date
           </Label>
           <Input
@@ -210,12 +210,12 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
             required
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="mt-2 bg-[#0B1020] border-[#2a3342] text-white"
+            className="bg-[#0B1020] border-[#2a3342]/50 text-white focus:border-[#4A6CFF] transition-colors"
           />
         </div>
 
         <div>
-          <Label htmlFor="endDate" className="text-white">
+          <Label htmlFor="endDate" className="text-white/80 text-sm font-medium mb-2 block">
             End Date
           </Label>
           <Input
@@ -224,20 +224,20 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
             required
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="mt-2 bg-[#0B1020] border-[#2a3342] text-white"
+            className="bg-[#0B1020] border-[#2a3342]/50 text-white focus:border-[#4A6CFF] transition-colors"
           />
         </div>
       </div>
 
       <div>
-        <Label htmlFor="status" className="text-white">
+        <Label htmlFor="status" className="text-white/80 text-sm font-medium mb-2 block">
           Status
         </Label>
         <Select value={status} onValueChange={setStatus} required>
-          <SelectTrigger className="mt-2 bg-[#0B1020] border-[#2a3342] text-white">
+          <SelectTrigger className="bg-[#0B1020] border-[#2a3342]/50 text-white focus:border-[#4A6CFF] transition-colors">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-[#1a2332] border-[#2a3342]">
             <SelectItem value="upcoming">Upcoming</SelectItem>
             <SelectItem value="active">Active</SelectItem>
             <SelectItem value="completed">Completed</SelectItem>
@@ -246,20 +246,20 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
       </div>
 
       {error && (
-        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <p className="text-red-400 text-sm">{error}</p>
+        <div className="p-4 bg-red-500/15 border border-red-500/30 rounded-lg">
+          <p className="text-red-400 text-sm font-medium">{error}</p>
         </div>
       )}
 
-      <div className="flex gap-4">
-        <Button type="submit" className="bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white" disabled={isLoading}>
-          {isLoading ? "Saving..." : tournament ? "Update Tournament" : "Create Tournament"}
+      <div className="flex gap-4 pt-4">
+        <Button type="submit" className="bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white font-medium transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/20 disabled:opacity-50" disabled={isLoading}>
+          {isLoading ? "..." : tournament ? "Update" : "Create"}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={() => router.back()}
-          className="border-[#2a3342] text-white hover:bg-white/10"
+          className="border-[#2a3342]/50 text-white/70 hover:text-white hover:bg-white/5 transition-all"
         >
           Cancel
         </Button>

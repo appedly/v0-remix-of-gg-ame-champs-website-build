@@ -74,59 +74,74 @@ export default function AdminDashboardPage() {
     <div className="min-h-screen bg-[#0B1020]">
       <AdminNav userName={userName} />
 
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Welcome back, {userName}!</h1>
+      <main className="container mx-auto px-4 py-12">
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold text-white mb-2">Welcome back, {userName}!</h1>
+          <p className="text-white/40 text-sm">Manage tournaments, submissions, users, and platform settings</p>
+        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-            <h3 className="text-white/60 text-sm mb-2">Total Users</h3>
-            <p className="text-3xl font-bold text-white">{stats.usersCount}</p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#2a3342] transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/5">
+            <h3 className="text-white/50 text-xs font-medium uppercase tracking-wide mb-3">Total Users</h3>
+            <p className="text-4xl font-bold text-white">{stats.usersCount}</p>
           </div>
-          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-            <h3 className="text-white/60 text-sm mb-2">Active Tournaments</h3>
-            <p className="text-3xl font-bold text-white">{stats.tournamentsCount}</p>
+          <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#2a3342] transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/5">
+            <h3 className="text-white/50 text-xs font-medium uppercase tracking-wide mb-3">Active Tournaments</h3>
+            <p className="text-4xl font-bold text-white">{stats.tournamentsCount}</p>
           </div>
-          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-            <h3 className="text-white/60 text-sm mb-2">Total Submissions</h3>
-            <p className="text-3xl font-bold text-white">{stats.submissionsCount}</p>
+          <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#2a3342] transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/5">
+            <h3 className="text-white/50 text-xs font-medium uppercase tracking-wide mb-3">Total Submissions</h3>
+            <p className="text-4xl font-bold text-white">{stats.submissionsCount}</p>
           </div>
-          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-            <h3 className="text-white/60 text-sm mb-2">Waitlist</h3>
-            <p className="text-3xl font-bold text-white">{stats.waitlistCount}</p>
+          <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#2a3342] transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/5">
+            <h3 className="text-white/50 text-xs font-medium uppercase tracking-wide mb-3">Waitlist</h3>
+            <p className="text-4xl font-bold text-white">{stats.waitlistCount}</p>
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
           <a
             href="/admin/tournaments"
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 hover:border-[#4A6CFF] transition-colors group block"
+            className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#4A6CFF]/30 hover:shadow-lg hover:shadow-[#4A6CFF]/10 transition-all group block"
           >
-            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#4A6CFF]">Manage Tournaments</h3>
-            <p className="text-white/60">Create, edit, and manage tournament schedules</p>
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-lg font-semibold text-white group-hover:text-[#4A6CFF] transition-colors">Manage Tournaments</h3>
+              <div className="w-2 h-2 rounded-full bg-[#4A6CFF] group-hover:scale-150 transition-transform"></div>
+            </div>
+            <p className="text-white/60 text-sm">Create, edit, and manage tournament schedules</p>
           </a>
 
           <a
             href="/admin/submissions"
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 hover:border-[#4A6CFF] transition-colors group block"
+            className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#4A6CFF]/30 hover:shadow-lg hover:shadow-[#4A6CFF]/10 transition-all group block"
           >
-            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#4A6CFF]">Review Submissions</h3>
-            <p className="text-white/60">Approve or reject user clip submissions</p>
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-lg font-semibold text-white group-hover:text-[#4A6CFF] transition-colors">Review Submissions</h3>
+              <div className="w-2 h-2 rounded-full bg-[#4A6CFF] group-hover:scale-150 transition-transform"></div>
+            </div>
+            <p className="text-white/60 text-sm">Approve or reject user clip submissions</p>
           </a>
 
           <a
             href="/admin/users"
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 hover:border-[#4A6CFF] transition-colors group block"
+            className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#4A6CFF]/30 hover:shadow-lg hover:shadow-[#4A6CFF]/10 transition-all group block"
           >
-            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#4A6CFF]">User Management</h3>
-            <p className="text-white/60">View and manage user accounts</p>
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-lg font-semibold text-white group-hover:text-[#4A6CFF] transition-colors">User Management</h3>
+              <div className="w-2 h-2 rounded-full bg-[#4A6CFF] group-hover:scale-150 transition-transform"></div>
+            </div>
+            <p className="text-white/60 text-sm">View and manage user accounts</p>
           </a>
 
           <a
             href="/admin/settings"
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 hover:border-[#4A6CFF] transition-colors group block"
+            className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#4A6CFF]/30 hover:shadow-lg hover:shadow-[#4A6CFF]/10 transition-all group block"
           >
-            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#4A6CFF]">Platform Settings</h3>
-            <p className="text-white/60">Configure feature flags and platform settings</p>
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-lg font-semibold text-white group-hover:text-[#4A6CFF] transition-colors">Platform Settings</h3>
+              <div className="w-2 h-2 rounded-full bg-[#4A6CFF] group-hover:scale-150 transition-transform"></div>
+            </div>
+            <p className="text-white/60 text-sm">Configure feature flags and platform settings</p>
           </a>
         </div>
       </main>

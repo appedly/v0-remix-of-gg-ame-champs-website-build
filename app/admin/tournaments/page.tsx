@@ -73,12 +73,15 @@ export default function TournamentsPage() {
     <div className="min-h-screen bg-[#0B1020]">
       <AdminNav userName="Admin" />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-white">Tournaments ({tournaments.length})</h1>
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-1">Tournaments</h1>
+            <p className="text-white/40 text-sm">{tournaments.length} {tournaments.length === 1 ? "tournament" : "tournaments"}</p>
+          </div>
           <Link
             href="/admin/tournaments/create"
-            className="px-4 py-2 bg-[#4A6CFF] text-white rounded-lg hover:bg-[#6A5CFF] transition-colors"
+            className="px-4 py-2 bg-[#4A6CFF] text-white rounded-lg hover:bg-[#6A5CFF] transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/20 font-medium"
           >
             Create Tournament
           </Link>
@@ -86,37 +89,39 @@ export default function TournamentsPage() {
 
         <div className="space-y-4">
           {tournaments.map((tournament) => (
-            <div key={tournament.id} className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
+            <div key={tournament.id} className="bg-gradient-to-r from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-6 hover:border-[#2a3342] transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/5">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-white mb-2">{tournament.title}</h3>
-                  <p className="text-white/60 text-sm mb-2">{tournament.game}</p>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-lg font-semibold text-white">{tournament.title}</h3>
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-medium border ${
+                        tournament.status === "active"
+                          ? "bg-green-500/15 text-green-400 border-green-500/30"
+                          : tournament.status === "upcoming"
+                            ? "bg-blue-500/15 text-blue-400 border-blue-500/30"
+                            : "bg-gray-500/15 text-gray-400 border-gray-500/30"
+                      }`}
+                    >
+                      {tournament.status.charAt(0).toUpperCase() + tournament.status.slice(1)}
+                    </span>
+                  </div>
+                  <p className="text-white/60 text-sm mb-1">{tournament.game}</p>
                   <p className="text-white/40 text-sm line-clamp-2">{tournament.description}</p>
                 </div>
-                <span
-                  className={`px-3 py-1 rounded text-xs font-medium ${
-                    tournament.status === "active"
-                      ? "bg-green-500/20 text-green-400"
-                      : tournament.status === "upcoming"
-                        ? "bg-blue-500/20 text-blue-400"
-                        : "bg-gray-500/20 text-gray-400"
-                  }`}
-                >
-                  {tournament.status}
-                </span>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-5 pb-5 border-b border-[#2a3342]/50">
                 <div>
-                  <p className="text-white/40 text-xs mb-1">Prize Pool</p>
+                  <p className="text-white/50 text-xs font-medium uppercase tracking-wide mb-1">Prize Pool</p>
                   <p className="text-white font-semibold">${tournament.prize_pool.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-white/40 text-xs mb-1">Start Date</p>
+                  <p className="text-white/50 text-xs font-medium uppercase tracking-wide mb-1">Starts</p>
                   <p className="text-white text-sm">{new Date(tournament.start_date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className="text-white/40 text-xs mb-1">End Date</p>
+                  <p className="text-white/50 text-xs font-medium uppercase tracking-wide mb-1">Ends</p>
                   <p className="text-white text-sm">{new Date(tournament.end_date).toLocaleDateString()}</p>
                 </div>
               </div>
@@ -125,7 +130,7 @@ export default function TournamentsPage() {
                 <select
                   value={tournament.status}
                   onChange={(e) => handleStatusChange(tournament.id, e.target.value)}
-                  className="px-3 py-1 bg-[#0B1020] border border-[#2a3342] text-white rounded text-sm"
+                  className="px-3 py-2 bg-[#0B1020] border border-[#2a3342]/50 text-white rounded-lg text-sm font-medium hover:border-[#2a3342] transition-colors"
                 >
                   <option value="upcoming">Upcoming</option>
                   <option value="active">Active</option>
@@ -135,7 +140,7 @@ export default function TournamentsPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => handleDelete(tournament.id)}
-                  className="bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20 hover:text-red-300"
+                  className="bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all"
                 >
                   Delete
                 </Button>
@@ -144,11 +149,11 @@ export default function TournamentsPage() {
           ))}
 
           {tournaments.length === 0 && (
-            <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-12 text-center">
+            <div className="bg-gradient-to-br from-[#1a2332] to-[#0F1823] rounded-lg border border-[#2a3342]/50 p-12 text-center">
               <p className="text-white/60 mb-4">No tournaments created yet</p>
               <Link
                 href="/admin/tournaments/create"
-                className="inline-block px-4 py-2 bg-[#4A6CFF] text-white rounded-lg hover:bg-[#6A5CFF] transition-colors"
+                className="inline-block px-4 py-2 bg-[#4A6CFF] text-white rounded-lg hover:bg-[#6A5CFF] transition-all hover:shadow-lg hover:shadow-[#4A6CFF]/20 font-medium"
               >
                 Create Your First Tournament
               </Link>
