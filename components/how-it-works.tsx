@@ -90,8 +90,22 @@ export function HowItWorks() {
   return (
     <section id="how-it-works" className="relative overflow-hidden py-32">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-[10%] h-[640px] w-[640px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.08),rgba(0,0,0,0)_70%)] blur-3xl" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(11,16,32,0),rgba(11,16,32,0.95)_60%,rgba(11,16,32,1)_100%)]" />
+        {/* Main background gradient */}
+        <div className="absolute left-1/2 top-[15%] h-[800px] w-[800px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.12),rgba(138,43,226,0.08),rgba(0,0,0,0)_75%)] blur-3xl" />
+        <div className="absolute right-1/4 top-1/4 h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,0,255,0.06),rgba(0,255,255,0.04),rgba(0,0,0,0)_70%)] blur-3xl" />
+        <div className="absolute left-1/4 bottom-1/4 h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle_at_center,rgba(0,255,127,0.05),rgba(255,127,0,0.03),rgba(0,0,0,0)_65%)] blur-2xl" />
+        
+        {/* Animated background particles */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-1 h-1 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0s', animationDuration: '3s' }} />
+          <div className="absolute top-40 right-20 w-1 h-1 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '1s', animationDuration: '3s' }} />
+          <div className="absolute bottom-40 left-1/4 w-1 h-1 bg-cyan-400 rounded-full animate-pulse" style={{ animationDelay: '2s', animationDuration: '3s' }} />
+          <div className="absolute top-60 right-1/3 w-1 h-1 bg-pink-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s', animationDuration: '3s' }} />
+          <div className="absolute bottom-60 right-1/4 w-1 h-1 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '1.5s', animationDuration: '3s' }} />
+        </div>
+        
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(11,16,32,0),rgba(11,16,32,0.97)_55%,rgba(11,16,32,1)_100%)]" />
       </div>
 
       <div className="container relative mx-auto px-4">
@@ -110,14 +124,44 @@ export function HowItWorks() {
 
         <div className="relative mx-auto mt-20 max-w-4xl">
           <div className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px bg-white/10 md:block">
+            {/* Main gradient line */}
             <div
-              className="absolute left-1/2 top-0 h-full w-[2px] -translate-x-1/2 rounded-full bg-gradient-to-b from-[#4A6CFF]/50 via-[#00C2FF]/30 to-transparent transition-all duration-700 ease-out"
+              className="absolute left-1/2 top-0 h-full w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-[#4A6CFF]/60 via-[#00C2FF]/40 via-purple-500/30 to-transparent transition-all duration-700 ease-out"
               style={{ height: `${progressLine}%` }}
             />
+            
+            {/* Glowing core line */}
             <div
-              className="lightning-pulse absolute left-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10"
-              style={{ top: `${indicatorPosition}%` }}
+              className="absolute left-1/2 top-0 h-full w-[1px] -translate-x-1/2 rounded-full bg-gradient-to-b from-white/40 via-cyan-400/30 to-transparent transition-all duration-700 ease-out"
+              style={{ height: `${progressLine}%` }}
             />
+            
+            {/* Animated sparks along the line */}
+            <div className="absolute inset-0 overflow-hidden">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute left-1/2 w-2 h-2 -translate-x-1/2 rounded-full opacity-0 transition-opacity duration-500"
+                  style={{
+                    top: `${(i + 1) * 12}%`,
+                    backgroundColor: ['#00C2FF', '#8A2BE2', '#FF1493', '#00FF7F', '#FFD700', '#FF69B4', '#00CED1', '#FF6347'][i],
+                    opacity: activeStep >= i ? 1 : 0,
+                    animation: activeStep >= i ? `spark-${i} 2s ease-in-out infinite` : 'none',
+                    animationDelay: `${i * 0.2}s`,
+                  }}
+                />
+              ))}
+            </div>
+            
+            {/* Main indicator with enhanced glow */}
+            <div
+              className="absolute left-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00C2FF]/50 bg-[#00C2FF]/15 transition-all duration-300"
+              style={{ top: `${indicatorPosition}%` }}
+            >
+              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.4),transparent_70%)] animate-pulse" />
+              <div className="absolute inset-0 rounded-full border border-cyan-400/30 animate-ping" />
+              <div className="absolute inset-0 rounded-full border border-purple-400/20 animate-ping" style={{ animationDelay: '0.5s' }} />
+            </div>
           </div>
 
           <div className="space-y-16 md:space-y-20">
@@ -125,14 +169,6 @@ export function HowItWorks() {
               const Icon = step.icon
               return (
                 <div key={step.title} ref={(element) => (stepRefs.current[index] = element)} data-index={index} className="relative">
-                  <div
-                    className={cn(
-                      "pointer-events-none absolute left-1/2 top-8 hidden h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border border-white/15 bg-[#0B1020]/90 text-white/60 backdrop-blur md:flex z-20",
-                      activeStep >= index && "border-[#00C2FF]/50 text-white"
-                    )}
-                  >
-                    <span className="text-xs font-semibold">{String(index + 1).padStart(2, "0")}</span>
-                  </div>
 
                   <div className="relative">
                     {/* Background elements that appear from behind */}
@@ -227,9 +263,6 @@ export function HowItWorks() {
                         <div className="relative z-10 text-center space-y-6">
                           <div className="flex items-center justify-center gap-3">
                             <Icon className="w-6 h-6 text-[#00C2FF]" />
-                            <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
-                              Stage {String(index + 1).padStart(2, "0")}
-                            </span>
                           </div>
                           <h3 className="text-3xl font-semibold text-white md:text-4xl">{step.title}</h3>
                           <p className="text-lg leading-relaxed text-white/70 md:text-xl max-w-lg mx-auto">{step.description}</p>
@@ -255,6 +288,38 @@ export function HowItWorks() {
           @keyframes float-2 {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-25px) rotate(-90deg); }
+          }
+          @keyframes spark-0 {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+            50% { transform: translateX(-50%) scale(1.5); opacity: 1; box-shadow: 0 0 10px currentColor; }
+          }
+          @keyframes spark-1 {
+            0%, 100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 0.7; }
+            50% { transform: translateX(-50%) translateY(-3px) scale(1.3); opacity: 1; box-shadow: 0 0 8px currentColor; }
+          }
+          @keyframes spark-2 {
+            0%, 100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 0.9; }
+            50% { transform: translateX(-50%) translateY(3px) scale(1.4); opacity: 1; box-shadow: 0 0 12px currentColor; }
+          }
+          @keyframes spark-3 {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+            50% { transform: translateX(-50%) scale(1.6); opacity: 1; box-shadow: 0 0 15px currentColor; }
+          }
+          @keyframes spark-4 {
+            0%, 100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 0.8; }
+            50% { transform: translateX(-50%) translateY(-2px) scale(1.2); opacity: 1; box-shadow: 0 0 10px currentColor; }
+          }
+          @keyframes spark-5 {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.7; }
+            50% { transform: translateX(-50%) translateY(2px) scale(1.5); opacity: 1; box-shadow: 0 0 11px currentColor; }
+          }
+          @keyframes spark-6 {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            50% { transform: translateX(-50%) translateY(-4px) scale(1.3); opacity: 1; box-shadow: 0 0 9px currentColor; }
+          }
+          @keyframes spark-7 {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+            50% { transform: translateX(-50%) translateY(4px) scale(1.4); opacity: 1; box-shadow: 0 0 13px currentColor; }
           }
         `}</style>
       </div>
