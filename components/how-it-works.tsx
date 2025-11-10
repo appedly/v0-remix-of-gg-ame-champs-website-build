@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { User, Upload, ThumbsUp, DollarSign } from "lucide-react"
+import { User, Upload, ThumbsUp, DollarSign, Camera, Trophy, Coins, Wallet, Star } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -11,44 +11,46 @@ const steps = [
     description:
       "Sign up in seconds, personalize your profile, and unlock access to every community tournament we host.",
     icon: User,
-    bgElements: [
-      { type: 'circle', color: '#00C2FF', size: 'w-2 h-2', delay: '0s' },
-      { type: 'square', color: '#4A6CFF', size: 'w-3 h-3', delay: '0.2s' },
-      { type: 'triangle', color: '#00C2FF', size: 'w-2 h-2', delay: '0.4s' },
+    floatingIcons: [
+      { icon: User, side: 'left', position: 'top', delay: '0s', tilt: -15 },
+      { icon: User, side: 'right', position: 'middle', delay: '0.2s', tilt: 12 },
     ],
+    isMoneyCard: false,
   },
   {
     title: "Upload Your Best Clips",
     description:
       "Drop your most electric gaming highlights. Our upload flow is fast, polished, and built for high-quality footage.",
     icon: Upload,
-    bgElements: [
-      { type: 'hexagon', color: '#FF6B6B', size: 'w-3 h-3', delay: '0s' },
-      { type: 'circle', color: '#4ECDC4', size: 'w-2 h-2', delay: '0.3s' },
-      { type: 'square', color: '#45B7D1', size: 'w-2 h-2', delay: '0.6s' },
+    floatingIcons: [
+      { icon: Camera, side: 'left', position: 'middle', delay: '0s', tilt: -8 },
+      { icon: Upload, side: 'right', position: 'bottom', delay: '0.3s', tilt: 18 },
     ],
+    isMoneyCard: false,
   },
   {
     title: "Get Votes & Rise Up",
     description:
       "Watch the leaderboard react in real-time as the community votes. Climb the brackets, earn prestige, and secure finals spots.",
     icon: ThumbsUp,
-    bgElements: [
-      { type: 'heart', color: '#FF6B6B', size: 'w-3 h-3', delay: '0s' },
-      { type: 'star', color: '#FFD93D', size: 'w-2 h-2', delay: '0.2s' },
-      { type: 'circle', color: '#6BCF7F', size: 'w-2 h-2', delay: '0.4s' },
+    floatingIcons: [
+      { icon: Star, side: 'left', position: 'bottom', delay: '0s', tilt: -12 },
+      { icon: Trophy, side: 'right', position: 'top', delay: '0.2s', tilt: 10 },
     ],
+    isMoneyCard: false,
   },
   {
     title: "Earn Real Money",
     description:
       "Champions take home cash, rewards, and sponsorship opportunities. The better the clip, the bigger the payoff.",
     icon: DollarSign,
-    bgElements: [
-      { type: 'diamond', color: '#FFD700', size: 'w-3 h-3', delay: '0s' },
-      { type: 'coin', color: '#FFA500', size: 'w-2 h-2', delay: '0.3s' },
-      { type: 'star', color: '#FFD700', size: 'w-2 h-2', delay: '0.6s' },
+    floatingIcons: [
+      { icon: Coins, side: 'left', position: 'top', delay: '0s', tilt: -20 },
+      { icon: Wallet, side: 'left', position: 'bottom', delay: '0.2s', tilt: 15 },
+      { icon: DollarSign, side: 'right', position: 'middle', delay: '0.1s', tilt: -10, large: true },
+      { icon: Star, side: 'right', position: 'top', delay: '0.3s', tilt: 8 },
     ],
+    isMoneyCard: true,
   },
 ]
 
@@ -171,101 +173,146 @@ export function HowItWorks() {
                 <div key={step.title} ref={(element) => (stepRefs.current[index] = element)} data-index={index} className="relative">
 
                   <div className="relative">
-                    {/* Background elements that appear from behind */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {step.bgElements.map((element, elementIndex) => (
-                        <div
-                          key={elementIndex}
-                          className={cn(
-                            "absolute opacity-0 transition-all duration-1000",
-                            activeStep === index && "opacity-100"
-                          )}
-                          style={{
-                            animationDelay: element.delay,
-                            animation: activeStep === index ? `float-${elementIndex} 3s ease-in-out infinite` : 'none',
-                            left: `${20 + elementIndex * 30}%`,
-                            top: `${10 + elementIndex * 15}%`,
-                          }}
-                        >
-                          {element.type === 'circle' && (
-                            <div 
-                              className={cn("rounded-full", element.size)}
-                              style={{ backgroundColor: element.color }}
-                            />
-                          )}
-                          {element.type === 'square' && (
-                            <div 
-                              className={cn("rotate-45", element.size)}
-                              style={{ backgroundColor: element.color }}
-                            />
-                          )}
-                          {element.type === 'triangle' && (
-                            <div 
-                              className={cn(element.size)}
-                              style={{
-                                width: 0,
-                                height: 0,
-                                borderLeft: `${parseInt(element.size.split(' ')[0].replace('w-', '')) * 4}px solid transparent`,
-                                borderRight: `${parseInt(element.size.split(' ')[0].replace('w-', '')) * 4}px solid transparent`,
-                                borderBottom: `${parseInt(element.size.split(' ')[0].replace('w-', '')) * 6}px solid ${element.color}`,
-                              }}
-                            />
-                          )}
-                          {element.type === 'hexagon' && (
-                            <div className={cn(element.size)} style={{ color: element.color }}>
-                              ⬡
+                    {/* Floating Side Icons */}
+                    <div className="absolute inset-0 pointer-events-none">
+                      {step.floatingIcons.map((floatingIcon, iconIndex) => {
+                        const FloatingIcon = floatingIcon.icon
+                        const isLeft = floatingIcon.side === 'left'
+                        const positionY = floatingIcon.position === 'top' ? '20%' : floatingIcon.position === 'bottom' ? '80%' : '50%'
+                        const positionX = isLeft ? '-15%' : '115%'
+                        const iconSize = floatingIcon.large ? 'w-16 h-16' : 'w-12 h-12'
+                        
+                        return (
+                          <div
+                            key={iconIndex}
+                            className={cn(
+                              "absolute transition-all duration-1000 ease-out",
+                              activeStep === index ? "opacity-100" : "opacity-0"
+                            )}
+                            style={{
+                              left: positionX,
+                              top: positionY,
+                              transform: `translateY(-50%) rotate(${floatingIcon.tilt}deg)`,
+                              animationDelay: floatingIcon.delay,
+                              animation: activeStep === index ? `float-icon-${iconIndex} 4s ease-in-out infinite` : 'none',
+                            }}
+                          >
+                            <div
+                              className={cn(
+                                "relative",
+                                activeStep === index && "group"
+                              )}
+                            >
+                              {/* Icon shadow cast on card */}
+                              <div 
+                                className={cn(
+                                  "absolute rounded-full blur-xl transition-all duration-500",
+                                  iconSize,
+                                  step.isMoneyCard 
+                                    ? "bg-gradient-to-br from-yellow-400/20 to-amber-600/20" 
+                                    : "bg-gradient-to-br from-blue-400/20 to-purple-600/20"
+                                )}
+                                style={{
+                                  transform: isLeft ? 'translateX(20px) translateY(10px)' : 'translateX(-20px) translateY(10px)',
+                                  opacity: activeStep === index ? 0.6 : 0,
+                                }}
+                              />
+                              
+                              {/* Main icon */}
+                              <div
+                                className={cn(
+                                  "relative transition-all duration-300",
+                                  iconSize,
+                                  "rounded-2xl",
+                                  "flex items-center justify-center",
+                                  step.isMoneyCard 
+                                    ? "bg-gradient-to-br from-yellow-400 to-amber-600 text-white shadow-lg shadow-yellow-500/25"
+                                    : "bg-gradient-to-br from-slate-800 to-slate-900 text-cyan-400 shadow-lg shadow-cyan-500/15 border border-cyan-500/20",
+                                  activeStep === index && [
+                                    "hover:scale-110 cursor-pointer",
+                                    step.isMoneyCard && "animate-pulse"
+                                  ]
+                                )}
+                              >
+                                <FloatingIcon className={cn(floatingIcon.large ? "w-8 h-8" : "w-6 h-6")} />
+                                
+                                {/* Glow effect on hover/focus */}
+                                {activeStep === index && (
+                                  <div
+                                    className={cn(
+                                      "absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300",
+                                      step.isMoneyCard 
+                                        ? "bg-gradient-to-br from-yellow-400 to-amber-600"
+                                        : "bg-gradient-to-br from-cyan-400 to-blue-600"
+                                    )}
+                                    style={{ filter: 'blur(8px)' }}
+                                  />
+                                )}
+                              </div>
                             </div>
-                          )}
-                          {element.type === 'heart' && (
-                            <div className={cn(element.size)} style={{ color: element.color }}>
-                              ♥
-                            </div>
-                          )}
-                          {element.type === 'star' && (
-                            <div className={cn(element.size)} style={{ color: element.color }}>
-                              ★
-                            </div>
-                          )}
-                          {element.type === 'diamond' && (
-                            <div className={cn(element.size)} style={{ color: element.color }}>
-                              ♦
-                            </div>
-                          )}
-                          {element.type === 'coin' && (
-                            <div className={cn(element.size, "rounded-full border-2")} style={{ borderColor: element.color }}>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                          </div>
+                        )
+                      })}
                     </div>
 
                     <div className="flex justify-center">
                       <div
                         className={cn(
-                          "relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-10 shadow-[0px_20px_80px_rgba(4,7,20,0.45)] transition-all duration-500 ease-out backdrop-blur-xl max-w-2xl w-full",
-                          activeStep === index
-                            ? "border-[#00C2FF]/40 bg-white/[0.04] shadow-[0_40px_120px_rgba(0,194,255,0.15)]"
-                            : "hover:border-white/20 hover:bg-white/[0.03]"
+                          "relative overflow-hidden rounded-2xl p-8 transition-all duration-500 ease-out max-w-2xl w-full",
+                          step.isMoneyCard 
+                            ? "bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-yellow-500/50 shadow-[0_20px_60px_rgba(250,204,21,0.15)]"
+                            : "bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/50 shadow-[0_10px_40px_rgba(0,0,0,0.3)]",
+                          activeStep === index && [
+                            step.isMoneyCard 
+                              ? "border-yellow-400 shadow-[0_30px_80px_rgba(250,204,21,0.25)]"
+                              : "border-cyan-500/30 shadow-[0_20px_60px_rgba(0,194,255,0.1)]"
+                          ],
+                          "hover:shadow-[0_25px_70px_rgba(0,0,0,0.4)]"
                         )}
                       >
-                        <div
-                          className={cn(
-                            "pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 ease-out",
-                            activeStep === index && "opacity-100"
-                          )}
-                        >
-                          {activeStep === index && (
-                            <div className="lightning-trace absolute inset-y-0 -left-1/2 w-[200%] bg-[linear-gradient(120deg,rgba(74,108,255,0)_0%,rgba(74,108,255,0.25)_45%,rgba(0,194,255,0.4)_55%,rgba(0,194,255,0)_100%)]" />
-                          )}
-                          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.08),rgba(0,0,0,0)_70%)]" />
-                        </div>
-
-                        <div className="relative z-10 text-center space-y-6">
-                          <div className="flex items-center justify-center gap-3">
-                            <Icon className="w-6 h-6 text-[#00C2FF]" />
+                        {/* Special watermark for money card */}
+                        {step.isMoneyCard && (
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
+                            <DollarSign className="w-64 h-64 text-yellow-400" />
                           </div>
-                          <h3 className="text-3xl font-semibold text-white md:text-4xl">{step.title}</h3>
-                          <p className="text-lg leading-relaxed text-white/70 md:text-xl max-w-lg mx-auto">{step.description}</p>
+                        )}
+
+                        <div className="relative z-10 space-y-6">
+                          {/* Icon and title section */}
+                          <div className="flex items-center gap-4">
+                            <div
+                              className={cn(
+                                "rounded-xl p-3",
+                                step.isMoneyCard 
+                                  ? "bg-gradient-to-br from-yellow-400 to-amber-600 text-white"
+                                  : "bg-gradient-to-br from-cyan-500/20 to-blue-600/20 text-cyan-400 border border-cyan-500/30"
+                              )}
+                            >
+                              <Icon className="w-6 h-6" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className={cn(
+                                "text-2xl md:text-3xl font-semibold text-white",
+                                step.isMoneyCard && "bg-gradient-to-r from-yellow-400 to-amber-600 bg-clip-text text-transparent"
+                              )}>
+                                {step.title}
+                              </h3>
+                              {/* Divider line */}
+                              <div 
+                                className={cn(
+                                  "mt-2 h-0.5 rounded-full",
+                                  step.isMoneyCard 
+                                    ? "bg-gradient-to-r from-yellow-400 to-amber-600"
+                                    : "bg-gradient-to-r from-cyan-500 to-blue-600"
+                                )}
+                              />
+                            </div>
+                          </div>
+                          
+                          {/* Description */}
+                          <p className="text-base md:text-lg leading-relaxed text-white/70 text-left">
+                            {step.description}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -277,17 +324,50 @@ export function HowItWorks() {
         </div>
 
         <style jsx>{`
-          @keyframes float-0 {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+          @keyframes float-icon-0 {
+            0%, 100% { transform: translateY(-50%) rotate(-15deg) translateX(0px); }
+            25% { transform: translateY(-50%) rotate(-12deg) translateX(-5px); }
+            50% { transform: translateY(-55%) rotate(-18deg) translateX(3px); }
+            75% { transform: translateY(-50%) rotate(-10deg) translateX(-3px); }
           }
-          @keyframes float-1 {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            50% { transform: translateY(-15px) translateX(10px); }
+          @keyframes float-icon-1 {
+            0%, 100% { transform: translateY(-50%) rotate(12deg) translateX(0px); }
+            25% { transform: translateY(-52%) rotate(15deg) translateX(4px); }
+            50% { transform: translateY(-48%) rotate(8deg) translateX(-4px); }
+            75% { transform: translateY(-50%) rotate(14deg) translateX(2px); }
           }
-          @keyframes float-2 {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-25px) rotate(-90deg); }
+          @keyframes float-icon-2 {
+            0%, 100% { transform: translateY(-50%) rotate(-8deg) translateX(0px); }
+            33% { transform: translateY(-53%) rotate(-5deg) translateX(-3px); }
+            66% { transform: translateY(-47%) rotate(-11deg) translateX(3px); }
+          }
+          @keyframes float-icon-3 {
+            0%, 100% { transform: translateY(-50%) rotate(18deg) translateX(0px); }
+            25% { transform: translateY(-52%) rotate(15deg) translateX(-4px); }
+            50% { transform: translateY(-48%) rotate(21deg) translateX(4px); }
+            75% { transform: translateY(-50%) rotate(16deg) translateX(-2px); }
+          }
+          @keyframes float-icon-4 {
+            0%, 100% { transform: translateY(-50%) rotate(-20deg) translateX(0px); }
+            25% { transform: translateY(-55%) rotate(-17deg) translateX(5px); }
+            50% { transform: translateY(-45%) rotate(-23deg) translateX(-5px); }
+            75% { transform: translateY(-50%) rotate(-18deg) translateX(2px); }
+          }
+          @keyframes float-icon-5 {
+            0%, 100% { transform: translateY(-50%) rotate(15deg) translateX(0px); }
+            33% { transform: translateY(-52%) rotate(12deg) translateX(-3px); }
+            66% { transform: translateY(-48%) rotate(18deg) translateX(3px); }
+          }
+          @keyframes float-icon-6 {
+            0%, 100% { transform: translateY(-50%) rotate(-10deg) translateX(0px); }
+            25% { transform: translateY(-53%) rotate(-7deg) translateX(4px); }
+            50% { transform: translateY(-47%) rotate(-13deg) translateX(-4px); }
+            75% { transform: translateY(-50%) rotate(-8deg) translateX(-2px); }
+          }
+          @keyframes float-icon-7 {
+            0%, 100% { transform: translateY(-50%) rotate(8deg) translateX(0px); }
+            33% { transform: translateY(-52%) rotate(5deg) translateX(-3px); }
+            66% { transform: translateY(-48%) rotate(11deg) translateX(3px); }
           }
           @keyframes spark-0 {
             0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
