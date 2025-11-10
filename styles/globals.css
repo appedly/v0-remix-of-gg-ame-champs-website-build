@@ -123,3 +123,59 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom utility classes for enhanced dashboard */
+@layer utilities {
+  .glass-morphism {
+    @apply backdrop-blur-md bg-white/10 border border-white/20;
+  }
+  
+  .gradient-border {
+    background: linear-gradient(135deg, #4A6CFF, #00C2FF, #FFB800, #FF6B6B);
+    padding: 1px;
+    border-radius: inherit;
+  }
+  
+  .gradient-border-content {
+    background: inherit;
+    border-radius: inherit;
+    padding: inherit;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-[#4A6CFF] to-[#00C2FF] bg-clip-text text-transparent;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-xl;
+  }
+  
+  .glow-effect {
+    box-shadow: 0 0 20px rgba(74, 108, 255, 0.3);
+  }
+  
+  .glow-effect-hover:hover {
+    box-shadow: 0 0 30px rgba(74, 108, 255, 0.5);
+  }
+  
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
