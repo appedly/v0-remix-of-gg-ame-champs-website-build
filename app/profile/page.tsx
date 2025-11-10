@@ -22,6 +22,12 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  const [stats, setStats] = useState({
+    totalSubmissions: 0,
+    totalVotes: 0,
+    approvedSubmissions: 0,
+    activeTournaments: 0,
+  })
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -52,6 +58,27 @@ export default function ProfilePage() {
       if (userData) {
         setDisplayName(userData.display_name || "")
         setBio(userData.bio || "")
+      }
+
+      // Fetch user stats
+      const { data: submissions } = await supabase
+        .from("submissions")
+        .select("*, votes:votes(count), tournament:tournaments(status)")
+        .eq("user_id", session.user.id)
+
+      if (submissions) {
+        const totalVotes = submissions.reduce((sum, sub) => sum + (sub.votes?.length || 0), 0)
+        const approvedSubmissions = submissions.filter((sub) => sub.status === "approved").length
+        const activeTournaments = new Set(
+          submissions.filter((sub) => sub.tournament?.status === "active").map((sub) => sub.tournament_id),
+        ).size
+
+        setStats({
+          totalSubmissions: submissions.length,
+          totalVotes,
+          approvedSubmissions,
+          activeTournaments,
+        })
       }
 
       setIsLoading(false)
@@ -139,8 +166,11 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[#0B1020]">
       <UserNav userName={user?.display_name || "User"} />
 
-      <main className="container mx-auto px-4 py-8 max-w-3xl">
-        <h1 className="text-3xl font-bold text-white mb-8">Profile Settings</h1>
+      <main className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Profile Settings</h1>
+          <p className="text-white/60">Manage your account and view your stats</p>
+        </div>
 
         {message && (
           <div
@@ -154,11 +184,31 @@ export default function ProfilePage() {
           </div>
         )}
 
-        <div className="space-y-8">
+        {/* Stats Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4">
+            <div className="text-white/40 text-sm mb-1">Total Submissions</div>
+            <div className="text-2xl font-bold text-white">{stats.totalSubmissions}</div>
+          </div>
+          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4">
+            <div className="text-white/40 text-sm mb-1">Approved</div>
+            <div className="text-2xl font-bold text-green-400">{stats.approvedSubmissions}</div>
+          </div>
+          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4">
+            <div className="text-white/40 text-sm mb-1">Total Votes</div>
+            <div className="text-2xl font-bold text-[#00C2FF]">{stats.totalVotes}</div>
+          </div>
+          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4">
+            <div className="text-white/40 text-sm mb-1">Active Tournaments</div>
+            <div className="text-2xl font-bold text-[#4A6CFF]">{stats.activeTournaments}</div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
           {/* Profile Information */}
           <form
             onSubmit={handleUpdateProfile}
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-8 space-y-6"
+            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 md:p-8 space-y-6"
           >
             <div>
               <h2 className="text-xl font-semibold text-white mb-4">Profile Information</h2>
@@ -214,7 +264,7 @@ export default function ProfilePage() {
           {/* Change Password */}
           <form
             onSubmit={handleChangePassword}
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-8 space-y-6"
+            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 md:p-8 space-y-6"
           >
             <div>
               <h2 className="text-xl font-semibold text-white mb-4">Change Password</h2>
