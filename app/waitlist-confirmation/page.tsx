@@ -11,7 +11,6 @@ export default function WaitlistConfirmationPage() {
   const [accessCode, setAccessCode] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [showCodeInput, setShowCodeInput] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -28,41 +27,37 @@ export default function WaitlistConfirmationPage() {
         return
       }
 
-      // Validate access code
       const { data: codeData, error: codeError } = await supabase
         .from("access_codes")
         .select("*")
         .eq("code", accessCode.toUpperCase())
+        .single()
 
-      if (codeError || !codeData || codeData.length === 0) {
+      if (codeError || !codeData) {
         setError("Invalid access code")
         setIsLoading(false)
         return
       }
 
-      const code = codeData[0]
-      if (code.used_at) {
+      if (codeData.used_at) {
         setError("Access code has already been used")
         setIsLoading(false)
         return
       }
 
-      if (code.expires_at && new Date(code.expires_at) < new Date()) {
+      if (codeData.expires_at && new Date(codeData.expires_at) < new Date()) {
         setError("Access code has expired")
         setIsLoading(false)
         return
       }
 
-      // Mark code as used
       await supabase
         .from("access_codes")
         .update({ used_by: userData.user.id, used_at: new Date().toISOString() })
-        .eq("id", code.id)
+        .eq("id", codeData.id)
 
-      // Update user with access code
-      await supabase.from("users").update({ access_code_id: code.id }).eq("id", userData.user.id)
+      await supabase.from("users").update({ access_code_id: codeData.id, approved: true }).eq("id", userData.user.id)
 
-      // Redirect to dashboard
       router.push("/dashboard")
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -85,50 +80,43 @@ export default function WaitlistConfirmationPage() {
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <Image src="/logo.png" alt="GGameChamps" width={100} height={100} className="w-24 h-24 mx-auto mb-6" />
-          <h1 className="text-4xl font-bold text-white mb-3">Thank you for joining!</h1>
-          <p className="text-white/60 text-base">You've been added to our waitlist</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Thank you for joining!</h1>
+          <p className="text-white/60 text-base">We will notify you when access is available</p>
         </div>
 
         <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl space-y-6">
           <div className="bg-gradient-to-r from-[#4A6CFF]/10 to-[#00D9FF]/10 border border-[#4A6CFF]/20 rounded-xl p-6 text-center">
             <p className="text-white/80 text-sm leading-relaxed">
-              We will notify you when access is available. In the meantime, follow our socials for invite code
-              giveaways!
+              You've been added to our waitlist. Follow our socials for invite code giveaways!
             </p>
           </div>
 
-          <div className="space-y-3">
-            <button
-              onClick={() => setShowCodeInput(!showCodeInput)}
-              className="w-full text-center text-[#4A6CFF] hover:text-[#5A7CFF] text-sm font-medium transition-colors py-2"
-            >
-              {showCodeInput ? "✕ Hide" : "+ Received an invite code?"}
-            </button>
-
-            {showCodeInput && (
-              <form onSubmit={handleAccessCodeSubmit} className="space-y-3 pt-3 border-t border-white/10">
-                <input
-                  type="text"
-                  placeholder="Enter your access code"
-                  value={accessCode}
-                  onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
-                  className="w-full bg-[#0a0f1e] border border-white/10 text-white placeholder:text-white/30 h-12 rounded-xl px-4 focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all"
-                />
-                {error && (
-                  <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                    <p className="text-red-400 text-sm">{error}</p>
-                  </div>
-                )}
-                <button
-                  type="submit"
-                  disabled={isLoading || !accessCode}
-                  className="w-full bg-[#4A6CFF] hover:bg-[#5A7CFF] disabled:opacity-50 text-white h-12 rounded-xl font-medium transition-all shadow-lg shadow-[#4A6CFF]/20"
-                >
-                  {isLoading ? "Verifying..." : "Unlock Access"}
-                </button>
-              </form>
+          <form onSubmit={handleAccessCodeSubmit} className="space-y-4 border-t border-white/10 pt-6">
+            <div>
+              <label className="text-white/80 text-sm font-medium mb-2 block">
+                Skip the waitlist and start right away
+              </label>
+              <input
+                type="text"
+                placeholder="Enter invite code"
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
+                className="w-full bg-[#0a0f1e] border border-white/10 text-white placeholder:text-white/30 h-12 rounded-xl px-4 focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all"
+              />
+            </div>
+            {error && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p className="text-red-400 text-sm">{error}</p>
+              </div>
             )}
-          </div>
+            <button
+              type="submit"
+              disabled={isLoading || !accessCode}
+              className="w-full bg-[#4A6CFF] hover:bg-[#5A7CFF] disabled:opacity-50 disabled:cursor-not-allowed text-white h-12 rounded-xl font-medium transition-all shadow-lg shadow-[#4A6CFF]/20"
+            >
+              {isLoading ? "Verifying..." : "Redeem"}
+            </button>
+          </form>
 
           <div className="pt-4 border-t border-white/10">
             <p className="text-white/60 text-xs text-center mb-4">Follow our socials for invite code giveaways</p>

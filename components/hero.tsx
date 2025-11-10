@@ -37,7 +37,7 @@ export function Hero() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
             <a
-              href="#early-access"
+              href="https://gg-test-site.vercel.app/signup"
               className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#0a0f1e] rounded-full font-semibold text-lg hover:bg-white/90 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
             >
               Pre Register Now

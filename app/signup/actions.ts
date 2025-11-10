@@ -72,5 +72,6 @@ export async function signup(formData: FormData) {
     }
   }
 
+  // Always redirect to waitlist-confirmation if no valid access code is used
   redirect("/waitlist-confirmation")
 }
