@@ -52,7 +52,8 @@ export default function SignupPage() {
     setIsGoogleLoading(true)
     setError(null)
     try {
-      await signupWithGoogle(accessCode)
+      // Google signup now redirects to waitlist-confirmation without requiring access code upfront
+      await signupWithGoogle()
     } catch (error: unknown) {
       console.error("[v0] Google signup error:", error)
       setError(error instanceof Error ? error.message : "An error occurred")
