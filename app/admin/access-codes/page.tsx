@@ -14,6 +14,7 @@ interface AccessCode {
   expires_at: string | null
   used_at: string | null
   used_by: string | null
+  is_used: boolean
 }
 
 export default function AccessCodesPage() {
@@ -28,32 +29,57 @@ export default function AccessCodesPage() {
   const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchAdminAndCodes = async () => {
-      const supabase = createClient()
+    const checkAuth = async () => {
+      // Check for admin_session flag set by hardcoded login
+      const adminSession = localStorage.getItem("admin_session")
+      
+      if (!adminSession) {
+        // Fallback to checking Supabase auth
+        const supabase = createClient()
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+        if (!session) {
+          router.push("/admin/login")
+          return
+        }
 
-      if (!session) {
-        router.push("/admin/login")
-        return
+        // Verify admin role
+        const { data: userData } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", session.user.id)
+          .single()
+
+        if (userData?.role !== "admin") {
+          router.push("/admin/login")
+          return
+        }
+
+        setAdminId(session.user.id)
+        await fetchCodes()
+        setIsLoading(false)
+      } else {
+        // Admin session found in localStorage (hardcoded credentials)
+        // For hardcoded login, we need to get an admin ID from the database
+        const supabase = createClient()
+        const { data: adminData } = await supabase
+          .from("users")
+          .select("id")
+          .eq("role", "admin")
+          .limit(1)
+          .single()
+        
+        if (adminData) {
+          setAdminId(adminData.id)
+        }
+        await fetchCodes()
+        setIsLoading(false)
       }
-
-      // Verify admin role
-      const { data: userData } = await supabase.from("users").select("role").eq("id", session.user.id).single()
-
-      if (userData?.role !== "admin") {
-        router.push("/admin/login")
-        return
-      }
-
-      setAdminId(session.user.id)
-      await fetchCodes()
-      setIsLoading(false)
     }
 
-    fetchAdminAndCodes()
+    checkAuth()
   }, [router])
 
   const fetchCodes = async () => {
@@ -111,7 +137,7 @@ export default function AccessCodesPage() {
     const { error } = await supabase.from("access_codes").delete().eq("id", id)
 
     if (!error) {
-      setCodes(codes.filter((c) => c.id !== id))
+      await fetchCodes()
       setSuccess(`Code ${code} has been revoked`)
     } else {
       setError(`Error revoking code: ${error.message}`)
@@ -126,8 +152,8 @@ export default function AccessCodesPage() {
     )
   }
 
-  const activeCodes = codes.filter((c) => !c.used_at)
-  const usedCodes = codes.filter((c) => c.used_at)
+  const activeCodes = codes.filter((c) => !c.is_used)
+  const usedCodes = codes.filter((c) => c.is_used)
 
   return (
     <div className="min-h-screen bg-[#0B1020]">

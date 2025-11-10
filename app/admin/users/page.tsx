@@ -20,20 +20,50 @@ export default function UsersPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const adminSession = localStorage.getItem("admin_session")
-    if (!adminSession) {
-      router.push("/admin/login")
-      return
+    const checkAuth = async () => {
+      // Check for admin_session flag set by hardcoded login
+      const adminSession = localStorage.getItem("admin_session")
+      
+      if (!adminSession) {
+        // Fallback to checking Supabase auth
+        const supabase = createClient()
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+
+        if (!session) {
+          router.push("/admin/login")
+          return
+        }
+
+        // Verify admin role
+        const { data: userData } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", session.user.id)
+          .single()
+
+        if (userData?.role !== "admin") {
+          router.push("/admin/login")
+          return
+        }
+
+        await fetchUsers()
+        setIsLoading(false)
+      } else {
+        // Admin session found in localStorage (hardcoded credentials)
+        await fetchUsers()
+        setIsLoading(false)
+      }
     }
 
     const fetchUsers = async () => {
       const supabase = createClient()
       const { data } = await supabase.from("users").select("*").order("created_at", { ascending: false })
       setUsers(data || [])
-      setIsLoading(false)
     }
 
-    fetchUsers()
+    checkAuth()
   }, [router])
 
   const handleRoleChange = async (userId: string, newRole: string) => {

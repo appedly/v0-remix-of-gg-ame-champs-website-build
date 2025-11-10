@@ -30,8 +30,8 @@ export default function AdminLoginPage() {
       console.log("[v0] Admin login attempt with email:", email)
       
       // Hardcoded admin credentials
-      const HARDCODED_EMAIL = "arjanchaudharyy@gmail.com"
-      const HARDCODED_PASSWORD = "aaaaaa"
+      const HARDCODED_EMAIL = "ggiscool"
+      const HARDCODED_PASSWORD = "gg@coolasf17"
 
       if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
         console.log("[v0] Hardcoded admin credentials verified")
@@ -158,7 +158,7 @@ export default function AdminLoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="arjanchaudharyy@gmail.com"
+                placeholder="ggiscool"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
