@@ -54,7 +54,10 @@ export async function GET(request: NextRequest) {
               .eq("id", accessCodeRecord.id)
 
             // Update user with access code
-            await supabase.from("users").update({ access_code_id: accessCodeRecord.id }).eq("id", userData.user.id)
+            await supabase
+              .from("users")
+              .update({ access_code_id: accessCodeRecord.id, approved: true })
+              .eq("id", userData.user.id)
           }
         }
       } else {

@@ -14,13 +14,21 @@ export async function login(formData: FormData) {
 
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
 
   if (error) {
     return { error: error.message }
+  }
+
+  if (data.user) {
+    const { data: userData } = await supabase.from("users").select("approved").eq("id", data.user.id).single()
+
+    if (!userData?.approved) {
+      redirect("/waitlist-confirmation")
+    }
   }
 
   // Revalidate the cache and redirect
