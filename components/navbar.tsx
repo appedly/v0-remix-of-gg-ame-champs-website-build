@@ -53,7 +53,7 @@ export function Navbar() {
           {/* CTA Button - Right Side */}
           <div className="hidden lg:flex flex-shrink-0 items-center">
             <Link
-              href="/login"
+              href="/signup"
               className="group inline-flex items-center gap-2 rounded-full border border-white/25 px-7 py-2.5 text-sm font-semibold text-white/85 transition-all duration-300 hover:border-white/60 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/15"
             >
               Join Waitlist
@@ -86,7 +86,7 @@ export function Navbar() {
                 Contact
               </NavLink>
               <Link
-                href="/login"
+                href="/signup"
                 className="mt-2 rounded-full border border-white/25 px-4 py-2 text-center text-sm font-semibold text-white/85 transition-all duration-300 hover:border-white/60 hover:bg-white/10 hover:text-white"
                 onClick={() => setIsOpen(false)}
               >

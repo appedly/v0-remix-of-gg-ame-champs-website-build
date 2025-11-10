@@ -258,3 +258,16 @@
   animation: lightning-pulse 1.6s ease-in-out infinite;
   will-change: opacity, box-shadow;
 }
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    transform: translate3d(0, -14px, 0) scale(1.04);
+  }
+  70% {
+    transform: translate3d(0, 8px, 0) scale(0.98);
+  }
+}
