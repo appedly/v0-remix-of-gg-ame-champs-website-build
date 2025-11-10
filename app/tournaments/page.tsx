@@ -26,13 +26,22 @@ export default async function TournamentsPage() {
     <div className="min-h-screen bg-[#0B1020]">
       <UserNav userName={userData?.display_name || "User"} />
 
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Tournaments</h1>
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Tournaments</h1>
+          <p className="text-white/60">Browse and compete in active gaming tournaments</p>
+        </div>
 
         {/* Active Tournaments */}
         {activeTournaments.length > 0 && (
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-4">Active Now</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+              <h2 className="text-2xl font-bold text-white">Active Now</h2>
+              <span className="ml-2 px-2 py-1 bg-green-500/10 text-green-400 text-xs font-medium rounded-full">
+                {activeTournaments.length}
+              </span>
+            </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeTournaments.map((tournament) => (
                 <TournamentCard key={tournament.id} tournament={tournament} />
@@ -44,7 +53,13 @@ export default async function TournamentsPage() {
         {/* Upcoming Tournaments */}
         {upcomingTournaments.length > 0 && (
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-white mb-4">Coming Soon</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
+              <h2 className="text-2xl font-bold text-white">Coming Soon</h2>
+              <span className="ml-2 px-2 py-1 bg-blue-500/10 text-blue-400 text-xs font-medium rounded-full">
+                {upcomingTournaments.length}
+              </span>
+            </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcomingTournaments.map((tournament) => (
                 <TournamentCard key={tournament.id} tournament={tournament} />
@@ -56,7 +71,13 @@ export default async function TournamentsPage() {
         {/* Completed Tournaments */}
         {completedTournaments.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold text-white mb-4">Past Tournaments</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+              <h2 className="text-2xl font-bold text-white">Past Tournaments</h2>
+              <span className="ml-2 px-2 py-1 bg-gray-500/10 text-gray-400 text-xs font-medium rounded-full">
+                {completedTournaments.length}
+              </span>
+            </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {completedTournaments.map((tournament) => (
                 <TournamentCard key={tournament.id} tournament={tournament} />
@@ -67,7 +88,13 @@ export default async function TournamentsPage() {
 
         {tournaments?.length === 0 && (
           <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-12 text-center">
-            <p className="text-white/60">No tournaments available at the moment</p>
+            <div className="max-w-md mx-auto">
+              <div className="w-16 h-16 bg-[#4A6CFF]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl text-[#4A6CFF]">●</span>
+              </div>
+              <p className="text-white/60 mb-2">No tournaments available at the moment</p>
+              <p className="text-white/40 text-sm">Check back soon for new competitions</p>
+            </div>
           </div>
         )}
       </main>
