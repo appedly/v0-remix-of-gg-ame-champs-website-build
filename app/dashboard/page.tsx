@@ -182,7 +182,7 @@ export default function DashboardPage() {
                   <Link href="/tournaments">Browse Tournaments</Link>
                 </Button>
                 <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
-                  <Link href="/submissions/new">Submit Clip</Link>
+                  <Link href="/tournaments">Submit Clip</Link>
                 </Button>
                 <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
                   <Link href="/leaderboard">View Rankings</Link>
@@ -305,8 +305,10 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white">
-                      Join Tournament →
+                    <Button asChild className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white">
+                      <Link href={`/tournaments/${tournament.id}`}>
+                        View Tournament Details →
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -323,14 +325,14 @@ export default function DashboardPage() {
                   Check back soon! New tournaments are launching regularly with prizes and competition.
                 </p>
                 <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Link href="/tournaments">Browse All Tournaments</Link>
+                  <Link href="/tournaments">View All Tournaments</Link>
                 </Button>
               </CardContent>
             </Card>
           )}
         </div>
 
-        {/* Recent Submissions & Activity */}
+        {/* User Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Recent Submissions */}
           <div className="lg:col-span-2">
@@ -406,6 +408,23 @@ export default function DashboardPage() {
             )}
           </div>
 
+          {/* Tournament Participation */}
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-lg font-bold text-white mb-4">Tournament Participation</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
+                  <span className="text-slate-400">Active Tournaments</span>
+                  <span className="text-2xl font-bold text-blue-500">{activeTournaments.length}</span>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
+                  <span className="text-slate-400">Total Participated</span>
+                  <span className="text-2xl font-bold text-green-500">{userStats.joinedTournaments}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Quick Actions & Tips */}
           <div className="space-y-6">
             {/* Quick Actions */}
@@ -414,7 +433,7 @@ export default function DashboardPage() {
                 <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
                 <div className="space-y-3">
                   <Button asChild className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
-                    <Link href="/submissions/new">
+                    <Link href="/tournaments">
                       Submit New Clip
                     </Link>
                   </Button>
@@ -432,23 +451,27 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            {/* Tips */}
+            {/* Recent Activity */}
             <Card>
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-white mb-4">Tips</h3>
+                <h3 className="text-lg font-bold text-white mb-4">Recent Activity</h3>
                 <div className="space-y-3">
-                  <div className="flex gap-3">
-                    <span className="text-blue-500">•</span>
-                    <p className="text-slate-300 text-sm">Submit clips early to maximize voting time</p>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="text-blue-500">•</span>
-                    <p className="text-slate-300 text-sm">High-quality clips get more engagement</p>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="text-blue-500">•</span>
-                    <p className="text-slate-300 text-sm">Participate daily to climb rankings</p>
-                  </div>
+                  {submissions.slice(0, 3).map((submission) => (
+                    <div key={submission.id} className="flex items-center gap-3 p-3 bg-slate-800 rounded-lg">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-slate-300 text-sm">
+                          Submitted "{submission.title}" to {submission.tournament.title}
+                        </p>
+                        <p className="text-slate-500 text-xs">
+                          {new Date(submission.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  {submissions.length === 0 && (
+                    <p className="text-slate-400 text-sm">No recent activity</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -463,7 +486,7 @@ export default function DashboardPage() {
           size="lg"
           className="w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-700 shadow-2xl hover:scale-110 transition-all"
         >
-          <Link href="/submissions/new">
+          <Link href="/tournaments">
             <span className="text-2xl">+</span>
           </Link>
         </Button>
