@@ -1,31 +1,40 @@
 "use client"
 
+import { useEffect, useRef } from "react"
 import Link from "next/link"
 
 export function TournamentsSection() {
-  const tournaments = [
-    {
-      title: "FPS Championship",
-      description: "Competitive First Person Shooter tournaments",
-      icon: "🎯",
-      prize: "$5K",
-      participants: "500+",
-    },
-    {
-      title: "Battle Royale Masters",
-      description: "Ultimate survival gameplay showcase",
-      icon: "👑",
-      prize: "$10K",
-      participants: "1000+",
-    },
-    {
-      title: "Speed Run Challenge",
-      description: "Record-breaking gameplay moments",
-      icon: "⚡",
-      prize: "$3K",
-      participants: "300+",
-    },
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const games = [
+    { name: "Fortnite", image: "/generic-battle-royale.png" },
+    { name: "Valorant", image: "/valorant-game.jpg" },
+    { name: "Call of Duty", image: "/call-of-duty-game.jpg" },
+    { name: "Apex Legends", image: "/futuristic-battle-arena.png" },
+    { name: "League of Legends", image: "/league-of-legends-game.jpg" },
+    { name: "CS2", image: "/tactical-shooter-scene.png" },
+    { name: "Overwatch 2", image: "/overwatch-2-game.jpg" },
+    { name: "Rocket League", image: "/rocket-league-game.jpg" },
   ]
+
+  useEffect(() => {
+    const scrollContainer = scrollRef.current
+    if (!scrollContainer) return
+
+    let scrollAmount = 0
+    const scrollSpeed = 0.3
+
+    const scroll = () => {
+      scrollAmount += scrollSpeed
+      if (scrollAmount >= scrollContainer.scrollWidth / 2) {
+        scrollAmount = 0
+      }
+      scrollContainer.scrollLeft = scrollAmount
+    }
+
+    const interval = setInterval(scroll, 30)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <section id="tournaments" className="py-32 px-4 relative overflow-hidden">
@@ -58,77 +67,50 @@ export function TournamentsSection() {
           </div>
 
           <div className="space-y-3 max-w-2xl mx-auto">
-            <p className="text-2xl md:text-3xl font-bold text-white">Your clips are worth more than you think</p>
+            <p className="text-2xl md:text-3xl font-bold text-white">Tournaments for all games coming soon</p>
             <p className="text-lg md:text-xl text-white/60 leading-relaxed">
-              Compete in epic tournaments, showcase your best clips, and climb the leaderboards for real prizes and recognition.
+              Compete in epic tournaments across your favorite games, showcase your best clips, and climb the leaderboards for real prizes and recognition.
             </p>
           </div>
         </div>
 
-        {/* Tournament Cards Grid */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-16">
-          {tournaments.map((tournament, index) => (
-            <div
-              key={index}
-              className="group relative"
-            >
-              {/* Glowing border effect */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-[#4fc3f7] to-[#4A6CFF] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
-              
-              {/* Card background */}
-              <div className="relative h-full p-8 bg-gradient-to-br from-[#1a2332]/90 to-[#0f1621]/90 rounded-2xl border border-[#2a3342]/60 group-hover:border-[#4A6CFF]/40 backdrop-blur-xl transition-all duration-300 hover:shadow-[0_0_40px_rgba(74,108,255,0.3)]">
-                
-                {/* Animated gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#4A6CFF]/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
-                
-                <div className="relative z-10 space-y-6">
-                  {/* Icon and Title */}
-                  <div className="space-y-3">
-                    <div className="text-5xl mb-2">{tournament.icon}</div>
-                    <h3 className="text-2xl font-bold text-white group-hover:text-[#4fc3f7] transition-colors duration-300">
-                      {tournament.title}
-                    </h3>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-white/60 text-sm leading-relaxed group-hover:text-white/70 transition-colors duration-300">
-                    {tournament.description}
-                  </p>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#2a3342]/50">
-                    <div>
-                      <p className="text-[#4fc3f7] font-bold text-lg">{tournament.prize}</p>
-                      <p className="text-white/50 text-xs">Prize Pool</p>
-                    </div>
-                    <div>
-                      <p className="text-[#4A6CFF] font-bold text-lg">{tournament.participants}</p>
-                      <p className="text-white/50 text-xs">Participants</p>
-                    </div>
-                  </div>
-
-                  {/* Hover indicator */}
-                  <div className="flex items-center text-[#4fc3f7] opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm font-semibold pt-2">
-                    Learn More <span className="ml-1 inline-block group-hover:translate-x-1 transition-transform">→</span>
-                  </div>
+        {/* Games Showcase */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h3 className="text-2xl font-bold text-white mb-4">Supported Games</h3>
+            <p className="text-white/60">Compete across the most popular gaming titles</p>
+          </div>
+          
+          <div ref={scrollRef} className="flex gap-6 overflow-x-hidden px-4" style={{ scrollBehavior: "auto" }}>
+            {/* Duplicate games for infinite scroll effect */}
+            {[...games, ...games].map((game, index) => (
+              <div key={index} className="flex-shrink-0 w-[350px] h-[220px] relative rounded-xl overflow-hidden group">
+                <img
+                  src={game.image || "/placeholder.svg"}
+                  alt={game.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1020] via-transparent to-transparent opacity-80" />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h3 className="text-2xl font-bold text-white">{game.name}</h3>
+                  <p className="text-white/70 text-sm mt-1">Tournaments Coming Soon</p>
                 </div>
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#4fc3f7] transition-all duration-300 rounded-xl" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#4fc3f7]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        {/* CTA Button */}
+        <div className="flex justify-center items-center">
           <Link
             href="/signup"
-            className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-[#0a0f1e] rounded-full font-semibold text-lg hover:bg-white/90 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
+            className="group inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-[#4fc3f7] to-[#4A6CFF] text-white rounded-full font-semibold text-lg hover:from-[#4fc3f7]/90 hover:to-[#4A6CFF]/90 transition-all hover:scale-105 shadow-xl hover:shadow-[0_0_40px_rgba(79,195,247,0.4)]"
           >
             Pre Register Now
             <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
           </Link>
-          <button className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-[#4A6CFF]/60 text-[#4A6CFF] rounded-full font-semibold text-lg hover:border-[#4A6CFF] hover:bg-[#4A6CFF]/10 transition-all hover:scale-105">
-            View Full Schedule
-          </button>
         </div>
       </div>
     </section>
