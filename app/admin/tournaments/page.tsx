@@ -35,9 +35,19 @@ export default function TournamentsPage() {
 
       // Then verify Supabase auth session
       const supabase = createClient()
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+      
+      // Wait a moment for session to be available
+      let attempts = 0
+      let session = null
+      
+      while (attempts < 3 && !session) {
+        const { data: sessionData } = await supabase.auth.getSession()
+        session = sessionData.session
+        if (!session) {
+          await new Promise(resolve => setTimeout(resolve, 100))
+          attempts++
+        }
+      }
 
       if (!session) {
         // Clear localStorage if no Supabase session

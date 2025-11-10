@@ -42,8 +42,7 @@ export default function AdminLoginPage() {
 
       console.log("[v0] Admin authenticated successfully:", authData.user?.id)
 
-      const serviceSupabase = createClient({ useServiceRole: true })
-      const { data: userData, error: userError } = await serviceSupabase
+      const { data: userData, error: userError } = await supabase
         .from("users")
         .select("role")
         .eq("id", authData.user.id)
@@ -51,18 +50,40 @@ export default function AdminLoginPage() {
 
       if (userError) {
         console.error("[v0] Error fetching user role:", userError)
-        throw new Error("Error verifying admin access")
-      }
-
-      console.log("[v0] User role:", userData?.role)
-
-      if (userData?.role !== "admin") {
+        
+        // If user doesn't exist in users table, create them as admin
+        if (userError.code === 'PGRST116') {
+          console.log("[v0] User not found in users table, creating admin user...")
+          const { error: insertError } = await supabase
+            .from("users")
+            .insert({
+              id: authData.user.id,
+              email: authData.user.email,
+              role: "admin",
+              display_name: authData.user.email?.split("@")[0] || "Admin"
+            })
+          
+          if (insertError) {
+            console.error("[v0] Error creating admin user:", insertError)
+            throw new Error("Error setting up admin access")
+          }
+          
+          console.log("[v0] Admin user created successfully")
+        } else {
+          throw new Error("Error verifying admin access")
+        }
+      } else if (userData?.role !== "admin") {
         await supabase.auth.signOut()
         throw new Error("Access denied. Admin privileges required.")
       }
 
       localStorage.setItem("admin_session", "true")
       console.log("[v0] Admin login successful, redirecting to dashboard")
+      console.log("[v0] User ID:", authData.user?.id)
+      console.log("[v0] User email:", authData.user?.email)
+      
+      // Add a small delay to ensure session is properly set
+      await new Promise(resolve => setTimeout(resolve, 500))
       router.push("/admin/dashboard")
     } catch (error: unknown) {
       console.error("[v0] Admin login error:", error)

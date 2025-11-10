@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import { useAdminAuth } from "@/lib/admin-auth"
 import { AdminNav } from "@/components/admin-nav"
 
 export default function AdminDashboardPage() {
   const router = useRouter()
+  const { handleAuthFailure, checkAuth } = useAdminAuth()
   const [stats, setStats] = useState({
     usersCount: 0,
     tournamentsCount: 0,
@@ -17,63 +19,47 @@ export default function AdminDashboardPage() {
   const [userName, setUserName] = useState("Admin")
 
   useEffect(() => {
-    const checkAuth = async () => {
-      // Check localStorage admin session first
-      const adminSession = localStorage.getItem("admin_session")
-      if (!adminSession) {
-        router.push("/admin/login")
-        return
+    const initializeDashboard = async () => {
+      try {
+        const authResult = await checkAuth()
+        if (!authResult.success) {
+          await handleAuthFailure(authResult.error)
+          return
+        }
+
+        // Get user data and stats
+        const supabase = createClient()
+        const { data: userData } = await supabase
+          .from("users")
+          .select("display_name")
+          .eq("id", authResult.userId)
+          .single()
+
+        setUserName(userData?.display_name || "Admin")
+
+        // Fetch stats
+        const [users, tournaments, submissions, waitlist] = await Promise.all([
+          supabase.from("users").select("*", { count: "exact", head: true }),
+          supabase.from("tournaments").select("*", { count: "exact", head: true }).eq("status", "active"),
+          supabase.from("submissions").select("*", { count: "exact", head: true }),
+          supabase.from("waitlist").select("*", { count: "exact", head: true }),
+        ])
+
+        setStats({
+          usersCount: users.count || 0,
+          tournamentsCount: tournaments.count || 0,
+          submissionsCount: submissions.count || 0,
+          waitlistCount: waitlist.count || 0,
+        })
+        setIsLoading(false)
+      } catch (error) {
+        console.error("[Dashboard] Error initializing:", error)
+        await handleAuthFailure("Dashboard initialization failed")
       }
-
-      // Then verify Supabase auth session
-      const supabase = createClient()
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-
-      if (!session) {
-        // Clear localStorage if no Supabase session
-        localStorage.removeItem("admin_session")
-        router.push("/admin/login")
-        return
-      }
-
-      // Verify admin role
-      const { data: userData } = await supabase
-        .from("users")
-        .select("role, display_name")
-        .eq("id", session.user.id)
-        .single()
-
-      if (userData?.role !== "admin") {
-        // Clear localStorage and redirect if not admin
-        localStorage.removeItem("admin_session")
-        await supabase.auth.signOut()
-        router.push("/admin/login")
-        return
-      }
-
-      setUserName(userData.display_name || "Admin")
-
-      // Fetch stats
-      const [users, tournaments, submissions, waitlist] = await Promise.all([
-        supabase.from("users").select("*", { count: "exact", head: true }),
-        supabase.from("tournaments").select("*", { count: "exact", head: true }).eq("status", "active"),
-        supabase.from("submissions").select("*", { count: "exact", head: true }),
-        supabase.from("waitlist").select("*", { count: "exact", head: true }),
-      ])
-
-      setStats({
-        usersCount: users.count || 0,
-        tournamentsCount: tournaments.count || 0,
-        submissionsCount: submissions.count || 0,
-        waitlistCount: waitlist.count || 0,
-      })
-      setIsLoading(false)
     }
 
-    checkAuth()
-  }, [router])
+    initializeDashboard()
+  }, [router, checkAuth, handleAuthFailure])
 
   if (isLoading) {
     return (
