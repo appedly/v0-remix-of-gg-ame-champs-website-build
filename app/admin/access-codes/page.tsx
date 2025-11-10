@@ -28,6 +28,46 @@ export default function AccessCodesPage() {
   const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
+    const checkAuth = async () => {
+      // Check localStorage admin session first
+      const adminSession = localStorage.getItem("admin_session")
+      if (!adminSession) {
+        router.push("/admin/login")
+        return
+      }
+
+      // Then verify Supabase auth session
+      const supabase = createClient()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+
+      if (!session) {
+        // Clear localStorage if no Supabase session
+        localStorage.removeItem("admin_session")
+        router.push("/admin/login")
+        return
+      }
+
+      // Verify admin role
+      const { data: userData } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", session.user.id)
+        .single()
+
+      if (userData?.role !== "admin") {
+        // Clear localStorage and redirect if not admin
+        localStorage.removeItem("admin_session")
+        await supabase.auth.signOut()
+        router.push("/admin/login")
+        return
+      }
+
+      // If all checks pass, fetch admin data and codes
+      await fetchAdminAndCodes()
+    }
+
     const fetchAdminAndCodes = async () => {
       const supabase = createClient()
 
@@ -53,7 +93,7 @@ export default function AccessCodesPage() {
       setIsLoading(false)
     }
 
-    fetchAdminAndCodes()
+    checkAuth()
   }, [router])
 
   const fetchCodes = async () => {

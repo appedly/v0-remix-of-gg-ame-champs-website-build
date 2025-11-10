@@ -2,10 +2,19 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 export function AdminNav({ userName }: { userName: string }) {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    // Clear admin session from localStorage
+    localStorage.removeItem("admin_session")
+    
+    // Navigate to login page
+    router.push("/admin/login")
+  }
 
   const navItems = [
     { href: "/admin/dashboard", label: "Dashboard" },
@@ -45,14 +54,12 @@ export function AdminNav({ userName }: { userName: string }) {
 
           <div className="flex items-center gap-4">
             <span className="text-white/60 text-sm hidden sm:block">{userName}</span>
-            <form action="/api/auth/signout" method="post">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors text-sm"
-              >
-                Sign Out
-              </button>
-            </form>
+            <button
+              onClick={handleSignOut}
+              className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors text-sm"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </div>
