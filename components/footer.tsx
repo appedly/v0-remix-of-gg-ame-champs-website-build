@@ -82,19 +82,19 @@ export function Footer() {
             <h4 className="text-white font-semibold mb-6 text-sm uppercase tracking-wider">Support</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="#" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
+                <a href="https://discord.com/channels/1388011156517552148/1388135186465820682" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
                   Help Center
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="#" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
+                <a href="https://discord.gg/PhsGYmUf" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
                   Community
-                </Link>
+                </a>
               </li>
               <li>
-                <Link href="#contact" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
+                <a href="mailto:contact@ggamechamps.com" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
                   Contact
-                </Link>
+                </a>
               </li>
               <li>
                 <Link href="#" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
@@ -109,17 +109,17 @@ export function Footer() {
             <h4 className="text-white font-semibold mb-6 text-sm uppercase tracking-wider">Legal</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="#" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
+                <Link href="/privacy-policy" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
+                <Link href="/terms-and-conditions" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
+                <Link href="/rules" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
                   Rules
                 </Link>
               </li>
