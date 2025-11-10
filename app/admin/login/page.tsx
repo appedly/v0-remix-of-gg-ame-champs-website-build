@@ -49,11 +49,16 @@ export default function AdminLoginPage() {
         .maybeSingle()
 
       if (userError) {
-        console.error("[v0] Error fetching user role:", userError)
+        console.error("[v0] Error fetching user role from profile table:", userError)
+      }
+
+      const resolvedRole =
+        userData?.role ?? authData.user.app_metadata?.role ?? authData.user.user_metadata?.role
+
+      if (!resolvedRole) {
         throw new Error("Error verifying admin access")
       }
 
-      const resolvedRole = userData?.role ?? authData.user.app_metadata?.role ?? authData.user.user_metadata?.role
       console.log("[v0] Resolved user role:", resolvedRole)
 
       if (resolvedRole !== "admin") {
