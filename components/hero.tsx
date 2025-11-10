@@ -5,28 +5,6 @@ import { ArrowRight, Clapperboard, Coins, Film, Gamepad2, Swords, Zap } from "lu
 
 import { CountdownTimer } from "@/components/countdown-timer"
 
-const launchBenefits: Array<{
-  title: string
-  description: string
-  icon: LucideIcon
-}> = [
-  {
-    title: "Creator Reels Toolkit",
-    description: "Lock in cinematic overlays, reel frames, and highlight presets the moment we go live.",
-    icon: Clapperboard,
-  },
-  {
-    title: "Launch Battle Pods",
-    description: "Drop into curated duel brackets and headline showcase matches with fellow founders.",
-    icon: Swords,
-  },
-  {
-    title: "Founders Prize Boost",
-    description: "Stack cash multipliers, sponsor loot, and referral bonuses reserved for wave-one contenders.",
-    icon: Coins,
-  },
-]
-
 const heroGlyphs: Array<{
   icon: LucideIcon
   className: string
@@ -108,7 +86,7 @@ export function Hero() {
 
       <div className="container relative z-20 mx-auto px-6">
         <div className="mx-auto max-w-5xl text-center">
-          <div className="inline-flex items-center gap-3 rounded-full border border-[#f6ce6d]/60 bg-[linear-gradient(135deg,#f9d46d_0%,#f6bd3c_45%,#f09a24_100%)] px-6 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.45em] text-[#2a1602] shadow-[0_0_35px_rgba(245,190,69,0.45)]">
+          <div className="mt-6 inline-flex items-center gap-3 rounded-full border border-[#f6ce6d]/60 bg-[linear-gradient(135deg,#f9d46d_0%,#f6bd3c_45%,#f09a24_100%)] px-6 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.45em] text-[#2a1602] shadow-[0_0_35px_rgba(245,190,69,0.45)]">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full rounded-full bg-white/70 blur-[2px]" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2a1602]" />
@@ -116,7 +94,7 @@ export function Hero() {
             Launching Soon...
           </div>
 
-          <h1 className="mt-8 text-balance text-5xl font-black leading-[1.05] tracking-tight text-[#f5f5f5] drop-shadow-[0_20px_50px_rgba(5,7,18,0.65)] md:mt-10 md:text-7xl lg:text-[5.75rem] xl:text-[6.25rem]">
+          <h1 className="mt-12 text-balance text-5xl font-black leading-[1.05] tracking-tight text-[#f5f5f5] drop-shadow-[0_20px_50px_rgba(5,7,18,0.65)] md:mt-14 md:text-7xl lg:text-[5.75rem] xl:text-[6.25rem]">
             <span className="block animate-in fade-in-0 slide-in-from-bottom-6 duration-700">
               Turn Your Gaming Clips into
               <span className="ml-3 inline-flex items-center">
@@ -153,38 +131,7 @@ export function Hero() {
             </a>
           </div>
 
-          <div className="mt-8 flex flex-col items-center gap-2 text-sm text-white/65">
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[#FFD166]" aria-hidden="true" />
-              Launch window opening soon for early contenders.
-            </div>
-            <span className="text-white/45">Secure your pass for exclusive drops, battle pods, and prize boosts.</span>
-          </div>
-
           <CountdownTimer className="mx-auto mt-12 max-w-2xl" />
-
-          <div className="mt-16 grid gap-5 text-left sm:grid-cols-3">
-            {launchBenefits.map((benefit) => {
-              const Icon = benefit.icon
-              return (
-                <div
-                  key={benefit.title}
-                  className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
-                >
-                  <div className="relative z-10 flex items-start gap-3">
-                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-white/5 text-[#FFD166] shadow-[0_12px_30px_rgba(10,15,30,0.4)]">
-                      <Icon className="h-6 w-6" aria-hidden="true" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#f5f5f5]">{benefit.title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-white/60">{benefit.description}</p>
-                    </div>
-                  </div>
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#4fc3f7]/0 via-[#4fc3f7]/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                </div>
-              )
-            })}
-          </div>
         </div>
       </div>
     </section>
