@@ -21,13 +21,44 @@ export default function AdminLeaderboardPage() {
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   useEffect(() => {
-    const adminSession = localStorage.getItem("admin_session")
-    if (!adminSession) {
-      router.push("/admin/login")
-      return
+    const checkAuth = async () => {
+      // Check for admin_session flag set by hardcoded login
+      const adminSession = localStorage.getItem("admin_session")
+      
+      if (!adminSession) {
+        // Fallback to checking Supabase auth
+        const supabase = createClient()
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+
+        if (!session) {
+          router.push("/admin/login")
+          return
+        }
+
+        // Verify admin role
+        const { data: userData } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", session.user.id)
+          .single()
+
+        if (userData?.role !== "admin") {
+          router.push("/admin/login")
+          return
+        }
+
+        await fetchLeaderboard()
+        setIsLoading(false)
+      } else {
+        // Admin session found in localStorage (hardcoded credentials)
+        await fetchLeaderboard()
+        setIsLoading(false)
+      }
     }
 
-    fetchLeaderboard()
+    checkAuth()
   }, [router])
 
   const fetchLeaderboard = async () => {
@@ -37,7 +68,6 @@ export default function AdminLeaderboardPage() {
     const { data: users } = await supabase.from("users").select("id, display_name, email")
 
     if (!users) {
-      setIsLoading(false)
       return
     }
 
@@ -76,7 +106,6 @@ export default function AdminLeaderboardPage() {
       .map((entry, index) => ({ ...entry, rank: index + 1 }))
 
     setLeaderboard(sorted)
-    setIsLoading(false)
     setIsRefreshing(false)
   }
 

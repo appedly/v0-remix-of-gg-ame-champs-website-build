@@ -25,20 +25,50 @@ export default function TournamentsPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const adminSession = localStorage.getItem("admin_session")
-    if (!adminSession) {
-      router.push("/admin/login")
-      return
+    const checkAuth = async () => {
+      // Check for admin_session flag set by hardcoded login
+      const adminSession = localStorage.getItem("admin_session")
+      
+      if (!adminSession) {
+        // Fallback to checking Supabase auth
+        const supabase = createClient()
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+
+        if (!session) {
+          router.push("/admin/login")
+          return
+        }
+
+        // Verify admin role
+        const { data: userData } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", session.user.id)
+          .single()
+
+        if (userData?.role !== "admin") {
+          router.push("/admin/login")
+          return
+        }
+
+        await fetchTournaments()
+        setIsLoading(false)
+      } else {
+        // Admin session found in localStorage (hardcoded credentials)
+        await fetchTournaments()
+        setIsLoading(false)
+      }
     }
 
     const fetchTournaments = async () => {
       const supabase = createClient()
       const { data } = await supabase.from("tournaments").select("*").order("start_date", { ascending: false })
       setTournaments(data || [])
-      setIsLoading(false)
     }
 
-    fetchTournaments()
+    checkAuth()
   }, [router])
 
   const handleDelete = async (id: string) => {
@@ -94,16 +124,18 @@ export default function TournamentsPage() {
                   <p className="text-white/40 text-sm line-clamp-2">{tournament.description}</p>
                 </div>
                 <span
-                  className={`px-3 py-1 rounded text-xs font-medium ${
-                    tournament.status === "active"
-                      ? "bg-green-500/20 text-green-400"
-                      : tournament.status === "upcoming"
-                        ? "bg-blue-500/20 text-blue-400"
-                        : "bg-gray-500/20 text-gray-400"
-                  }`}
-                >
-                  {tournament.status}
-                </span>
+                                    className={`px-3 py-1 rounded text-xs font-medium ${
+                                      tournament.status === "active"
+                                        ? "bg-green-500/20 text-green-400"
+                                        : tournament.status === "upcoming"
+                                          ? "bg-blue-500/20 text-blue-400"
+                                          : tournament.status === "ended"
+                                            ? "bg-gray-500/20 text-gray-400"
+                                            : "bg-red-500/20 text-red-400"
+                                    }`}
+                                  >
+                                    {tournament.status === "ended" ? "Completed" : tournament.status}
+                                  </span>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
@@ -129,7 +161,8 @@ export default function TournamentsPage() {
                 >
                   <option value="upcoming">Upcoming</option>
                   <option value="active">Active</option>
-                  <option value="completed">Completed</option>
+                  <option value="ended">Ended</option>
+                  <option value="cancelled">Cancelled</option>
                 </select>
                 <Button
                   variant="outline"
