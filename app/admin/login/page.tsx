@@ -28,6 +28,22 @@ export default function AdminLoginPage() {
 
     try {
       console.log("[v0] Admin login attempt with email:", email)
+      
+      // Hardcoded admin credentials
+      const HARDCODED_EMAIL = "arjanchaudharyy@gmail.com"
+      const HARDCODED_PASSWORD = "aaaaaa"
+
+      if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
+        console.log("[v0] Hardcoded admin credentials verified")
+        
+        // Set admin session in localStorage
+        localStorage.setItem("admin_session", "true")
+        console.log("[v0] Admin login successful, redirecting to dashboard")
+        router.push("/admin/dashboard")
+        return
+      }
+
+      // If hardcoded credentials don't match, try with Supabase
       const supabase = createClient()
 
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -142,7 +158,7 @@ export default function AdminLoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@ggamechamps.com"
+                placeholder="arjanchaudharyy@gmail.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
