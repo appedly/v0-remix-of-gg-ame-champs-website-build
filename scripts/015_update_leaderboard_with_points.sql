@@ -1,7 +1,6 @@
--- Use DROP IF EXISTS to remove old function before recreating with correct return type
-DROP FUNCTION IF EXISTS get_leaderboard();
-
-CREATE FUNCTION get_leaderboard()
+-- Update leaderboard function to calculate points based on vote ranks
+-- 1st place = 3 points, 2nd place = 2 points, 3rd place = 1 point
+CREATE OR REPLACE FUNCTION get_leaderboard()
 RETURNS TABLE (
   user_id UUID,
   display_name TEXT,
