@@ -42,7 +42,8 @@ export default function AdminLoginPage() {
 
       console.log("[v0] Admin authenticated successfully:", authData.user?.id)
 
-      const { data: userData, error: userError } = await supabase
+      const serviceSupabase = createClient({ useServiceRole: true })
+      const { data: userData, error: userError } = await serviceSupabase
         .from("users")
         .select("role")
         .eq("id", authData.user.id)

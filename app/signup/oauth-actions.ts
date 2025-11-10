@@ -9,7 +9,7 @@ export async function signupWithGoogle(accessCode?: string) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/callback?accessCode=${accessCode || ""}`,
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`,
     },
   })
 
