@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer id="contact" className="relative bg-[#0a0f1a] border-t border-[#1a2332] py-16 overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(0,194,255,0.08),rgba(10,15,26,0)_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(0,194,255,0.04),rgba(10,15,26,0)_80%)]" />
       
       <div className="container mx-auto px-4 relative">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
@@ -15,7 +15,7 @@ export function Footer() {
             <div className="flex items-center gap-3 mb-6">
               <div className="relative">
                 <Image src="/logo.png" alt="GGameChamps" width={40} height={40} className="w-10 h-10" />
-                <div className="absolute -inset-1 bg-[#00C2FF]/20 rounded-full blur-md" />
+                <div className="absolute -inset-1 bg-[#00C2FF]/10 rounded-full blur-sm" />
               </div>
               <span className="text-xl font-bold text-white">GGameChamps</span>
             </div>
