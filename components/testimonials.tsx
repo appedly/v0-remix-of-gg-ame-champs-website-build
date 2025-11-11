@@ -30,15 +30,17 @@ export function Testimonials() {
   ]
 
   return (
-    <section className="py-32 relative overflow-hidden">
+    <section className="py-40 relative overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center mb-20">
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            Trusted by{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD166] to-[#FF7A1A]">gamers</span>
+        <div className="max-w-4xl mx-auto text-center mb-32">
+          <h2 className="text-5xl md:text-7xl font-bold text-white mb-8">
+            Trusted by Gamers
             <br />
-            landing sponsorships and winning prizes
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD166] to-[#FF7A1A]">Landing Sponsorships & Winning Prizes</span>
           </h2>
+          <p className="text-lg md:text-xl text-white/60 leading-relaxed">
+            Real players share how they've grown their careers on our platform
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">

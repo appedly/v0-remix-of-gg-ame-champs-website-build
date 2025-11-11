@@ -35,7 +35,7 @@ export function FAQ() {
   ]
 
   return (
-    <section id="faq" className="py-32 relative overflow-hidden">
+    <section id="faq" className="py-40 relative overflow-hidden">
       {/* Sophisticated background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0B1020] via-[#1a2332] to-[#0B1020]" />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(79,195,247,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,195,247,0.03)_1px,transparent_1px)] bg-[size:50px_50px] animate-pulse" />
@@ -45,21 +45,21 @@ export function FAQ() {
       <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-[#FFD166]/10 rounded-full blur-[80px] pointer-events-none animate-pulse" style={{ animationDelay: "1s" }} />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           {/* Enhanced header section */}
-          <div className="text-center mb-20">
+          <div className="text-center mb-32">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#4A6CFF]/10 to-[#4fc3f7]/10 border border-[#4A6CFF]/30 rounded-full mb-8 backdrop-blur-sm">
               <HelpCircleIcon className="w-4 h-4 text-[#4fc3f7]" />
               <span className="text-[#4fc3f7] text-sm font-semibold tracking-wide">FREQUENTLY ASKED QUESTIONS</span>
             </div>
             
-            <h2 className="text-5xl md:text-7xl font-bold text-white mb-6 text-balance leading-tight">
+            <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 text-balance leading-tight">
               Got{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4A6CFF] via-[#4fc3f7] to-[#00C2FF] animate-gradient">
                 Questions?
               </span>
             </h2>
-            <p className="text-2xl md:text-3xl text-white/60 font-light">
+            <p className="text-xl md:text-2xl text-white/70 font-light leading-relaxed">
               We've Got{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD166] via-[#FF7A1A] to-[#FF6B6B] animate-gradient">
                 Answers

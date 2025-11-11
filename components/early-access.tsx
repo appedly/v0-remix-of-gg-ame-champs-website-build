@@ -52,34 +52,38 @@ export function EarlyAccess() {
   }
 
   return (
-    <section id="early-access" className="py-20 relative">
+    <section id="early-access" className="py-40 relative">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Join Early Access</h2>
-            <p className="text-lg text-white/70">Be among the first to experience the future of competitive gaming</p>
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-7xl font-bold text-white mb-8">Join Early Access</h2>
+            <p className="text-lg md:text-xl text-white/70 leading-relaxed">Be among the first to experience the future of competitive gaming</p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
             {/* Benefits */}
-            <div className="space-y-4">
-              {benefits.map((benefit, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-4 p-4 bg-[#1a2332] rounded-lg border border-[#2a3342] hover:translate-x-2 transition-transform"
-                  style={{
-                    animationDelay: `${index * 100}ms`,
-                  }}
-                >
-                  <div className="w-6 h-6 bg-[#00C2FF]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="w-4 h-4 text-[#00C2FF]" />
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-8">What You Get</h3>
+              <div className="space-y-5">
+                {benefits.map((benefit, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-4 p-5 bg-[#1a2332]/50 rounded-lg border border-[#2a3342] hover:border-[#4A6CFF]/30 hover:translate-x-2 transition-all"
+                    style={{
+                      animationDelay: `${index * 100}ms`,
+                    }}
+                  >
+                    <div className="w-6 h-6 bg-[#00C2FF]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-4 h-4 text-[#00C2FF]" />
+                    </div>
+                    <p className="text-white/80 leading-relaxed">{benefit}</p>
                   </div>
-                  <p className="text-white/80">{benefit}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             <div className="relative">
+              <h3 className="text-2xl font-bold text-white mb-8">Create Your Account</h3>
               <div className="bg-[#151b2e]/50 backdrop-blur-sm p-8 rounded-2xl border border-white/5 shadow-2xl">
                 {success ? (
                   <div className="text-center py-8">
@@ -134,12 +138,12 @@ export function EarlyAccess() {
                     )}
 
                     <button
-                      type="submit"
-                      disabled={isLoading}
-                      className="w-full px-6 py-3 bg-[#4A6CFF] text-white rounded-xl font-medium text-base hover:bg-[#5A7CFF] transition-all shadow-lg shadow-[#4A6CFF]/20 disabled:opacity-50 disabled:cursor-not-allowed h-12"
-                    >
-                      {isLoading ? "Creating account..." : "Pre-Register"}
-                    </button>
+                       type="submit"
+                       disabled={isLoading}
+                       className="w-full px-6 py-3 bg-gradient-to-r from-[#FFD166] to-[#FF7A1A] text-[#0B1020] rounded-full font-bold text-base hover:shadow-[0_0_30px_rgba(255,209,102,0.4)] transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed h-12"
+                     >
+                       {isLoading ? "Creating account..." : "Pre-Register"}
+                     </button>
                   </form>
                 )}
               </div>

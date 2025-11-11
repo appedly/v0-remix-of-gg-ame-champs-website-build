@@ -90,7 +90,7 @@ export function HowItWorks() {
     steps.length > 0 ? Math.min(100, Math.max(0, ((activeStep + 0.5) / steps.length) * 100)) : 100
 
   return (
-    <section id="how-it-works" className="relative overflow-hidden py-32">
+    <section id="how-it-works" className="relative overflow-hidden py-40">
       <div className="pointer-events-none absolute inset-0">
         {/* Main background gradient */}
         <div className="absolute left-1/2 top-[15%] h-[800px] w-[800px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.12),rgba(138,43,226,0.08),rgba(0,0,0,0)_75%)] blur-3xl" />
@@ -115,12 +115,11 @@ export function HowItWorks() {
           <div className="inline-flex items-center gap-2 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10 px-5 py-2 text-xs font-semibold tracking-[0.4em] text-[#00C2FF]/80">
             HOW IT WORKS
           </div>
-          <h2 className="mt-8 text-5xl font-semibold text-white md:text-6xl">
+          <h2 className="mt-8 text-5xl font-semibold text-white md:text-6xl lg:text-7xl">
             Start Competing in 4 Simple Steps
           </h2>
-          <p className="mt-4 text-lg text-white/70 md:text-xl">
-            Every tournament is engineered for momentum. Scroll through the four stages to see how players turn raw clips
-            into championship payouts.
+          <p className="mt-6 text-lg text-white/70 md:text-xl leading-relaxed">
+            Every tournament is engineered for momentum. Scroll through the four stages to see how players turn raw clips into championship payouts.
           </p>
         </div>
 

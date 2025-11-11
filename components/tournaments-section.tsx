@@ -37,7 +37,7 @@ export function TournamentsSection() {
   }, [])
 
   return (
-    <section id="tournaments" className="py-32 px-4 relative overflow-hidden">
+    <section id="tournaments" className="py-40 px-4 relative overflow-hidden">
       {/* Animated background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020] via-[#1a2332] to-[#0B1020]" />
       
@@ -51,13 +51,13 @@ export function TournamentsSection() {
 
       <div className="container mx-auto relative z-10">
         {/* Header */}
-        <div className="text-center space-y-8 mb-20">
+        <div className="text-center space-y-8 mb-32">
           <div className="inline-block px-4 py-2 bg-[#4A6CFF]/10 border border-[#4A6CFF]/30 rounded-full mb-6">
             <span className="text-[#4A6CFF] text-sm font-semibold">TOURNAMENTS</span>
           </div>
 
-          <div className="space-y-6">
-            <h2 className="text-6xl md:text-7xl font-bold text-white">
+          <div className="space-y-8">
+            <h2 className="text-6xl md:text-7xl lg:text-8xl font-bold text-white">
               Tournaments
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#10b981]">
@@ -66,19 +66,19 @@ export function TournamentsSection() {
             </h2>
           </div>
 
-          <div className="space-y-3 max-w-2xl mx-auto">
-            <p className="text-2xl md:text-3xl font-bold text-white">Tournaments for all games coming soon</p>
-            <p className="text-lg md:text-xl text-white/60 leading-relaxed">
-              Compete in epic tournaments across your favorite games, showcase your best clips, and climb the leaderboards for real prizes and recognition.
+          <div className="space-y-6 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl font-semibold text-white">Compete Across Your Favorite Games</p>
+            <p className="text-lg md:text-lg text-white/70 leading-relaxed">
+              Epic tournaments with real prizes. Showcase your best clips, climb the leaderboards, and earn recognition.
             </p>
           </div>
         </div>
 
         {/* Games Showcase */}
-        <div className="mb-20">
-          <div className="text-center mb-12">
-            <h3 className="text-2xl font-bold text-white mb-4">Supported Games</h3>
-            <p className="text-white/60">Compete across the most popular gaming titles</p>
+        <div className="mb-24">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Supported Games</h3>
+            <p className="text-lg text-white/70 leading-relaxed">Compete across the most popular gaming titles</p>
           </div>
           
           <div ref={scrollRef} className="flex gap-6 overflow-x-hidden px-4" style={{ scrollBehavior: "auto" }}>
@@ -103,13 +103,13 @@ export function TournamentsSection() {
         </div>
 
         {/* CTA Button */}
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center pt-8">
           <Link
             href="/signup"
-            className="group inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-[#4fc3f7] to-[#4A6CFF] text-white rounded-full font-semibold text-lg hover:from-[#4fc3f7]/90 hover:to-[#4A6CFF]/90 transition-all hover:scale-105 shadow-xl hover:shadow-[0_0_40px_rgba(79,195,247,0.4)]"
+            className="group inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-[#FFD166] to-[#FF7A1A] text-[#0B1020] rounded-full font-bold text-lg hover:shadow-[0_0_50px_rgba(255,209,102,0.5)] transition-all hover:scale-110 shadow-2xl"
           >
             Pre Register Now
-            <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
+            <span className="inline-block group-hover:translate-x-1 transition-transform text-xl">→</span>
           </Link>
         </div>
       </div>

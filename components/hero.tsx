@@ -51,32 +51,43 @@ export function Hero() {
           </h1>
 
           <p
-            className={`text-lg sm:text-xl md:text-2xl text-slate-300 mb-10 text-pretty max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
+            className={`text-lg sm:text-xl md:text-2xl text-slate-300 mb-12 text-pretty max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            Submit your best gaming moments, compete in weekly tournaments, and climb the leaderboard. 
-            Your skills deserve recognition.
+            The platform where skilled gamers compete for real money and recognition.
           </p>
 
           <div
-            className={`flex flex-col sm:flex-row gap-4 justify-center mb-16 transition-all duration-700 delay-300 ${
+            className={`text-base sm:text-lg text-slate-300 mb-12 max-w-2xl mx-auto space-y-3 transition-all duration-700 delay-200 ${
+              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-[#4fc3f7] font-bold mt-1">●</span>
+              <span>Submit your best gaming moments and compete weekly</span>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-[#4fc3f7] font-bold mt-1">●</span>
+              <span>Climb global leaderboards with real-time rankings</span>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-[#4fc3f7] font-bold mt-1">●</span>
+              <span>Win cash prizes and sponsorship opportunities</span>
+            </div>
+          </div>
+
+          <div
+            className={`flex flex-col sm:flex-row gap-4 justify-center mb-20 transition-all duration-700 delay-300 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
             <a
               href="#early-access"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#4fc3f7] to-[#00C2FF] text-[#0a0f1e] rounded-full font-semibold text-lg hover:shadow-[0_0_40px_rgba(79,195,247,0.3)] transition-all duration-300 hover:scale-105 shadow-lg"
+              className="group inline-flex items-center justify-center gap-2 px-10 py-5 bg-gradient-to-r from-[#FFD166] to-[#FF7A1A] text-[#0B1020] rounded-full font-bold text-lg hover:shadow-[0_0_50px_rgba(255,209,102,0.5)] transition-all duration-300 hover:scale-110 shadow-2xl"
             >
               Get Early Access
-              <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
-            </a>
-            <a
-              href="#how-it-works"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm"
-            >
-              How It Works
-              <span className="inline-block group-hover:translate-y-1 transition-transform">↓</span>
+              <span className="inline-block group-hover:translate-x-1 transition-transform text-xl">→</span>
             </a>
           </div>
         </div>
