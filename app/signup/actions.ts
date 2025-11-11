@@ -43,8 +43,7 @@ export async function signup(formData: FormData) {
       data: {
         display_name: displayName,
       },
-      emailRedirectTo:
-        process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/callback?accessCode=${accessCode || ""}`,
     },
   })
 
@@ -56,22 +55,5 @@ export async function signup(formData: FormData) {
     return { error: "Failed to create user" }
   }
 
-  if (accessCode) {
-    const { data: codeData } = await supabase.from("access_codes").select("id").eq("code", accessCode.toUpperCase())
-
-    if (codeData && codeData.length > 0) {
-      await supabase
-        .from("access_codes")
-        .update({ used_by: authData.user.id, used_at: new Date().toISOString() })
-        .eq("id", codeData[0].id)
-
-      // Update user with access code reference
-      await supabase.from("users").update({ access_code_id: codeData[0].id }).eq("id", authData.user.id)
-
-      redirect("/dashboard")
-    }
-  }
-
-  // Always redirect to waitlist-confirmation if no valid access code is used
-  redirect("/waitlist-confirmation")
+  redirect("/confirmation-waitlist")
 }

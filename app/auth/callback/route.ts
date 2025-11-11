@@ -36,7 +36,11 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      if (accessCode) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (accessCode && user) {
         const { data: codeData, error: codeError } = await supabase
           .from("access_codes")
           .select("*")
@@ -44,46 +48,38 @@ export async function GET(request: NextRequest) {
 
         if (!codeError && codeData && codeData.length > 0) {
           const accessCodeRecord = codeData[0]
-          const { data: userData } = await supabase.auth.getUser()
 
-          if (userData.user) {
-            // Mark access code as used
-            await supabase
-              .from("access_codes")
-              .update({ used_by: userData.user.id, used_at: new Date().toISOString() })
-              .eq("id", accessCodeRecord.id)
+          await supabase
+            .from("access_codes")
+            .update({ used_by: user.id, used_at: new Date().toISOString() })
+            .eq("id", accessCodeRecord.id)
 
-            // Update user with access code
-            await supabase
-              .from("users")
-              .update({ access_code_id: accessCodeRecord.id, approved: true })
-              .eq("id", userData.user.id)
+          await supabase.from("users").update({ access_code_id: accessCodeRecord.id, approved: true }).eq("id", user.id)
+
+          if (isAdmin) {
+            return NextResponse.redirect(`${origin}/admin/dashboard`)
           }
+          return NextResponse.redirect(`${origin}/dashboard`)
         }
-      } else {
-        // Add to waitlist if no access code
-        const { data: userData } = await supabase.auth.getUser()
-        if (userData.user) {
-          const { data: existingWaitlist } = await supabase
-            .from("waitlist")
-            .select("id")
-            .eq("email", userData.user.email)
+      }
 
-          if (existingWaitlist && existingWaitlist.length > 0) {
-            await supabase
-              .from("waitlist")
-              .update({
-                display_name: userData.user.user_metadata?.display_name || userData.user.email,
-                access_code_used: false,
-              })
-              .eq("email", userData.user.email)
-          } else {
-            await supabase.from("waitlist").insert({
-              email: userData.user.email,
-              display_name: userData.user.user_metadata?.display_name || userData.user.email,
+      if (user) {
+        const { data: existingWaitlist } = await supabase.from("waitlist").select("id").eq("email", user.email)
+
+        if (existingWaitlist && existingWaitlist.length > 0) {
+          await supabase
+            .from("waitlist")
+            .update({
+              display_name: user.user_metadata?.display_name || user.email,
               access_code_used: false,
             })
-          }
+            .eq("email", user.email)
+        } else {
+          await supabase.from("waitlist").insert({
+            email: user.email,
+            display_name: user.user_metadata?.display_name || user.email,
+            access_code_used: false,
+          })
         }
       }
 
@@ -95,6 +91,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Return the user to an error page with instructions
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
