@@ -19,50 +19,20 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const checkAuth = async () => {
-      // Check for admin_session flag set by hardcoded login
-      const adminSession = localStorage.getItem("admin_session")
-      
-      if (!adminSession) {
-        // Fallback to checking Supabase auth
-        const supabase = createClient()
-        const {
-          data: { session },
-        } = await supabase.auth.getSession()
-
-        if (!session) {
-          router.push("/admin/login")
-          return
-        }
-
-        // Verify admin role
-        const { data: userData } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", session.user.id)
-          .single()
-
-        if (userData?.role !== "admin") {
-          router.push("/admin/login")
-          return
-        }
-
-        await fetchSettings()
-        setIsLoading(false)
-      } else {
-        // Admin session found in localStorage (hardcoded credentials)
-        await fetchSettings()
-        setIsLoading(false)
-      }
+    const adminSession = localStorage.getItem("admin_session")
+    if (!adminSession) {
+      router.push("/admin/login")
+      return
     }
 
     const fetchSettings = async () => {
       const supabase = createClient()
       const { data } = await supabase.from("feature_flags").select("*")
       setSettings(data || [])
+      setIsLoading(false)
     }
 
-    checkAuth()
+    fetchSettings()
   }, [router])
 
   if (isLoading) {

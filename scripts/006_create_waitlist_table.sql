@@ -4,8 +4,6 @@ create table if not exists public.waitlist (
   email text not null unique,
   display_name text,
   referral_source text,
-  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
-  user_id uuid references public.users(id) on delete set null,
   created_at timestamptz not null default now()
 );
 
@@ -20,26 +18,6 @@ create policy "waitlist_insert_all"
 -- Only admins can view waitlist
 create policy "waitlist_select_admin"
   on public.waitlist for select
-  using (
-    exists (
-      select 1 from public.users
-      where id = auth.uid() and role = 'admin'
-    )
-  );
-
--- Only admins can update waitlist
-create policy "waitlist_update_admin"
-  on public.waitlist for update
-  using (
-    exists (
-      select 1 from public.users
-      where id = auth.uid() and role = 'admin'
-    )
-  );
-
--- Only admins can delete waitlist
-create policy "waitlist_delete_admin"
-  on public.waitlist for delete
   using (
     exists (
       select 1 from public.users

@@ -13,40 +13,30 @@ export default function CreateTournamentPage() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // Check for admin_session flag set by hardcoded login
-      const adminSession = localStorage.getItem("admin_session")
-      
-      if (!adminSession) {
-        // Fallback to checking Supabase auth
-        const supabase = createClient()
-        const {
-          data: { session },
-        } = await supabase.auth.getSession()
+      const supabase = createClient()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
 
-        if (!session) {
-          router.push("/admin/login")
-          return
-        }
-
-        // Verify admin role
-        const { data: userData } = await supabase
-          .from("users")
-          .select("role, display_name")
-          .eq("id", session.user.id)
-          .single()
-
-        if (userData?.role !== "admin") {
-          router.push("/admin/login")
-          return
-        }
-
-        setUserName(userData.display_name || "Admin")
-        setIsLoading(false)
-      } else {
-        // Admin session found in localStorage (hardcoded credentials)
-        setUserName("Admin")
-        setIsLoading(false)
+      if (!session) {
+        router.push("/admin/login")
+        return
       }
+
+      // Verify admin role
+      const { data: userData } = await supabase
+        .from("users")
+        .select("role, display_name")
+        .eq("id", session.user.id)
+        .single()
+
+      if (userData?.role !== "admin") {
+        router.push("/admin/login")
+        return
+      }
+
+      setUserName(userData.display_name || "Admin")
+      setIsLoading(false)
     }
 
     checkAuth()

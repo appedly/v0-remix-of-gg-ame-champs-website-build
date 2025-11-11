@@ -8,7 +8,7 @@ import { SubmissionList } from "@/components/submission-list"
 
 type Submission = {
   id: string
-  clip_url: string
+  video_url: string
   title: string
   description: string | null
   status: string
@@ -23,44 +23,30 @@ export default function SubmissionsPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const checkAuth = async () => {
-      // Check for admin_session flag set by hardcoded login
-      const adminSession = localStorage.getItem("admin_session")
-      
-      if (!adminSession) {
-        // Fallback to checking Supabase auth
-        const supabase = createClient()
-        const {
-          data: { session },
-        } = await supabase.auth.getSession()
-
-        if (!session) {
-          router.push("/admin/login")
-          return
-        }
-
-        // Verify admin role
-        const { data: userData } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", session.user.id)
-          .single()
-
-        if (userData?.role !== "admin") {
-          router.push("/admin/login")
-          return
-        }
-
-        await fetchSubmissions()
-        setIsLoading(false)
-      } else {
-        // Admin session found in localStorage (hardcoded credentials)
-        await fetchSubmissions()
-        setIsLoading(false)
-      }
+    const adminSession = localStorage.getItem("admin_session")
+    if (!adminSession) {
+      router.push("/admin/login")
+      return
     }
 
-    checkAuth()
+    const fetchSubmissions = async () => {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from("submissions")
+        .select(
+          `
+          *,
+          user:users(display_name, email),
+          tournament:tournaments(title, game)
+        `,
+        )
+        .order("created_at", { ascending: false })
+
+      setSubmissions(data || [])
+      setIsLoading(false)
+    }
+
+    fetchSubmissions()
   }, [router])
 
   const refreshSubmissions = async () => {

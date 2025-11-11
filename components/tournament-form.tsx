@@ -240,8 +240,7 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
           <SelectContent>
             <SelectItem value="upcoming">Upcoming</SelectItem>
             <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="ended">Ended</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
           </SelectContent>
         </Select>
       </div>

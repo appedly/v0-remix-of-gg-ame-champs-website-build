@@ -18,71 +18,45 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // Check for admin_session flag set by hardcoded login
-      const adminSession = localStorage.getItem("admin_session")
-      
-      if (!adminSession) {
-        // Fallback to checking Supabase auth
-        const supabase = createClient()
-        const {
-          data: { session },
-        } = await supabase.auth.getSession()
+      const supabase = createClient()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
 
-        if (!session) {
-          router.push("/admin/login")
-          return
-        }
-
-        // Verify admin role
-        const { data: userData } = await supabase
-          .from("users")
-          .select("role, display_name")
-          .eq("id", session.user.id)
-          .single()
-
-        if (userData?.role !== "admin") {
-          router.push("/admin/login")
-          return
-        }
-
-        setUserName(userData.display_name || "Admin")
-
-        // Fetch stats
-        const [users, tournaments, submissions, waitlist] = await Promise.all([
-          supabase.from("users").select("*", { count: "exact", head: true }),
-          supabase.from("tournaments").select("*", { count: "exact", head: true }).eq("status", "active"),
-          supabase.from("submissions").select("*", { count: "exact", head: true }),
-          supabase.from("waitlist").select("*", { count: "exact", head: true }),
-        ])
-
-        setStats({
-          usersCount: users.count || 0,
-          tournamentsCount: tournaments.count || 0,
-          submissionsCount: submissions.count || 0,
-          waitlistCount: waitlist.count || 0,
-        })
-        setIsLoading(false)
-      } else {
-        // Admin session found in localStorage (hardcoded credentials)
-        setUserName("Admin")
-        
-        // Fetch stats
-        const supabase = createClient()
-        const [users, tournaments, submissions, waitlist] = await Promise.all([
-          supabase.from("users").select("*", { count: "exact", head: true }),
-          supabase.from("tournaments").select("*", { count: "exact", head: true }).eq("status", "active"),
-          supabase.from("submissions").select("*", { count: "exact", head: true }),
-          supabase.from("waitlist").select("*", { count: "exact", head: true }),
-        ])
-
-        setStats({
-          usersCount: users.count || 0,
-          tournamentsCount: tournaments.count || 0,
-          submissionsCount: submissions.count || 0,
-          waitlistCount: waitlist.count || 0,
-        })
-        setIsLoading(false)
+      if (!session) {
+        router.push("/admin/login")
+        return
       }
+
+      // Verify admin role
+      const { data: userData } = await supabase
+        .from("users")
+        .select("role, display_name")
+        .eq("id", session.user.id)
+        .single()
+
+      if (userData?.role !== "admin") {
+        router.push("/admin/login")
+        return
+      }
+
+      setUserName(userData.display_name || "Admin")
+
+      // Fetch stats
+      const [users, tournaments, submissions, waitlist] = await Promise.all([
+        supabase.from("users").select("*", { count: "exact", head: true }),
+        supabase.from("tournaments").select("*", { count: "exact", head: true }).eq("status", "active"),
+        supabase.from("submissions").select("*", { count: "exact", head: true }),
+        supabase.from("waitlist").select("*", { count: "exact", head: true }),
+      ])
+
+      setStats({
+        usersCount: users.count || 0,
+        tournamentsCount: tournaments.count || 0,
+        submissionsCount: submissions.count || 0,
+        waitlistCount: waitlist.count || 0,
+      })
+      setIsLoading(false)
     }
 
     checkAuth()
