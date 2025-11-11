@@ -1,13 +1,29 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 export function Hero() {
   const [mounted, setMounted] = useState(false)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect()
+        const x = (e.clientX - rect.left - rect.width / 2) / rect.width
+        const y = (e.clientY - rect.top - rect.height / 2) / rect.height
+        setMousePosition({ x, y })
+      }
+    }
+
+    window.addEventListener("mousemove", handleMouseMove)
+    return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
   return (
@@ -81,21 +97,69 @@ export function Hero() {
           </div>
 
           <div
-            className={`grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto transition-all duration-700 delay-500 ${
+            ref={containerRef}
+            className={`grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto transition-all duration-700 delay-500 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            <div className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-[#4fc3f7]/30 transition-all duration-300 hover:scale-105">
-              <div className="text-3xl font-bold text-[#4fc3f7] mb-2">5K+</div>
-              <div className="text-slate-400 text-sm font-medium">Players Ready</div>
+            <div
+              className="group relative bg-gradient-to-br from-[#4fc3f7]/10 via-slate-900/50 to-slate-950/50 backdrop-blur-md rounded-2xl p-6 border border-[#4fc3f7]/20 overflow-hidden transition-all duration-500 hover:border-[#4fc3f7]/50 hover:shadow-[0_0_30px_rgba(79,195,247,0.15)] cursor-pointer"
+              style={{
+                transform: `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg) translateZ(0)`,
+                transition: "transform 0.1s ease-out"
+              }}
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#4fc3f7]/10 rounded-full blur-2xl group-hover:bg-[#4fc3f7]/20 transition-all duration-500" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-[#4fc3f7]/10 border border-[#4fc3f7]/30 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-[#4fc3f7]/20 transition-all duration-300">
+                  <svg className="w-6 h-6 text-[#4fc3f7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#4fc3f7] transition-colors">Instant Submission</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">Upload clips directly. One-click tournament entry with automatic processing.</p>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#4fc3f7]/50 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
             </div>
-            <div className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-[#FFD166]/30 transition-all duration-300 hover:scale-105">
-              <div className="text-3xl font-bold text-[#FFD166] mb-2">$10K+</div>
-              <div className="text-slate-400 text-sm font-medium">Prize Pool</div>
+
+            <div
+              className="group relative bg-gradient-to-br from-[#FFD166]/10 via-slate-900/50 to-slate-950/50 backdrop-blur-md rounded-2xl p-6 border border-[#FFD166]/20 overflow-hidden transition-all duration-500 hover:border-[#FFD166]/50 hover:shadow-[0_0_30px_rgba(255,209,102,0.15)] cursor-pointer"
+              style={{
+                transform: `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg) translateZ(0)`,
+                transition: "transform 0.1s ease-out"
+              }}
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD166]/10 rounded-full blur-2xl group-hover:bg-[#FFD166]/20 transition-all duration-500" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-[#FFD166]/10 border border-[#FFD166]/30 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-[#FFD166]/20 transition-all duration-300">
+                  <svg className="w-6 h-6 text-[#FFD166]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#FFD166] transition-colors">Community Voting</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">Your peers decide. Fair ranking system with anti-manipulation protection.</p>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#FFD166]/50 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
             </div>
-            <div className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-[#00C2FF]/30 transition-all duration-300 hover:scale-105">
-              <div className="text-3xl font-bold text-[#00C2FF] mb-2">24/7</div>
-              <div className="text-slate-400 text-sm font-medium">Live Tournaments</div>
+
+            <div
+              className="group relative bg-gradient-to-br from-[#00C2FF]/10 via-slate-900/50 to-slate-950/50 backdrop-blur-md rounded-2xl p-6 border border-[#00C2FF]/20 overflow-hidden transition-all duration-500 hover:border-[#00C2FF]/50 hover:shadow-[0_0_30px_rgba(0,194,255,0.15)] cursor-pointer"
+              style={{
+                transform: `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg) translateZ(0)`,
+                transition: "transform 0.1s ease-out"
+              }}
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#00C2FF]/10 rounded-full blur-2xl group-hover:bg-[#00C2FF]/20 transition-all duration-500" />
+              <div className="relative z-10">
+                <div className="w-12 h-12 rounded-xl bg-[#00C2FF]/10 border border-[#00C2FF]/30 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-[#00C2FF]/20 transition-all duration-300">
+                  <svg className="w-6 h-6 text-[#00C2FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#00C2FF] transition-colors">Real Rewards</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">Win actual prizes. Cash, gear, and exclusive tournament invitations.</p>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00C2FF]/50 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
             </div>
           </div>
         </div>

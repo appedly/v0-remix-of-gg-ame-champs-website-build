@@ -32,14 +32,17 @@ Enhanced the hero section with professional, cool design elements while maintain
 - Both buttons have hover states and smooth transitions
 - Improved visual hierarchy between actions
 
-### 5. **Social Proof Stats Cards**
-- Three professional stat cards showing:
-  - 5K+ Players Ready
-  - $10K+ Prize Pool
-  - 24/7 Live Tournaments
-- Glass morphism design with gradient borders
-- Hover effects with color-coordinated borders
-- Scale animation on hover for engagement
+### 5. **Interactive Feature Cards with 3D Parallax**
+- Three interactive cards showcasing platform features:
+  - Instant Submission (with lightning icon)
+  - Community Voting (with badge icon)
+  - Real Rewards (with shopping icon)
+- Mouse-tracking 3D parallax effect using perspective transforms
+- Glass morphism design with gradient overlays
+- Animated glow effects on hover
+- Icon containers that scale and glow on interaction
+- Bottom border reveal animation on hover
+- Each card has color-coded theming (cyan, yellow, blue)
 
 ### 6. **Improved Badge Design**
 - Enhanced gradient background (yellow to cyan)
@@ -73,9 +76,11 @@ Enhanced the hero section with professional, cool design elements while maintain
 ### Component Structure
 ```tsx
 "use client"
-- useState for mount detection
-- useEffect for animation trigger
+- useState for mount detection and mouse position tracking
+- useEffect for animation trigger and mouse event listeners
+- useRef for container reference (parallax calculations)
 - Staggered animations with CSS transitions
+- Real-time 3D transforms based on mouse position
 - No external animation libraries needed
 ```
 
@@ -87,16 +92,22 @@ Enhanced the hero section with professional, cool design elements while maintain
 - Glass: white/5, white/10 with backdrop-blur
 
 ### Performance Considerations
-- Uses CSS transitions (GPU accelerated)
-- No heavy JavaScript animations
+- Uses CSS transitions and transforms (GPU accelerated)
+- 3D transforms use perspective and translateZ for hardware acceleration
+- Mouse tracking throttled naturally by React state updates
+- No heavy JavaScript animation libraries
 - Optimized Image component from Next.js
 - Minimal re-renders with mount-based animations
+- Event listeners properly cleaned up on unmount
 
 ## Result
 A professional, cool, and engaging hero section that:
-- Captures attention with smooth animations
+- Captures attention with smooth entrance animations
 - Communicates value clearly with action-oriented copy
-- Provides social proof through stats
+- Shows actual platform features through interactive 3D cards
+- Creates immersive experience with mouse-tracking parallax
+- Encourages exploration with hover effects and visual feedback
 - Encourages action with dual CTAs
 - Maintains gaming aesthetic while being professional
 - Is fully responsive and accessible
+- No generic stats - focuses on real value propositions
