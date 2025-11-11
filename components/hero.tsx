@@ -23,30 +23,37 @@ export function Hero() {
   }, [])
 
   const gameLogos = [
-    { name: "Fortnite", position: { left: '10%', top: '20%' }, delay: '0s' },
-    { name: "Valorant", position: { left: '15%', top: '35%' }, delay: '0.2s' },
-    { name: "CS2", position: { left: '8%', top: '50%' }, delay: '0.4s' },
-    { name: "Apex Legends", position: { right: '15%', top: '25%' }, delay: '0.6s' },
-    { name: "League of Legends", position: { right: '10%', top: '40%' }, delay: '0.8s' },
-    { name: "Call of Duty", position: { right: '8%', top: '60%' }, delay: '1.0s' },
-    { name: "Overwatch 2", position: { left: '12%', top: '75%' }, delay: '1.2s' },
-    { name: "Rocket League", position: { right: '12%', top: '80%' }, delay: '1.4s' },
+    { name: "Fortnite", position: { left: '8%', top: '15%' }, delay: '0s', image: "https://cdn1.epicgames.com/offer/cbd5b3d310a54b12bf3fe8c41994174f/EGS_VALORANT_RiotGames_S1_2560x1440-892482f9cbec5827c7c4989d7feb2bf1.png" },
+    { name: "Valorant", position: { left: '15%', top: '35%' }, delay: '0.2s', image: "https://cdn1.epicgames.com/offer/cbd5b3d310a54b12bf3fe8c41994174f/EGS_VALORANT_RiotGames_S1_2560x1440-892482f9cbec5827c7c4989d7feb2bf1.png" },
+    { name: "CS2", position: { right: '12%', top: '15%' }, delay: '0.4s', image: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2669320/86a267ec44fc57124127eba46f25120813374317/capsule_616x353.jpg?t=1752681627" },
+    { name: "Apex Legends", position: { right: '8%', top: '35%' }, delay: '0.6s', image: "https://cdn1.epicgames.com/offer/cbd5b3d310a54b12bf3fe8c41994174f/EGS_ApexLegends_R1_2560x1440-892482f9cbec5827c7c4989d7feb2bf1.png" },
+    { name: "League of Legends", position: { left: '8%', top: '50%' }, delay: '0.8s', image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI29PK-OT68a3Jx-n5U0Fi4rvZNv3mYxZKXDOnE2BbiJEqH0ofqVtBto_ofYVkXrZptHZT&s=10&usqp=CAU&COUNTER_STRIKE_2:https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwyhWdjp7THruWS8PYpCoLS1HGvhvdoVCe3pJyaKTBR2oQpbV0Slst0swq19bDBFoVQyk&usqp=CAU" },
+    { name: "Call of Duty", position: { left: '15%', top: '65%' }, delay: '1.0s', image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/730/capsule_616x353.jpg?t=1749053861" },
+    { name: "Overwatch 2", position: { right: '15%', top: '80%' }, delay: '1.2s', image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI29PK-OT68a3Jx-n5U0Fi4rvZNv3mYxZKXDOnE2BbiJEqH0ofqVtBto_ofYVkXrZptHZT&s=10&usqp=CAU" },
+    { name: "Rocket League", position: { right: '8%', top: '85%' }, delay: '1.4s', image: "https://image.api.playstation.com/vulcan/ap/rnd/202407/0401/670c294ded3baf4fa11068db2ec6758c63f7daeb266a35a1.png" },
   ]
 
   return (
     <section ref={heroRef} className="relative min-h-screen flex items-center justify-center pt-32 overflow-hidden">
-      {/* Enhanced animated background */}
+      {/* Professional animated background */}
       <div className="absolute inset-0 z-0">
+        {/* Main gradient layers */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0B1020] via-[#1a1f2e] to-[#0f172a]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(79,195,247,0.1),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(74,108,255,0.08),transparent_40%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,109,76,0.08),transparent_40%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.05),transparent_60%)] animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1e] via-[#4A6CFF]/20 to-[#0B1020]/80" />
+        <div className="absolute inset-0 bg-gradient-to-bl from-[#00C2FF]/10 via-[#4A6CFF]/10 to-[#0B1020]/80" />
 
-        {/* Subtle grid pattern overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]" />
+        {/* Dynamic radial gradients */}
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[radial-gradient(circle_at_0%_50%,rgba(79,195,247,0.15),transparent_70%)] animate-pulse" />
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[radial-gradient(circle_at_100%_50%,rgba(74,108,255,0.12),transparent_70%)] animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-[radial-gradient(circle_at_0%_100%,rgba(0,194,255,0.08),transparent_70%)] animate-pulse" style={{ animationDelay: '2s' }} />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[radial-gradient(circle_at_100%_100%,rgba(74,108,255,0.05),transparent_70%)] animate-pulse" style={{ animationDelay: '3s' }} />
+        </div>
 
-        <Image src="/hero-bg.png" alt="Gaming Background" fill className="object-cover opacity-20 mix-blend-overlay" priority />
+        {/* Animated mesh overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(45deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px]" />
+
+        <Image src="/hero-bg.png" alt="Gaming Background" fill className="object-cover opacity-30 mix-blend-overlay" priority />
       </div>
 
       {/* Game Logos */}
@@ -66,19 +73,19 @@ export function Hero() {
             <div className="relative group">
               {/* Logo container with enhanced styling */}
               <div
-                className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#1a2332]/80 to-[#0f1621] border-2 border-white/10 flex items-center justify-center transition-all duration-500 hover:scale-110 hover:border-white/30"
+                className="w-32 h-32 rounded-3xl bg-gradient-to-br from-[#1a2332]/80 to-[#0f1621] border-2 border-white/20 flex items-center justify-center transition-all duration-500 hover:scale-110 hover:border-white/30 backdrop-blur-sm"
               >
-                <div className="text-3xl font-bold text-white/90 group-hover:text-white">
-                  {game.name.charAt(0)}
-                </div>
-                <div className="text-xs font-medium text-white/70 uppercase tracking-wider">
-                  {game.name.slice(1)}
-                </div>
+                <img
+                  src={game.image}
+                  alt={game.name}
+                  className="w-20 h-20 object-contain transition-all duration-300 group-hover:scale-110"
+                />
+                <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-gradient-to-br from-white/20 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
 
               {/* Enhanced glow effect */}
               <div
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"
+                className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"
                 style={{
                   background: 'linear-gradient(135deg, rgba(79,195,247,0.3), rgba(74,108,255,0.2))',
                 }}
@@ -87,9 +94,9 @@ export function Hero() {
               {/* Particle effects */}
               {isVisible && (
                 <div className="absolute inset-0">
-                  <div className="absolute -top-2 -left-2 w-1 h-1 bg-blue-400 rounded-full animate-ping" style={{ animationDelay: `${index * 0.3}s` }} />
-                  <div className="absolute -top-1 -right-2 w-1 h-1 bg-purple-400 rounded-full animate-ping" style={{ animationDelay: `${index * 0.3 + 0.1}s` }} />
-                  <div className="absolute top-2 left-2 w-1 h-1 bg-cyan-400 rounded-full animate-ping" style={{ animationDelay: `${index * 0.3 + 0.2}s` }} />
+                  <div className="absolute -top-3 -left-3 w-2 h-2 bg-blue-400 rounded-full animate-ping" style={{ animationDelay: `${index * 0.4}s` }} />
+                  <div className="absolute -top-3 -right-3 w-2 h-2 bg-purple-400 rounded-full animate-ping" style={{ animationDelay: `${index * 0.4 + 0.1}s` }} />
+                  <div className="absolute top-3 left-3 w-2 h-2 bg-cyan-400 rounded-full animate-ping" style={{ animationDelay: `${index * 0.4 + 0.2}s` }} />
                 </div>
               )}
             </div>
@@ -114,7 +121,7 @@ export function Hero() {
             </span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-white/70 mb-12 text-pretty max-w-3xl mx-auto leading-relaxed font-light" style={{ fontFamily: 'var(--font-eb-garamond), Georgia, serif' }}>
+          <p className="text-xl md:text-2xl text-white/70 mb-12 text-pretty max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-inter), sans-serif' }}>
             Join tournaments, showcase clips, and rise through the ranks before anyone else.
           </p>
 

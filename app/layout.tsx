@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono, EB_Garamond } from 'next/font/google'
+import { Geist, Geist_Mono, EB_Garamond, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -11,6 +11,13 @@ const ebGaramond = EB_Garamond({
   subsets: ["latin"], 
   weight: ["400", "500", "600", "700"],
   variable: "--font-eb-garamond"
+});
+
+// Add modern font for better readability
+const inter = Inter({ 
+  subsets: ["latin"], 
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter"
 });
 
 export const metadata: Metadata = {
@@ -26,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased ${ebGaramond.variable}`}>
+      <body className={`font-sans antialiased ${ebGaramond.variable} ${inter.variable}`}>
         {children}
         <Analytics />
       </body>
