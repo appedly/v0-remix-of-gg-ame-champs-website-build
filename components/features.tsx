@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect, useRef, useState } from "react"
 import {
   TrophyIcon,
   UsersIcon,
@@ -8,8 +11,37 @@ import {
   ClockIcon,
   ZapIcon,
 } from "./bordered-icons"
+import { Crown, Star, Target, Gamepad2, Medal, Sparkles } from "lucide-react"
 
 export function Features() {
+  const [activeSection, setActiveSection] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setActiveSection(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  const floatingIcons = [
+    { icon: Crown, side: 'left', position: 'top', delay: '0s', tilt: -15, color: '#FFD166' },
+    { icon: Star, side: 'right', position: 'middle', delay: '0.3s', tilt: 12, color: '#4A6CFF' },
+    { icon: Target, side: 'left', position: 'bottom', delay: '0.6s', tilt: -8, color: '#FF7A1A' },
+    { icon: Gamepad2, side: 'right', position: 'top', delay: '0.9s', tilt: 18, color: '#4fc3f7' },
+    { icon: Medal, side: 'left', position: 'middle', delay: '1.2s', tilt: 10, color: '#00C2FF' },
+    { icon: Sparkles, side: 'right', position: 'bottom', delay: '1.5s', tilt: -12, color: '#FFD166' },
+  ]
   const featuredFeatures = [
     {
       icon: TrophyIcon,
@@ -59,7 +91,7 @@ export function Features() {
   ]
 
   return (
-    <section id="features" className="py-32 relative overflow-hidden">
+    <section id="features" ref={sectionRef} className="py-32 relative overflow-hidden">
       {/* Enhanced animated background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0B1020] via-[#1a2332] to-[#0B1020]" />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(79,195,247,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,195,247,0.03)_1px,transparent_1px)] bg-[size:50px_50px] animate-pulse" />
@@ -75,26 +107,91 @@ export function Features() {
         <div className="absolute top-0 right-1/3 w-0.5 h-full bg-gradient-to-b from-transparent via-[#4A6CFF]/20 to-transparent lightning-trace" style={{ animationDelay: "1.5s" }} />
       </div>
 
+      {/* Floating Icons */}
+      <div className="absolute inset-0 pointer-events-none">
+        {floatingIcons.map((floatingIcon, index) => {
+          const FloatingIcon = floatingIcon.icon
+          const isLeft = floatingIcon.side === 'left'
+          const positionY = floatingIcon.position === 'top' ? '20%' : floatingIcon.position === 'bottom' ? '80%' : '50%'
+          const positionX = isLeft ? '5%' : '95%'
+          
+          return (
+            <div
+              key={index}
+              className={`absolute transition-all duration-1000 ease-out ${activeSection ? 'opacity-100' : 'opacity-0'}`}
+              style={{
+                left: positionX,
+                top: positionY,
+                transform: `translateY(-50%) rotate(${floatingIcon.tilt}deg)`,
+                animationDelay: floatingIcon.delay,
+                animation: activeSection ? `float-feature-icon-${index} 4s ease-in-out infinite` : 'none',
+              }}
+            >
+              <div className="relative group">
+                {/* Icon shadow */}
+                <div 
+                  className="absolute rounded-full blur-xl transition-all duration-500 w-12 h-12"
+                  style={{
+                    backgroundColor: `${floatingIcon.color}20`,
+                    transform: isLeft ? 'translateX(20px) translateY(10px)' : 'translateX(-20px) translateY(10px)',
+                    opacity: activeSection ? 0.6 : 0,
+                  }}
+                />
+                
+                {/* Main icon */}
+                <div
+                  className="relative w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 border-2"
+                  style={{
+                    backgroundColor: `${floatingIcon.color}15`,
+                    borderColor: `${floatingIcon.color}40`,
+                    color: floatingIcon.color,
+                  }}
+                >
+                  <FloatingIcon className="w-6 h-6" />
+                  
+                  {/* Glow effect on hover */}
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                      backgroundColor: floatingIcon.color,
+                      filter: 'blur(8px)',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
       <div className="container mx-auto px-4 relative z-10">
         {/* Enhanced header section */}
         <div className="max-w-4xl mx-auto text-center mb-24">
           <div className="inline-block px-8 py-4 bg-gradient-to-r from-[#FFD166]/10 to-[#FF7A1A]/10 border border-[#FFD166]/30 rounded-full mb-10 backdrop-blur-sm hover:from-[#FFD166]/20 hover:to-[#FF7A1A]/20 transition-all duration-500">
             <span className="text-[#FFD166] text-sm font-bold tracking-wider uppercase">PREMIUM FEATURES</span>
           </div>
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 text-balance leading-tight">
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 text-balance leading-tight" style={{ fontFamily: 'var(--font-eb-garamond), Georgia, serif' }}>
             Everything You Need to{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD166] via-[#FF7A1A] to-[#FF6B6B] animate-gradient">
               Dominate
             </span>
           </h2>
-          <p className="text-xl md:text-2xl text-white/60 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl text-white/60 leading-relaxed max-w-3xl mx-auto" style={{ fontFamily: 'var(--font-eb-garamond), Georgia, serif' }}>
             Built for competitive gamers who want to showcase their skills and win real prizes.
           </p>
         </div>
 
         {/* Featured Features Section */}
-        <div className="mb-20">
-          <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+        <div className="mb-20 relative">
+          {/* Glowing connecting line */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-full h-px bg-gradient-to-r from-transparent via-[#FFD166]/60 to-transparent relative">
+              <div className="absolute inset-0 h-px bg-gradient-to-r from-transparent via-[#FFD166] to-transparent animate-pulse blur-sm" />
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-[#FFD166] rounded-full animate-ping" />
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto relative z-10">
             {featuredFeatures.map((feature, index) => (
               <div
                 key={`featured-${index}`}
@@ -147,7 +244,26 @@ export function Features() {
         </div>
 
         {/* Regular Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="relative">
+          {/* Horizontal and vertical glowing lines */}
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Horizontal lines */}
+            <div className="absolute top-1/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4A6CFF]/30 to-transparent">
+              <div className="absolute inset-0 h-px bg-gradient-to-r from-transparent via-[#4A6CFF] to-transparent animate-pulse blur-sm" />
+            </div>
+            <div className="absolute top-2/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#4A6CFF]/30 to-transparent">
+              <div className="absolute inset-0 h-px bg-gradient-to-r from-transparent via-[#4A6CFF] to-transparent animate-pulse blur-sm" />
+            </div>
+            {/* Vertical lines */}
+            <div className="absolute left-1/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#4fc3f7]/30 to-transparent">
+              <div className="absolute inset-0 w-px bg-gradient-to-b from-transparent via-[#4fc3f7] to-transparent animate-pulse blur-sm" />
+            </div>
+            <div className="absolute left-2/3 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#4fc3f7]/30 to-transparent">
+              <div className="absolute inset-0 w-px bg-gradient-to-b from-transparent via-[#4fc3f7] to-transparent animate-pulse blur-sm" />
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto relative z-10">
           {regularFeatures.map((feature, index) => (
             <div
               key={`regular-${index}`}
@@ -179,6 +295,7 @@ export function Features() {
               </div>
             </div>
           ))}
+          </div>
         </div>
         
         {/* Enhanced bottom decorative element */}

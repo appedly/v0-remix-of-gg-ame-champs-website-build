@@ -3,11 +3,35 @@
 import type React from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [lastScrollY, setLastScrollY] = useState(0)
+  const [isVisible, setIsVisible] = useState(true)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      
+      // Hide/show navbar based on scroll direction
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false) // Scrolling down
+      } else {
+        setIsVisible(true) // Scrolling up or at top
+      }
+      
+      // Change navbar style when scrolled
+      setIsScrolled(currentScrollY > 20)
+      
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
@@ -21,8 +45,14 @@ export function Navbar() {
   }
 
   return (
-    <nav className="fixed top-4 left-0 right-0 z-50 px-4">
-      <div className="max-w-7xl mx-auto bg-[#0B1020]/60 backdrop-blur-md border border-white/10 rounded-full px-6 py-3">
+    <nav className={`fixed top-4 left-0 right-0 z-50 px-4 transition-all duration-300 ease-in-out ${
+      isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+    }`}>
+      <div className={`max-w-7xl mx-auto transition-all duration-300 ease-in-out ${
+        isScrolled 
+          ? 'bg-[#0B1020]/90 backdrop-blur-lg border border-white/20 shadow-lg shadow-black/20 scale-95' 
+          : 'bg-[#0B1020]/60 backdrop-blur-md border border-white/10'
+      } rounded-full px-6 py-3`}>
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <Image src="/logo.png" alt="GGameChamps" width={40} height={40} className="w-10 h-10" />
@@ -51,10 +81,10 @@ export function Navbar() {
           {/* CTA Button - Right Side */}
           <div className="hidden lg:flex items-center flex-shrink-0">
             <Link
-              href="/login"
-              className="px-6 py-2 bg-white text-[#0B1020] rounded-full hover:bg-white/90 transition-colors font-semibold text-sm"
+              href="/signup"
+              className="px-6 py-2 bg-white text-[#0B1020] rounded-full hover:bg-white/90 transition-colors font-semibold text-sm hover:scale-105 transition-transform"
             >
-              Pre Register
+              Join the Waitlist
             </Link>
           </div>
 
@@ -84,11 +114,11 @@ export function Navbar() {
                 Contact
               </NavLink>
               <Link
-                href="/login"
+                href="/signup"
                 className="px-4 py-2 bg-white text-[#0B1020] rounded-full hover:bg-white/90 transition-colors text-center font-semibold text-sm mt-2"
                 onClick={() => setIsOpen(false)}
               >
-                Pre Register
+                Join the Waitlist
               </Link>
             </div>
           </div>

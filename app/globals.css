@@ -121,6 +121,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  :root {
+    --font-eb-garamond: 'EB Garamond', Georgia, serif;
+  }
 }
 
 /* Added animated stars background */
@@ -257,4 +260,40 @@
 .lightning-pulse {
   animation: lightning-pulse 1.6s ease-in-out infinite;
   will-change: opacity, box-shadow;
+}
+
+/* Floating animations for feature icons */
+@keyframes float-feature-icon-0 {
+  0%, 100% { transform: translateY(-50%) rotate(-15deg) translateX(0px); }
+  25% { transform: translateY(-52%) rotate(-12deg) translateX(-5px); }
+  50% { transform: translateY(-48%) rotate(-18deg) translateX(3px); }
+  75% { transform: translateY(-50%) rotate(-10deg) translateX(-3px); }
+}
+@keyframes float-feature-icon-1 {
+  0%, 100% { transform: translateY(-50%) rotate(12deg) translateX(0px); }
+  25% { transform: translateY(-48%) rotate(15deg) translateX(4px); }
+  50% { transform: translateY(-52%) rotate(8deg) translateX(-4px); }
+  75% { transform: translateY(-50%) rotate(14deg) translateX(2px); }
+}
+@keyframes float-feature-icon-2 {
+  0%, 100% { transform: translateY(-50%) rotate(-8deg) translateX(0px); }
+  33% { transform: translateY(-53%) rotate(-5deg) translateX(-3px); }
+  66% { transform: translateY(-47%) rotate(-11deg) translateX(3px); }
+}
+@keyframes float-feature-icon-3 {
+  0%, 100% { transform: translateY(-50%) rotate(18deg) translateX(0px); }
+  25% { transform: translateY(-52%) rotate(15deg) translateX(-4px); }
+  50% { transform: translateY(-48%) rotate(21deg) translateX(4px); }
+  75% { transform: translateY(-50%) rotate(16deg) translateX(-2px); }
+}
+@keyframes float-feature-icon-4 {
+  0%, 100% { transform: translateY(-50%) rotate(10deg) translateX(0px); }
+  33% { transform: translateY(-52%) rotate(7deg) translateX(-3px); }
+  66% { transform: translateY(-48%) rotate(13deg) translateX(3px); }
+}
+@keyframes float-feature-icon-5 {
+  0%, 100% { transform: translateY(-50%) rotate(-12deg) translateX(0px); }
+  25% { transform: translateY(-53%) rotate(-9deg) translateX(4px); }
+  50% { transform: translateY(-47%) rotate(-15deg) translateX(-4px); }
+  75% { transform: translateY(-50%) rotate(-10deg) translateX(-2px); }
 }
