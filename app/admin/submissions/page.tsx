@@ -26,7 +26,7 @@ export default function SubmissionsPage() {
     const checkAuth = async () => {
       // Check for admin_session flag set by hardcoded login
       const adminSession = localStorage.getItem("admin_session")
-      
+
       if (!adminSession) {
         // Fallback to checking Supabase auth
         const supabase = createClient()
@@ -40,22 +40,18 @@ export default function SubmissionsPage() {
         }
 
         // Verify admin role
-        const { data: userData } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", session.user.id)
-          .single()
+        const { data: userData } = await supabase.from("users").select("role").eq("id", session.user.id).single()
 
         if (userData?.role !== "admin") {
           router.push("/admin/login")
           return
         }
 
-        await fetchSubmissions()
+        await refreshSubmissions()
         setIsLoading(false)
       } else {
         // Admin session found in localStorage (hardcoded credentials)
-        await fetchSubmissions()
+        await refreshSubmissions()
         setIsLoading(false)
       }
     }
