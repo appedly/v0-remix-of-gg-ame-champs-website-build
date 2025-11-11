@@ -1,21 +1,26 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { Trophy, Star, Crown, Gamepad2, Target, Swords } from "lucide-react"
+import { useEffect, useMemo, useState, useRef } from "react"
+import { Trophy, Zap, Skull, Swords, Award, Crosshair } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-const floatingIcons = [
-  { icon: Trophy, side: "left", position: "top", delay: "0s", tilt: -15, size: "large" },
-  { icon: Crown, side: "left", position: "bottom", delay: "0.2s", tilt: 12, size: "medium" },
-  { icon: Star, side: "right", position: "top", delay: "0.1s", tilt: 18, size: "medium" },
-  { icon: Target, side: "right", position: "middle", delay: "0.3s", tilt: -10, size: "large" },
-  { icon: Gamepad2, side: "left", position: "middle", delay: "0.4s", tilt: -8, size: "small" },
-  { icon: Swords, side: "right", position: "bottom", delay: "0.2s", tilt: 15, size: "small" },
-]
 
 export function CTASection() {
   const [isVisible, setIsVisible] = useState(false)
+  const [typedText, setTypedText] = useState("")
+  const [showCursor, setShowCursor] = useState(true)
   const sectionRef = useRef<HTMLDivElement>(null)
+  
+  const fullText = "> READY_TO_COMPETE?"
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 20 }, () => ({
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        duration: 3 + Math.random() * 4,
+        delay: Math.random() * 2,
+      })),
+    []
+  )
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -33,174 +38,309 @@ export function CTASection() {
     return () => observer.disconnect()
   }, [])
 
-  const getIconSize = (size: string) => {
-    switch (size) {
-      case 'small':
-        return 'w-10 h-10'
-      case 'medium':
-        return 'w-14 h-14'
-      case 'large':
-        return 'w-20 h-20'
-      default:
-        return 'w-14 h-14'
+  useEffect(() => {
+    if (!isVisible) {
+      setTypedText("")
+      return
     }
-  }
 
-  const getIconInnerSize = (size: string) => {
-    switch (size) {
-      case 'small':
-        return 'w-5 h-5'
-      case 'medium':
-        return 'w-7 h-7'
-      case 'large':
-        return 'w-10 h-10'
-      default:
-        return 'w-7 h-7'
-    }
-  }
+    let currentIndex = 0
+    const typingInterval = setInterval(() => {
+      if (currentIndex <= fullText.length) {
+        setTypedText(fullText.slice(0, currentIndex))
+        currentIndex++
+      } else {
+        clearInterval(typingInterval)
+      }
+    }, 80)
+
+    return () => clearInterval(typingInterval)
+  }, [isVisible])
+
+  useEffect(() => {
+    const cursorInterval = setInterval(() => {
+      setShowCursor((prev) => !prev)
+    }, 500)
+    return () => clearInterval(cursorInterval)
+  }, [])
 
   return (
     <section ref={sectionRef} className="py-20 sm:py-24 md:py-32 relative overflow-hidden">
-      {/* Background gradients */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#4A6CFF]/5 to-transparent" />
-      <div className="absolute top-1/4 left-1/4 w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] bg-[#FFD166]/8 rounded-full blur-[100px] sm:blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-[#4A6CFF]/8 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none" />
+      {/* Dark tech background */}
+      <div className="absolute inset-0 bg-[#050810]" />
+      
+      {/* Animated grid */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,170,0.3)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,170,0.3)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black_40%,transparent_100%)]" />
+      </div>
+
+      {/* Scanlines effect */}
+      <div className="absolute inset-0 pointer-events-none opacity-10">
+        <div
+          className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,255,170,0.1)_50%)] bg-[length:100%_4px]"
+          style={{ animation: "scan 12s linear infinite" }}
+        />
+      </div>
+
+      {/* Floating particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {particles.map((particle, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-50"
+            style={{
+              left: `${particle.left}%`,
+              top: `${particle.top}%`,
+              animation: `float-particle ${particle.duration}s ease-in-out infinite`,
+              animationDelay: `${particle.delay}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Corner decorations */}
+      <div className="absolute top-8 left-8 w-16 h-16 border-l-2 border-t-2 border-cyan-400/50" />
+      <div className="absolute top-8 right-8 w-16 h-16 border-r-2 border-t-2 border-cyan-400/50" />
+      <div className="absolute bottom-8 left-8 w-16 h-16 border-l-2 border-b-2 border-cyan-400/50" />
+      <div className="absolute bottom-8 right-8 w-16 h-16 border-r-2 border-b-2 border-cyan-400/50" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-4xl mx-auto">
-          <div className="relative group">
-            {/* Glow effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-[#FFD166] via-[#FF7A1A] to-[#FFD166] rounded-2xl sm:rounded-3xl blur-2xl opacity-50 group-hover:opacity-75 transition-opacity" />
+        <div className="max-w-5xl mx-auto">
+          {/* Console Header */}
+          <div className="mb-8 sm:mb-12 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-black/40 border border-cyan-400/30 backdrop-blur-sm mb-4">
+              <div className="flex gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" style={{ animationDelay: "0.2s" }} />
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: "0.4s" }} />
+              </div>
+              <span className="text-cyan-400 text-xs font-mono">SYSTEM_READY</span>
+            </div>
+          </div>
+
+          {/* Main Console Card */}
+          <div className="relative">
+            {/* Glowing border animation */}
+            <div className="absolute -inset-[2px] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 rounded-2xl opacity-75 blur-xl animate-pulse-glow" />
             
             {/* Main card */}
-            <div className="relative bg-gradient-to-br from-[#1a2332] to-[#0f1621] p-8 sm:p-10 md:p-16 rounded-2xl sm:rounded-3xl border border-[#FFD166]/30 text-center overflow-hidden">
-              {/* Floating Icons */}
-              <div className="absolute inset-0 pointer-events-none hidden md:block">
-                {floatingIcons.map((floatingIcon, index) => {
-                  const Icon = floatingIcon.icon
-                  const isLeft = floatingIcon.side === 'left'
-                  const positionY = 
-                    floatingIcon.position === 'top' ? '15%' : 
-                    floatingIcon.position === 'bottom' ? '85%' : 
-                    '50%'
-                  const positionX = isLeft ? '-8%' : '108%'
-                  const iconSize = getIconSize(floatingIcon.size)
-                  const iconInnerSize = getIconInnerSize(floatingIcon.size)
-                  
-                  return (
-                    <div
-                      key={index}
-                      className={cn(
-                        "absolute transition-all duration-1000 ease-out",
-                        isVisible ? "opacity-100" : "opacity-0"
-                      )}
-                      style={{
-                        left: positionX,
-                        top: positionY,
-                        transform: `translateY(-50%) rotate(${floatingIcon.tilt}deg)`,
-                        animationDelay: floatingIcon.delay,
-                        animation: isVisible ? `float-cta-${index} 4s ease-in-out infinite` : 'none',
-                      }}
-                    >
-                      <div className={cn("relative", isVisible && "group/icon")}>
-                        {/* Icon shadow */}
-                        <div 
-                          className={cn(
-                            "absolute rounded-xl sm:rounded-2xl blur-lg sm:blur-xl transition-all duration-500",
-                            iconSize,
-                            "bg-gradient-to-br from-yellow-400/30 to-orange-600/30"
-                          )}
-                          style={{
-                            transform: isLeft ? 'translateX(15px) translateY(8px)' : 'translateX(-15px) translateY(8px)',
-                            opacity: isVisible ? 0.7 : 0,
-                          }}
-                        />
-                        
-                        {/* Main icon */}
-                        <div
-                          className={cn(
-                            "relative transition-all duration-300",
-                            iconSize,
-                            "rounded-xl sm:rounded-2xl",
-                            "flex items-center justify-center",
-                            "bg-gradient-to-br from-yellow-400 to-orange-600 text-white shadow-lg shadow-yellow-500/25",
-                            isVisible && "hover:scale-110 cursor-pointer animate-pulse"
-                          )}
-                        >
-                          <Icon className={iconInnerSize} />
-                          
-                          {/* Glow effect */}
-                          {isVisible && (
-                            <div
-                              className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-yellow-400 to-orange-600"
-                              style={{ filter: 'blur(8px)' }}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
+            <div className="relative bg-gradient-to-br from-[#0a1628] via-[#0d1b2a] to-[#0a1628] rounded-2xl overflow-hidden border border-cyan-400/30 shadow-2xl">
+              {/* Top HUD bar */}
+              <div className="flex items-center justify-between px-6 py-3 bg-black/40 border-b border-cyan-400/20">
+                <div className="flex items-center gap-3">
+                  <Crosshair className="w-4 h-4 text-cyan-400 animate-pulse" />
+                  <span className="text-cyan-400 text-xs font-mono">TARGET_ACQUIRED</span>
+                </div>
+                <div className="flex gap-2">
+                  <div className="w-16 h-1 bg-cyan-400/20 rounded-full overflow-hidden">
+                    <div className="h-full bg-cyan-400 animate-pulse-bar" />
+                  </div>
+                  <div className="w-16 h-1 bg-purple-400/20 rounded-full overflow-hidden">
+                    <div className="h-full bg-purple-400 animate-pulse-bar" style={{ animationDelay: "0.5s" }} />
+                  </div>
+                </div>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6 text-balance leading-tight px-4 sm:px-0">
-                Ready to Compete with the Best?
-              </h2>
+              {/* Glitch effect overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 to-purple-500/5 mix-blend-overlay pointer-events-none animate-glitch" />
 
-              <p className="text-base sm:text-lg md:text-xl text-white/70 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-4 sm:px-0">
-                Join thousands of gamers competing for real prizes. Early access members get exclusive perks and free
-                tournament entries.
-              </p>
+              {/* Content */}
+              <div className="relative p-8 sm:p-12 md:p-16">
+                {/* Floating gaming icons */}
+                <div className="absolute inset-0 pointer-events-none hidden lg:block overflow-hidden">
+                  {[
+                    { Icon: Trophy, pos: "top-20 left-12", delay: "0s" },
+                    { Icon: Zap, pos: "top-32 right-16", delay: "0.3s" },
+                    { Icon: Skull, pos: "bottom-24 left-20", delay: "0.6s" },
+                    { Icon: Swords, pos: "bottom-32 right-12", delay: "0.9s" },
+                    { Icon: Award, pos: "top-1/2 left-8", delay: "0.2s" },
+                    { Icon: Crosshair, pos: "top-1/2 right-8", delay: "0.5s" },
+                  ].map(({ Icon, pos, delay }, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        "absolute",
+                        pos,
+                        isVisible ? "opacity-20" : "opacity-0"
+                      )}
+                      style={{
+                        animation: isVisible ? `float-icon ${3 + i}s ease-in-out infinite` : "none",
+                        animationDelay: delay,
+                      }}
+                    >
+                      <Icon className="w-8 h-8 text-cyan-400" />
+                    </div>
+                  ))}
+                </div>
 
-              <a
-                href="#early-access"
-                className="inline-flex items-center gap-2 sm:gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-gradient-to-r from-[#FFD166] to-[#FF7A1A] text-[#0B1020] rounded-xl font-bold text-base sm:text-lg hover:shadow-[0_0_40px_rgba(255,209,102,0.6)] transition-all hover:scale-105"
-              >
-                Join Early Access Now
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </a>
+                {/* Terminal-style heading */}
+                <div className="mb-8 sm:mb-10">
+                  <div className="flex items-start gap-2 mb-6">
+                    <span className="text-cyan-400 font-mono text-sm sm:text-base flex-shrink-0">$</span>
+                    <div className="flex-1">
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-mono text-white leading-tight">
+                        {typedText}
+                        {showCursor && isVisible && <span className="text-cyan-400 animate-pulse">▊</span>}
+                      </h2>
+                    </div>
+                  </div>
+                  
+                  {/* Achievement unlock style */}
+                  <div className="inline-flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg backdrop-blur-sm mb-6">
+                    <Trophy className="w-5 h-5 text-yellow-400 animate-bounce" />
+                    <span className="text-yellow-300 text-sm font-semibold">ACHIEVEMENT UNLOCKED</span>
+                  </div>
+                </div>
+
+                {/* Console output text */}
+                <div className="space-y-4 mb-8 sm:mb-12 max-w-2xl mx-auto">
+                  <div className="flex items-start gap-2 text-left">
+                    <span className="text-cyan-400 font-mono text-sm flex-shrink-0">&gt;</span>
+                    <p className="text-base sm:text-lg text-gray-300 font-mono leading-relaxed">
+                      Join <span className="text-cyan-400 font-bold">10,000+ gamers</span> competing for{" "}
+                      <span className="text-yellow-400 font-bold">real prizes</span>
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-2 text-left">
+                    <span className="text-purple-400 font-mono text-sm flex-shrink-0">&gt;</span>
+                    <p className="text-base sm:text-lg text-gray-300 font-mono leading-relaxed">
+                      Early access: <span className="text-purple-400 font-bold">Exclusive perks</span> +{" "}
+                      <span className="text-green-400 font-bold">FREE tournaments</span>
+                    </p>
+                  </div>
+
+                  <div className="flex items-start gap-2 text-left">
+                    <span className="text-green-400 font-mono text-sm flex-shrink-0">&gt;</span>
+                    <p className="text-base sm:text-lg text-gray-300 font-mono leading-relaxed">
+                      Status: <span className="text-green-400 font-bold animate-pulse">REGISTRATION_OPEN</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Stats display */}
+                <div className="grid grid-cols-3 gap-4 mb-10 max-w-2xl mx-auto">
+                  <div className="bg-black/40 border border-cyan-400/30 rounded-lg p-4 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-cyan-400 font-mono">1K+</div>
+                    <div className="text-xs sm:text-sm text-gray-400 font-mono mt-1">PLAYERS</div>
+                  </div>
+                  <div className="bg-black/40 border border-yellow-400/30 rounded-lg p-4 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-yellow-400 font-mono">$50K</div>
+                    <div className="text-xs sm:text-sm text-gray-400 font-mono mt-1">PRIZES</div>
+                  </div>
+                  <div className="bg-black/40 border border-purple-400/30 rounded-lg p-4 text-center">
+                    <div className="text-2xl sm:text-3xl font-bold text-purple-400 font-mono">24/7</div>
+                    <div className="text-xs sm:text-sm text-gray-400 font-mono mt-1">ACTIVE</div>
+                  </div>
+                </div>
+
+                {/* Action button */}
+                <div className="text-center">
+                  <a
+                    href="#early-access"
+                    className="group relative inline-flex items-center gap-3 px-8 sm:px-12 py-4 sm:py-5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-bold font-mono text-sm sm:text-base uppercase tracking-wider overflow-hidden transition-all hover:scale-105"
+                  >
+                    {/* Animated background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    
+                    {/* Button content */}
+                    <span className="relative z-10 flex items-center gap-3">
+                      <Zap className="w-5 h-5 animate-pulse" />
+                      INITIALIZE_ACCESS
+                      <span className="inline-block group-hover:translate-x-1 transition-transform">&gt;&gt;</span>
+                    </span>
+
+                    {/* Glowing border effect */}
+                    <div className="absolute inset-0 border-2 border-cyan-400 opacity-0 group-hover:opacity-100 animate-pulse" />
+                  </a>
+
+                  {/* Sub text */}
+                  <p className="mt-4 text-xs sm:text-sm text-gray-500 font-mono">
+                    &gt; Press to continue | ESC to cancel
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom HUD bar */}
+              <div className="flex items-center justify-between px-6 py-3 bg-black/40 border-t border-cyan-400/20">
+                <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span>ONLINE</span>
+                </div>
+                <div className="text-xs font-mono text-gray-500">
+                  PING: <span className="text-green-400">12ms</span>
+                </div>
+              </div>
             </div>
+          </div>
+
+          {/* Bottom terminal line */}
+          <div className="mt-8 text-center">
+            <p className="text-xs sm:text-sm font-mono text-gray-600">
+              <span className="text-cyan-400">$</span> sudo join_tournament --access=early --mode=competitive
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Animation keyframes */}
+      {/* Animations */}
       <style jsx>{`
-        @keyframes float-cta-0 {
-          0%, 100% { transform: translateY(-50%) rotate(-15deg) translateX(0px); }
-          25% { transform: translateY(-50%) rotate(-12deg) translateX(-8px); }
-          50% { transform: translateY(-55%) rotate(-18deg) translateX(5px); }
-          75% { transform: translateY(-50%) rotate(-10deg) translateX(-5px); }
+        @keyframes scan {
+          0% { background-position: 0 0; }
+          100% { background-position: 0 100%; }
         }
-        @keyframes float-cta-1 {
-          0%, 100% { transform: translateY(-50%) rotate(12deg) translateX(0px); }
-          25% { transform: translateY(-52%) rotate(15deg) translateX(6px); }
-          50% { transform: translateY(-48%) rotate(8deg) translateX(-6px); }
-          75% { transform: translateY(-50%) rotate(14deg) translateX(3px); }
+        
+        @keyframes pulse-glow {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
         }
-        @keyframes float-cta-2 {
-          0%, 100% { transform: translateY(-50%) rotate(18deg) translateX(0px); }
-          33% { transform: translateY(-53%) rotate(21deg) translateX(-4px); }
-          66% { transform: translateY(-47%) rotate(15deg) translateX(4px); }
+        
+        @keyframes pulse-bar {
+          0%, 100% { width: 0%; }
+          50% { width: 100%; }
         }
-        @keyframes float-cta-3 {
-          0%, 100% { transform: translateY(-50%) rotate(-10deg) translateX(0px); }
-          25% { transform: translateY(-52%) rotate(-7deg) translateX(7px); }
-          50% { transform: translateY(-48%) rotate(-13deg) translateX(-7px); }
-          75% { transform: translateY(-50%) rotate(-9deg) translateX(4px); }
+        
+        @keyframes glitch {
+          0%, 100% { 
+            transform: translate(0, 0);
+            opacity: 1;
+          }
+          20% { 
+            transform: translate(-2px, 2px);
+            opacity: 0.8;
+          }
+          40% { 
+            transform: translate(-2px, -2px);
+            opacity: 0.9;
+          }
+          60% { 
+            transform: translate(2px, 2px);
+            opacity: 0.8;
+          }
+          80% { 
+            transform: translate(2px, -2px);
+            opacity: 0.9;
+          }
         }
-        @keyframes float-cta-4 {
-          0%, 100% { transform: translateY(-50%) rotate(-8deg) translateX(0px); }
-          33% { transform: translateY(-55%) rotate(-5deg) translateX(-5px); }
-          66% { transform: translateY(-45%) rotate(-11deg) translateX(5px); }
+        
+        @keyframes float-particle {
+          0%, 100% { 
+            transform: translate(0, 0);
+            opacity: 0.3;
+          }
+          50% { 
+            transform: translate(10px, -20px);
+            opacity: 0.6;
+          }
         }
-        @keyframes float-cta-5 {
-          0%, 100% { transform: translateY(-50%) rotate(15deg) translateX(0px); }
-          25% { transform: translateY(-52%) rotate(18deg) translateX(-6px); }
-          50% { transform: translateY(-48%) rotate(12deg) translateX(6px); }
-          75% { transform: translateY(-50%) rotate(16deg) translateX(-3px); }
+        
+        @keyframes float-icon {
+          0%, 100% { 
+            transform: translateY(0px) rotate(0deg);
+          }
+          50% { 
+            transform: translateY(-20px) rotate(5deg);
+          }
         }
       `}</style>
     </section>
