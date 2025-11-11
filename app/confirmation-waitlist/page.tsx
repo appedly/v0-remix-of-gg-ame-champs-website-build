@@ -13,7 +13,7 @@ export default function ConfirmationWaitlistPage() {
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <Image src="/logo.png" alt= "GGameChamps" width={100} height={100} className="w-24 h-24 mx-auto mb-6" />
+          <Image src="/logo.png" alt="GGameChamps" width={100} height={100} className="w-24 h-24 mx-auto mb-6" />
           <h1 className="text-3xl font-bold text-white mb-3">Check Your Email</h1>
           <p className="text-white/60 text-base">We've sent you a verification link</p>
         </div>

@@ -35,6 +35,8 @@ export async function signup(formData: FormData) {
     }
   }
 
+  const redirectUrl = process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || "http://localhost:3000"
+
   // Sign up user with display_name in metadata
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
@@ -43,7 +45,7 @@ export async function signup(formData: FormData) {
       data: {
         display_name: displayName,
       },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/callback?accessCode=${accessCode || ""}`,
+      emailRedirectTo: `${redirectUrl}/auth/callback?accessCode=${accessCode || ""}`,
     },
   })
 

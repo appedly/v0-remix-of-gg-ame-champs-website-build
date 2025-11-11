@@ -11,7 +11,6 @@ export async function updateSession(request: NextRequest) {
 
   // If Supabase is not configured, skip auth checks
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.log("[v0] Supabase environment variables not found in middleware")
     return supabaseResponse
   }
 
