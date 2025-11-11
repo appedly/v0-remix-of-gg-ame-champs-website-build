@@ -19,15 +19,15 @@ export function CTASection() {
               </h2>
 
               <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Join thousands of gamers competing for real prizes. Early access members get exclusive perks and free
+                Join thousands of gamers competing for real prizes. Waitlist members get exclusive perks and free
                 tournament entries.
               </p>
 
               <a
-                href="#early-access"
+                href="/signup"
                 className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#FFD166] to-[#FF7A1A] text-[#0B1020] rounded-xl font-bold text-lg hover:shadow-[0_0_40px_rgba(255,209,102,0.6)] transition-all hover:scale-105"
               >
-                Join Early Access Now
+                Join the Waitlist
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>

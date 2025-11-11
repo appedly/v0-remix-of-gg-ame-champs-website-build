@@ -30,7 +30,7 @@ export function FAQ() {
     {
       question: "Is there a free trial?",
       answer:
-        "Yes! Early access members get free entry to their first 3 tournaments. After that, tournament entry fees vary based on the prize pool.",
+        "Yes! Waitlist members get free entry to their first 3 tournaments. After that, tournament entry fees vary based on the prize pool.",
     },
   ]
 

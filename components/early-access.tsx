@@ -56,7 +56,7 @@ export function EarlyAccess() {
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Join Early Access</h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Join the Waitlist</h2>
             <p className="text-lg text-white/70">Be among the first to experience the future of competitive gaming</p>
           </div>
 
@@ -138,7 +138,7 @@ export function EarlyAccess() {
                       disabled={isLoading}
                       className="w-full px-6 py-3 bg-[#4A6CFF] text-white rounded-xl font-medium text-base hover:bg-[#5A7CFF] transition-all shadow-lg shadow-[#4A6CFF]/20 disabled:opacity-50 disabled:cursor-not-allowed h-12"
                     >
-                      {isLoading ? "Creating account..." : "Pre-Register"}
+                      {isLoading ? "Creating account..." : "Join Waitlist"}
                     </button>
                   </form>
                 )}

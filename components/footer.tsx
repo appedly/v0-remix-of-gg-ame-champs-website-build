@@ -66,7 +66,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="#early-access" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
-                  Early Access
+                  Waitlist
                 </Link>
               </li>
               <li>
@@ -124,7 +124,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
+                <Link href="/cookiepolicy" className="text-white/60 hover:text-[#00C2FF] text-sm transition-all duration-300 hover:translate-x-1 inline-block">
                   Cookie Policy
                 </Link>
               </li>
