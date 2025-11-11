@@ -9,6 +9,7 @@ export function AdminNav({ userName }: { userName: string }) {
 
   const navItems = [
     { href: "/admin/dashboard", label: "Dashboard" },
+    { href: "/admin/analytics", label: "Analytics" },
     { href: "/admin/tournaments", label: "Tournaments" },
     { href: "/admin/submissions", label: "Submissions" },
     { href: "/admin/users", label: "Users" },

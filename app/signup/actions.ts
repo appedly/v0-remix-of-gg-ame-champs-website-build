@@ -35,8 +35,6 @@ export async function signup(formData: FormData) {
     }
   }
 
-  const redirectUrl = process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || "http://localhost:3000"
-
   // Sign up user with display_name in metadata
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
@@ -45,7 +43,8 @@ export async function signup(formData: FormData) {
       data: {
         display_name: displayName,
       },
-      emailRedirectTo: `${redirectUrl}/auth/callback?accessCode=${accessCode || ""}`,
+      emailRedirectTo:
+        process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/callback`,
     },
   })
 
@@ -57,5 +56,22 @@ export async function signup(formData: FormData) {
     return { error: "Failed to create user" }
   }
 
-  redirect("/confirmation-waitlist")
+  if (accessCode) {
+    const { data: codeData } = await supabase.from("access_codes").select("id").eq("code", accessCode.toUpperCase())
+
+    if (codeData && codeData.length > 0) {
+      await supabase
+        .from("access_codes")
+        .update({ used_by: authData.user.id, used_at: new Date().toISOString() })
+        .eq("id", codeData[0].id)
+
+      // Update user with access code reference
+      await supabase.from("users").update({ access_code_id: codeData[0].id }).eq("id", authData.user.id)
+
+      redirect("/dashboard")
+    }
+  }
+
+  // Always redirect to waitlist-confirmation if no valid access code is used
+  redirect("/waitlist-confirmation")
 }

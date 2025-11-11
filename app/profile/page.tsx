@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { Award, Gift, Zap } from "lucide-react"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -22,6 +23,15 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false)
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  const [stats, setStats] = useState({
+    totalSubmissions: 0,
+    totalVotes: 0,
+    approvedSubmissions: 0,
+    activeTournaments: 0,
+  })
+  const [badges, setBadges] = useState([])
+  const [earlyBirdBonus, setEarlyBirdBonus] = useState(null)
+  const [referralCount, setReferralCount] = useState(0)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -53,6 +63,44 @@ export default function ProfilePage() {
         setDisplayName(userData.display_name || "")
         setBio(userData.bio || "")
       }
+
+      // Fetch user stats
+      const { data: submissions } = await supabase
+        .from("submissions")
+        .select("*, votes:votes(count), tournament:tournaments(status)")
+        .eq("user_id", session.user.id)
+
+      if (submissions) {
+        const totalVotes = submissions.reduce((sum, sub) => sum + (sub.votes?.length || 0), 0)
+        const approvedSubmissions = submissions.filter((sub) => sub.status === "approved").length
+        const activeTournaments = new Set(
+          submissions.filter((sub) => sub.tournament?.status === "active").map((sub) => sub.tournament_id),
+        ).size
+
+        setStats({
+          totalSubmissions: submissions.length,
+          totalVotes,
+          approvedSubmissions,
+          activeTournaments,
+        })
+      }
+
+      const { data: badgesData } = await supabase.from("badges").select("*").eq("user_id", session.user.id)
+
+      const { data: earlyBirdData } = await supabase
+        .from("early_bird_bonuses")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .single()
+
+      const { data: referralData, count: referralCount } = await supabase
+        .from("user_referrals")
+        .select("*", { count: "exact" })
+        .eq("referrer_id", session.user.id)
+
+      setBadges(badgesData || [])
+      setEarlyBirdBonus(earlyBirdData)
+      setReferralCount(referralCount || 0)
 
       setIsLoading(false)
     }
@@ -139,8 +187,11 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[#0B1020]">
       <UserNav userName={user?.display_name || "User"} />
 
-      <main className="container mx-auto px-4 py-8 max-w-3xl">
-        <h1 className="text-3xl font-bold text-white mb-8">Profile Settings</h1>
+      <main className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Profile Settings</h1>
+          <p className="text-white/60">Manage your account and view your stats</p>
+        </div>
 
         {message && (
           <div
@@ -154,11 +205,113 @@ export default function ProfilePage() {
           </div>
         )}
 
-        <div className="space-y-8">
+        {/* Achievements & Bonuses */}
+        {(badges.length > 0 || earlyBirdBonus) && (
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-white mb-4">Achievements & Bonuses</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Badges */}
+              {badges.length > 0 && (
+                <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
+                  <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                    <Award className="w-5 h-5 text-yellow-400" />
+                    Your Badges
+                  </h3>
+                  <div className="space-y-2">
+                    {badges.map((badge) => (
+                      <div
+                        key={badge.id}
+                        className="flex items-center gap-3 p-3 bg-[#0B1020] rounded-lg border border-[#2a3342]"
+                      >
+                        <Award className="w-4 h-4 text-yellow-400" />
+                        <div>
+                          <p className="text-white font-semibold text-sm">{badge.name}</p>
+                          <p className="text-white/40 text-xs">{badge.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Early Bird Bonus */}
+              {earlyBirdBonus && (
+                <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
+                  <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-[#FDB022]" />
+                    Early Bird Bonus
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-[#0B1020] rounded-lg border border-[#2a3342]">
+                      <span className="text-white/60">Tier</span>
+                      <span className="text-white font-semibold">Tier {earlyBirdBonus.bonus_tier}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-[#0B1020] rounded-lg border border-[#2a3342]">
+                      <span className="text-white/60">Bonus Points</span>
+                      <span className="text-[#FDB022] font-semibold">{earlyBirdBonus.points_awarded}</span>
+                    </div>
+                    {earlyBirdBonus.tournament_access && (
+                      <div className="flex items-center justify-between p-3 bg-[#0B1020] rounded-lg border border-green-500/20">
+                        <span className="text-white/60">Special Access</span>
+                        <span className="text-green-400 font-semibold">Exclusive Tournaments</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Referral Stats */}
+        <div className="mb-8 bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
+          <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+            <Gift className="w-5 h-5 text-[#4A6CFF]" />
+            Referral Stats
+          </h3>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-[#0B1020] rounded-lg p-4 border border-[#2a3342]">
+              <p className="text-white/60 text-sm mb-1">Total Referrals</p>
+              <p className="text-3xl font-bold text-[#4A6CFF]">{referralCount}</p>
+            </div>
+            <div className="bg-[#1a2332] rounded-lg p-4 border border-[#2a3342]">
+              <p className="text-white/60 text-sm mb-1">Access Codes Generated</p>
+              <p className="text-3xl font-bold text-[#00C2FF]">{stats.totalSubmissions}</p>
+            </div>
+            <a
+              href="/dashboard/referral-codes"
+              className="bg-[#4A6CFF] rounded-lg p-4 border border-[#4A6CFF] text-white font-semibold hover:bg-[#6A5CFF] transition-colors flex items-center justify-center"
+            >
+              Manage Referrals
+            </a>
+          </div>
+        </div>
+
+        {/* Stats Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4">
+            <div className="text-white/40 text-sm mb-1">Total Submissions</div>
+            <div className="text-2xl font-bold text-white">{stats.totalSubmissions}</div>
+          </div>
+          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4">
+            <div className="text-white/40 text-sm mb-1">Approved</div>
+            <div className="text-2xl font-bold text-green-400">{stats.approvedSubmissions}</div>
+          </div>
+          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4">
+            <div className="text-white/40 text-sm mb-1">Total Votes</div>
+            <div className="text-2xl font-bold text-[#00C2FF]">{stats.totalVotes}</div>
+          </div>
+          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-4">
+            <div className="text-white/40 text-sm mb-1">Active Tournaments</div>
+            <div className="text-2xl font-bold text-[#4A6CFF]">{stats.activeTournaments}</div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
           {/* Profile Information */}
           <form
             onSubmit={handleUpdateProfile}
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-8 space-y-6"
+            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 md:p-8 space-y-6"
           >
             <div>
               <h2 className="text-xl font-semibold text-white mb-4">Profile Information</h2>
@@ -214,7 +367,7 @@ export default function ProfilePage() {
           {/* Change Password */}
           <form
             onSubmit={handleChangePassword}
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-8 space-y-6"
+            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 md:p-8 space-y-6"
           >
             <div>
               <h2 className="text-xl font-semibold text-white mb-4">Change Password</h2>

@@ -28,6 +28,22 @@ export default function AdminLoginPage() {
 
     try {
       console.log("[v0] Admin login attempt with email:", email)
+      
+      // Hardcoded admin credentials
+      const HARDCODED_EMAIL = "ggiscool"
+      const HARDCODED_PASSWORD = "gg@coolasf17"
+
+      if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
+        console.log("[v0] Hardcoded admin credentials verified")
+        
+        // Set admin session in localStorage
+        localStorage.setItem("admin_session", "true")
+        console.log("[v0] Admin login successful, redirecting to dashboard")
+        router.push("/admin/dashboard")
+        return
+      }
+
+      // If hardcoded credentials don't match, try with Supabase
       const supabase = createClient()
 
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -44,18 +60,24 @@ export default function AdminLoginPage() {
 
       const { data: userData, error: userError } = await supabase
         .from("users")
-        .select("role, approved")
+        .select("role")
         .eq("id", authData.user.id)
-        .single()
+        .maybeSingle()
 
       if (userError) {
-        console.error("[v0] Error fetching user role:", userError)
+        console.error("[v0] Error fetching user role from profile table:", userError)
+      }
+
+      const resolvedRole =
+        userData?.role ?? authData.user.app_metadata?.role ?? authData.user.user_metadata?.role
+
+      if (!resolvedRole) {
         throw new Error("Error verifying admin access")
       }
 
-      console.log("[v0] User role:", userData?.role)
+      console.log("[v0] Resolved user role:", resolvedRole)
 
-      if (userData?.role !== "admin") {
+      if (resolvedRole !== "admin") {
         await supabase.auth.signOut()
         throw new Error("Access denied. Admin privileges required.")
       }
@@ -136,7 +158,7 @@ export default function AdminLoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@ggamechamps.com"
+                placeholder="ggiscool"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect, notFound } from "next/navigation"
 import { UserNav } from "@/components/user-nav"
-import { Award, Video } from "lucide-react"
+import { Award, Video, Zap } from "lucide-react"
 
 export default async function UserProfilePage({ params }: { params: { userId: string } }) {
   const supabase = await createClient()
@@ -20,6 +20,14 @@ export default async function UserProfilePage({ params }: { params: { userId: st
   if (!profileUser) {
     notFound()
   }
+
+  const { data: badges } = await supabase.from("badges").select("*").eq("user_id", params.userId)
+
+  const { data: earlyBirdData } = await supabase
+    .from("early_bird_bonuses")
+    .select("*")
+    .eq("user_id", params.userId)
+    .single()
 
   // Get user's submissions
   const { data: submissions } = await supabase
@@ -47,7 +55,7 @@ export default async function UserProfilePage({ params }: { params: { userId: st
               />
             )}
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center gap-3 mb-2 flex-wrap">
                 <h1 className="text-3xl font-bold text-white">{profileUser.display_name}</h1>
                 {profileUser.founding_member && (
                   <div className="flex items-center gap-1 px-3 py-1 bg-yellow-500/20 border border-yellow-500/30 rounded-full">
@@ -63,6 +71,30 @@ export default async function UserProfilePage({ params }: { params: { userId: st
               </div>
             </div>
           </div>
+
+          {(badges && badges.length > 0) || earlyBirdData ? (
+            <div className="border-t border-[#2a3342] pt-6">
+              <p className="text-white/60 text-sm mb-3">Achievements</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                {badges &&
+                  badges.map((badge) => (
+                    <div
+                      key={badge.id}
+                      className="flex items-center gap-2 px-3 py-1 bg-[#0B1020] border border-[#2a3342] rounded-full"
+                    >
+                      <Award className="w-3 h-3 text-yellow-400" />
+                      <span className="text-xs text-white">{badge.name}</span>
+                    </div>
+                  ))}
+                {earlyBirdData && (
+                  <div className="flex items-center gap-2 px-3 py-1 bg-[#0B1020] border border-[#2a3342] rounded-full">
+                    <Zap className="w-3 h-3 text-[#FDB022]" />
+                    <span className="text-xs text-white">Early Bird - Tier {earlyBirdData.bonus_tier}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {/* Submissions */}
