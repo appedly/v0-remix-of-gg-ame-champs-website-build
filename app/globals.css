@@ -258,3 +258,9 @@
   animation: lightning-pulse 1.6s ease-in-out infinite;
   will-change: opacity, box-shadow;
 }
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
