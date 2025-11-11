@@ -3,11 +3,60 @@
 import type React from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      
+      // Don't hide navbar if it's at the top of the page
+      if (currentScrollY < 10) {
+        setIsVisible(true)
+        setLastScrollY(currentScrollY)
+        return
+      }
+      
+      // Calculate scroll difference to determine if it's significant enough
+      const scrollDifference = Math.abs(currentScrollY - lastScrollY)
+      
+      // Only react if scroll difference is significant (reduces jumpy behavior)
+      if (scrollDifference > 5) {
+        // Determine scroll direction
+        if (currentScrollY > lastScrollY) {
+          // Scrolling down - hide navbar
+          setIsVisible(false)
+        } else {
+          // Scrolling up - show navbar
+          setIsVisible(true)
+        }
+        
+        setLastScrollY(currentScrollY)
+      }
+    }
+
+    // Add scroll event listener with throttling for performance
+    let timeoutId: NodeJS.Timeout
+    const throttledHandleScroll = () => {
+      if (timeoutId) return
+      timeoutId = setTimeout(() => {
+        handleScroll()
+        timeoutId = null
+      }, 16) // ~60fps
+    }
+
+    window.addEventListener('scroll', throttledHandleScroll, { passive: true })
+    
+    return () => {
+      window.removeEventListener('scroll', throttledHandleScroll)
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [lastScrollY])
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
@@ -21,7 +70,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="fixed top-4 left-0 right-0 z-50 px-4">
+    <nav className={`fixed top-4 left-0 right-0 z-50 px-4 transition-all duration-300 ease-in-out ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
       <div className="max-w-7xl mx-auto bg-[#0B1020]/60 backdrop-blur-md border border-white/10 rounded-full px-6 py-3">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
