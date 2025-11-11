@@ -98,68 +98,87 @@ export function Hero() {
 
           <div
             ref={containerRef}
-            className={`grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto transition-all duration-700 delay-500 ${
+            className={`relative h-48 max-w-4xl mx-auto transition-all duration-700 delay-500 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
             <div
-              className="group relative bg-gradient-to-br from-[#4fc3f7]/10 via-slate-900/50 to-slate-950/50 backdrop-blur-md rounded-2xl p-6 border border-[#4fc3f7]/20 overflow-hidden transition-all duration-500 hover:border-[#4fc3f7]/50 hover:shadow-[0_0_30px_rgba(79,195,247,0.15)] cursor-pointer"
+              className="absolute left-[15%] top-1/2 -translate-y-1/2 w-32 h-32 group cursor-pointer"
               style={{
-                transform: `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg) translateZ(0)`,
-                transition: "transform 0.1s ease-out"
+                transform: `translate(${mousePosition.x * 30}px, ${mousePosition.y * 30}px)`,
+                transition: "transform 0.2s ease-out"
               }}
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#4fc3f7]/10 rounded-full blur-2xl group-hover:bg-[#4fc3f7]/20 transition-all duration-500" />
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-[#4fc3f7]/10 border border-[#4fc3f7]/30 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-[#4fc3f7]/20 transition-all duration-300">
-                  <svg className="w-6 h-6 text-[#4fc3f7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <div className="relative w-full h-full">
+                <div className="absolute inset-0 bg-[#4fc3f7]/20 rounded-full blur-2xl animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#4fc3f7] to-[#00C2FF] rounded-full opacity-90 group-hover:opacity-100 transition-opacity duration-300 animate-[spin_20s_linear_infinite]" style={{ animationDirection: 'reverse' }} />
+                <div className="absolute inset-2 bg-[#0B1020]/80 backdrop-blur-sm rounded-full border-2 border-[#4fc3f7]/30 group-hover:border-[#4fc3f7] transition-all duration-300 flex items-center justify-center group-hover:scale-110">
+                  <svg className="w-12 h-12 text-[#4fc3f7] group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#4fc3f7] transition-colors">Instant Submission</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">Upload clips directly. One-click tournament entry with automatic processing.</p>
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#4fc3f7] to-transparent rounded-full opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-300" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#4fc3f7]/50 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
             </div>
 
             <div
-              className="group relative bg-gradient-to-br from-[#FFD166]/10 via-slate-900/50 to-slate-950/50 backdrop-blur-md rounded-2xl p-6 border border-[#FFD166]/20 overflow-hidden transition-all duration-500 hover:border-[#FFD166]/50 hover:shadow-[0_0_30px_rgba(255,209,102,0.15)] cursor-pointer"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 group cursor-pointer z-10"
               style={{
-                transform: `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg) translateZ(0)`,
-                transition: "transform 0.1s ease-out"
+                transform: `translate(calc(-50% + ${mousePosition.x * -40}px), calc(-50% + ${mousePosition.y * -40}px))`,
+                transition: "transform 0.2s ease-out"
               }}
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD166]/10 rounded-full blur-2xl group-hover:bg-[#FFD166]/20 transition-all duration-500" />
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-[#FFD166]/10 border border-[#FFD166]/30 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-[#FFD166]/20 transition-all duration-300">
-                  <svg className="w-6 h-6 text-[#FFD166]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              <div className="relative w-full h-full">
+                <div className="absolute inset-0 bg-[#FFD166]/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '0.3s' }} />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#FFD166] to-[#FFA500] rounded-full opacity-90 group-hover:opacity-100 transition-opacity duration-300 animate-[spin_15s_linear_infinite]" />
+                <div className="absolute inset-2 bg-[#0B1020]/80 backdrop-blur-sm rounded-full border-2 border-[#FFD166]/30 group-hover:border-[#FFD166] transition-all duration-300 flex items-center justify-center group-hover:scale-110">
+                  <svg className="w-16 h-16 text-[#FFD166] group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#FFD166] transition-colors">Community Voting</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">Your peers decide. Fair ranking system with anti-manipulation protection.</p>
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#FFD166] to-transparent rounded-full opacity-0 group-hover:opacity-40 blur-xl transition-opacity duration-300" />
+                <div className="absolute inset-0 rounded-full border-2 border-dashed border-[#FFD166]/20 animate-[spin_30s_linear_infinite]" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#FFD166]/50 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
             </div>
 
             <div
-              className="group relative bg-gradient-to-br from-[#00C2FF]/10 via-slate-900/50 to-slate-950/50 backdrop-blur-md rounded-2xl p-6 border border-[#00C2FF]/20 overflow-hidden transition-all duration-500 hover:border-[#00C2FF]/50 hover:shadow-[0_0_30px_rgba(0,194,255,0.15)] cursor-pointer"
+              className="absolute right-[15%] top-1/2 -translate-y-1/2 w-36 h-36 group cursor-pointer"
               style={{
-                transform: `perspective(1000px) rotateX(${mousePosition.y * 2}deg) rotateY(${mousePosition.x * 2}deg) translateZ(0)`,
-                transition: "transform 0.1s ease-out"
+                transform: `translate(${mousePosition.x * 25}px, ${mousePosition.y * 25}px)`,
+                transition: "transform 0.2s ease-out"
               }}
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#00C2FF]/10 rounded-full blur-2xl group-hover:bg-[#00C2FF]/20 transition-all duration-500" />
-              <div className="relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-[#00C2FF]/10 border border-[#00C2FF]/30 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-[#00C2FF]/20 transition-all duration-300">
-                  <svg className="w-6 h-6 text-[#00C2FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              <div className="relative w-full h-full">
+                <div className="absolute inset-0 bg-[#00C2FF]/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '0.6s' }} />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00C2FF] to-[#0080FF] rounded-full opacity-90 group-hover:opacity-100 transition-opacity duration-300 animate-[spin_18s_linear_infinite]" style={{ animationDirection: 'reverse' }} />
+                <div className="absolute inset-2 bg-[#0B1020]/80 backdrop-blur-sm rounded-full border-2 border-[#00C2FF]/30 group-hover:border-[#00C2FF] transition-all duration-300 flex items-center justify-center group-hover:scale-110">
+                  <svg className="w-14 h-14 text-[#00C2FF] group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#00C2FF] transition-colors">Real Rewards</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">Win actual prizes. Cash, gear, and exclusive tournament invitations.</p>
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#00C2FF] to-transparent rounded-full opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-300" />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00C2FF]/50 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+            </div>
+
+            <div className="absolute inset-0 pointer-events-none">
+              <svg className="w-full h-full opacity-20" viewBox="0 0 800 200">
+                <path
+                  d="M 120 100 Q 250 80 400 100 T 680 100"
+                  stroke="url(#gradient1)"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeDasharray="5,5"
+                  className="animate-[dash_20s_linear_infinite]"
+                />
+                <defs>
+                  <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#4fc3f7" stopOpacity="0.5" />
+                    <stop offset="50%" stopColor="#FFD166" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="#00C2FF" stopOpacity="0.5" />
+                  </linearGradient>
+                </defs>
+              </svg>
             </div>
           </div>
         </div>
