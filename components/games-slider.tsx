@@ -36,18 +36,18 @@ export function GamesSlider() {
   }, [])
 
   return (
-    <section id="games" className="py-20 relative overflow-hidden">
-      <div className="container mx-auto px-4 mb-12">
+    <section id="games" className="py-16 sm:py-20 relative overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-10 sm:mb-12">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Supported Games</h2>
-          <p className="text-lg text-white/70">Compete across your favorite titles with more games added regularly</p>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6">Supported Games</h2>
+          <p className="text-base sm:text-lg text-white/70">Compete across your favorite titles with more games added regularly</p>
         </div>
       </div>
 
-      <div ref={scrollRef} className="flex gap-6 overflow-x-hidden px-4" style={{ scrollBehavior: "auto" }}>
+      <div ref={scrollRef} className="flex gap-4 sm:gap-6 overflow-x-hidden px-4" style={{ scrollBehavior: "auto" }}>
         {/* Duplicate games for infinite scroll effect */}
         {[...games, ...games].map((game, index) => (
-          <div key={index} className="flex-shrink-0 w-[300px] h-[200px] relative rounded-lg overflow-hidden group">
+          <div key={index} className="flex-shrink-0 w-[240px] sm:w-[280px] md:w-[300px] h-[160px] sm:h-[180px] md:h-[200px] relative rounded-lg overflow-hidden group">
             <img
               src={game.image || "/placeholder.svg"}
               alt={game.name}

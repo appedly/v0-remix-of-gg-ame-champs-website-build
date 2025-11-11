@@ -35,31 +35,31 @@ export function FAQ() {
   ]
 
   return (
-    <section id="faq" className="py-32 relative overflow-hidden">
+    <section id="faq" className="py-20 sm:py-24 md:py-32 relative overflow-hidden">
       {/* Sophisticated background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0B1020] via-[#1a2332] to-[#0B1020]" />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(79,195,247,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(79,195,247,0.03)_1px,transparent_1px)] bg-[size:50px_50px] animate-pulse" />
       
       {/* Floating orbs with FAQ-themed colors */}
-      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-[#4A6CFF]/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
-      <div className="absolute bottom-1/3 left-1/4 w-[400px] h-[400px] bg-[#FFD166]/10 rounded-full blur-[80px] pointer-events-none animate-pulse" style={{ animationDelay: "1s" }} />
+      <div className="absolute top-1/4 right-1/4 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-[#4A6CFF]/10 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none animate-pulse" />
+      <div className="absolute bottom-1/3 left-1/4 w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] bg-[#FFD166]/10 rounded-full blur-[60px] sm:blur-[80px] pointer-events-none animate-pulse" style={{ animationDelay: "1s" }} />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Enhanced header section */}
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#4A6CFF]/10 to-[#4fc3f7]/10 border border-[#4A6CFF]/30 rounded-full mb-8 backdrop-blur-sm">
+          <div className="text-center mb-12 sm:mb-16 md:mb-20">
+            <div className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-[#4A6CFF]/10 to-[#4fc3f7]/10 border border-[#4A6CFF]/30 rounded-full mb-6 sm:mb-8 backdrop-blur-sm">
               <HelpCircleIcon className="w-4 h-4 text-[#4fc3f7]" />
-              <span className="text-[#4fc3f7] text-sm font-semibold tracking-wide">FREQUENTLY ASKED QUESTIONS</span>
+              <span className="text-[#4fc3f7] text-xs sm:text-sm font-semibold tracking-wide">FREQUENTLY ASKED QUESTIONS</span>
             </div>
             
-            <h2 className="text-5xl md:text-7xl font-bold text-white mb-6 text-balance leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 text-balance leading-tight">
               Got{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4A6CFF] via-[#4fc3f7] to-[#00C2FF] animate-gradient">
                 Questions?
               </span>
             </h2>
-            <p className="text-2xl md:text-3xl text-white/60 font-light">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/60 font-light">
               We've Got{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD166] via-[#FF7A1A] to-[#FF6B6B] animate-gradient">
                 Answers
@@ -87,19 +87,19 @@ export function FAQ() {
                 >
                   <button
                     onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                    className="w-full px-8 py-6 flex items-center justify-between text-left group"
+                    className="w-full px-5 sm:px-8 py-5 sm:py-6 flex items-center justify-between text-left group"
                   >
-                    <div className="flex items-center gap-4 flex-1">
+                    <div className="flex items-center gap-3 sm:gap-4 flex-1">
                       {/* Question number indicator */}
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all duration-300 ${
                         openIndex === index 
                           ? "bg-gradient-to-br from-[#4A6CFF] to-[#4fc3f7] text-white shadow-lg" 
                           : "bg-[#2a3342]/60 text-white/60 group-hover:bg-[#4A6CFF]/20 group-hover:text-[#4fc3f7]"
                       }`}>
-                        {String(index + 1).padStart(2, '0')}
+                        {String(index + 1).padStart(2, "0")}
                       </div>
                       
-                      <span className={`text-lg font-semibold pr-8 transition-colors duration-300 ${
+                      <span className={`text-base sm:text-lg font-semibold pr-6 sm:pr-8 transition-colors duration-300 ${
                         openIndex === index 
                           ? "text-[#4fc3f7]" 
                           : "text-white group-hover:text-white/90"
@@ -109,7 +109,7 @@ export function FAQ() {
                     </div>
                     
                     <ChevronDown
-                      className={`w-6 h-6 transition-all duration-300 flex-shrink-0 ${
+                      className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 flex-shrink-0 ${
                         openIndex === index 
                           ? "text-[#4fc3f7] rotate-180" 
                           : "text-white/40 group-hover:text-[#4fc3f7]/70"
@@ -120,8 +120,8 @@ export function FAQ() {
                   <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
                     openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                   }`}>
-                    <div className="px-8 pb-6">
-                      <div className="pl-14 text-white/70 leading-relaxed group-hover:text-white/80 transition-colors duration-300">
+                    <div className="px-5 sm:px-8 pb-5 sm:pb-6">
+                      <div className="pl-11 sm:pl-14 text-sm sm:text-base text-white/70 leading-relaxed group-hover:text-white/80 transition-colors duration-300">
                         {faq.answer}
                       </div>
                     </div>
