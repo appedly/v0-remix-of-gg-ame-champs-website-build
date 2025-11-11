@@ -69,10 +69,15 @@ export function Features() {
       <div className="absolute bottom-1/3 left-1/4 w-[500px] h-[500px] bg-[#4A6CFF]/8 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDelay: "1s" }} />
       <div className="absolute top-1/2 left-1/3 w-[300px] h-[300px] bg-[#FF7A1A]/6 rounded-full blur-[80px] pointer-events-none animate-pulse" style={{ animationDelay: "2s" }} />
       
-      {/* Animated lightning traces */}
+      {/* Animated glowing lines connecting features */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-0.5 h-full bg-gradient-to-b from-transparent via-[#FFD166]/20 to-transparent lightning-trace" style={{ animationDelay: "0s" }} />
-        <div className="absolute top-0 right-1/3 w-0.5 h-full bg-gradient-to-b from-transparent via-[#4A6CFF]/20 to-transparent lightning-trace" style={{ animationDelay: "1.5s" }} />
+        {/* Vertical glowing lines */}
+        <div className="absolute top-0 left-1/4 w-0.5 h-full bg-gradient-to-b from-transparent via-[#FFD166]/30 to-transparent lightning-trace" style={{ animationDelay: "0s" }} />
+        <div className="absolute top-0 right-1/3 w-0.5 h-full bg-gradient-to-b from-transparent via-[#4A6CFF]/30 to-transparent lightning-trace" style={{ animationDelay: "1.5s" }} />
+        
+        {/* Horizontal flowing lines */}
+        <div className="absolute top-1/3 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#FFD166]/20 to-transparent flow-line" style={{ animationDelay: "0s" }} />
+        <div className="absolute top-2/3 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#4A6CFF]/20 to-transparent flow-line" style={{ animationDelay: "1s" }} />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -81,7 +86,7 @@ export function Features() {
           <div className="inline-block px-8 py-4 bg-gradient-to-r from-[#FFD166]/10 to-[#FF7A1A]/10 border border-[#FFD166]/30 rounded-full mb-10 backdrop-blur-sm hover:from-[#FFD166]/20 hover:to-[#FF7A1A]/20 transition-all duration-500">
             <span className="text-[#FFD166] text-sm font-bold tracking-wider uppercase">PREMIUM FEATURES</span>
           </div>
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 text-balance leading-tight">
+          <h2 className="serif-heading text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 text-balance leading-tight">
             Everything You Need to{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD166] via-[#FF7A1A] to-[#FF6B6B] animate-gradient">
               Dominate
@@ -108,9 +113,9 @@ export function Features() {
                 <div className="absolute -inset-1 bg-gradient-to-br from-[#FFD166]/30 via-[#FF7A1A]/20 to-[#FFD166]/30 rounded-4xl opacity-0 group-hover:opacity-40 transition-opacity duration-700 blur-xl" />
 
                 <div className="relative space-y-8">
-                  <div className="w-24 h-24 bg-gradient-to-br from-[#FFD166]/15 to-[#FF7A1A]/15 border-3 border-[#FFD166]/40 rounded-3xl flex items-center justify-center group-hover:scale-110 group-hover:border-[#FFD166] group-hover:from-[#FFD166]/25 group-hover:to-[#FF7A1A]/25 transition-all duration-700 text-[#FFD166] shadow-2xl group-hover:shadow-[0_0_40px_rgba(255,209,102,0.4)]">
-                    <feature.icon />
-                  </div>
+                    <div className="w-24 h-24 bg-gradient-to-br from-[#FFD166]/15 to-[#FF7A1A]/15 border-3 border-[#FFD166]/40 rounded-3xl flex items-center justify-center group-hover:scale-110 group-hover:border-[#FFD166] group-hover:from-[#FFD166]/25 group-hover:to-[#FF7A1A]/25 transition-all duration-700 text-[#FFD166] shadow-2xl group-hover:shadow-[0_0_40px_rgba(255,209,102,0.4)] glow-pulse">
+                      <feature.icon />
+                    </div>
 
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
@@ -161,7 +166,7 @@ export function Features() {
               <div className="absolute -inset-0.5 bg-gradient-to-br from-[#4A6CFF]/20 to-[#4fc3f7]/20 rounded-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-md" />
 
               <div className="relative space-y-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#4A6CFF]/10 to-[#4fc3f7]/10 border-2 border-[#4A6CFF]/30 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:border-[#4A6CFF] group-hover:from-[#4A6CFF]/20 group-hover:to-[#4fc3f7]/20 transition-all duration-500 text-[#4A6CFF] shadow-lg">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#4A6CFF]/10 to-[#4fc3f7]/10 border-2 border-[#4A6CFF]/30 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:border-[#4A6CFF] group-hover:from-[#4A6CFF]/20 group-hover:to-[#4fc3f7]/20 transition-all duration-500 text-[#4A6CFF] shadow-lg scroll-glow">
                   <feature.icon />
                 </div>
 

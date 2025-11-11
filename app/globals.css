@@ -258,3 +258,76 @@
   animation: lightning-pulse 1.6s ease-in-out infinite;
   will-change: opacity, box-shadow;
 }
+
+/* Glowing line animation for features */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(255, 209, 102, 0.3), inset 0 0 0 rgba(255, 209, 102, 0.2);
+    text-shadow: 0 0 0 rgba(255, 209, 102, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 209, 102, 0.6), inset 0 0 20px rgba(255, 209, 102, 0.3);
+    text-shadow: 0 0 20px rgba(255, 209, 102, 0.6);
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+/* Flowing line animation */
+@keyframes flow-line {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.flow-line {
+  background-size: 200% 100%;
+  animation: flow-line 3s linear infinite;
+}
+
+/* Scroll-triggered glow effect */
+@keyframes scroll-glow {
+  0% {
+    box-shadow: 0 0 10px rgba(74, 108, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(74, 108, 255, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(74, 108, 255, 0.2);
+  }
+}
+
+.scroll-glow {
+  animation: scroll-glow 2s ease-in-out infinite;
+}
+
+/* Sticky navbar animations */
+@keyframes navbar-shrink {
+  0% {
+    height: auto;
+    background-color: rgba(11, 16, 32, 0.6);
+  }
+  100% {
+    height: auto;
+    background-color: rgba(11, 16, 32, 0.95);
+  }
+}
+
+.navbar-scrolled {
+  animation: navbar-shrink 0.3s ease-out forwards;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Serif font enhancement */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;0,800;1,400;1,700&display=swap');
+
+.serif-heading {
+  font-family: 'EB Garamond', Georgia, serif;
+}

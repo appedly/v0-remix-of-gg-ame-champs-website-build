@@ -134,12 +134,12 @@ export function EarlyAccess() {
                     )}
 
                     <button
-                      type="submit"
-                      disabled={isLoading}
-                      className="w-full px-6 py-3 bg-[#4A6CFF] text-white rounded-xl font-medium text-base hover:bg-[#5A7CFF] transition-all shadow-lg shadow-[#4A6CFF]/20 disabled:opacity-50 disabled:cursor-not-allowed h-12"
-                    >
-                      {isLoading ? "Creating account..." : "Pre-Register"}
-                    </button>
+                       type="submit"
+                       disabled={isLoading}
+                       className="w-full px-6 py-3 bg-[#4A6CFF] text-white rounded-xl font-medium text-base hover:bg-[#5A7CFF] transition-all shadow-lg shadow-[#4A6CFF]/20 disabled:opacity-50 disabled:cursor-not-allowed h-12"
+                     >
+                       {isLoading ? "Joining waitlist..." : "Join the Waitlist"}
+                     </button>
                   </form>
                 )}
               </div>

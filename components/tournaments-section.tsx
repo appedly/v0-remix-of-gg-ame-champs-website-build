@@ -108,7 +108,7 @@ export function TournamentsSection() {
             href="/signup"
             className="group inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-[#4fc3f7] to-[#4A6CFF] text-white rounded-full font-semibold text-lg hover:from-[#4fc3f7]/90 hover:to-[#4A6CFF]/90 transition-all hover:scale-105 shadow-xl hover:shadow-[0_0_40px_rgba(79,195,247,0.4)]"
           >
-            Pre Register Now
+            Join the Waitlist
             <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
           </Link>
         </div>
