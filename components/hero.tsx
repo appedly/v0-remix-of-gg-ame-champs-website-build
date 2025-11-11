@@ -1,29 +1,13 @@
 "use client"
 
 import Image from "next/image"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 
 export function Hero() {
   const [mounted, setMounted] = useState(false)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect()
-        const x = (e.clientX - rect.left - rect.width / 2) / rect.width
-        const y = (e.clientY - rect.top - rect.height / 2) / rect.height
-        setMousePosition({ x, y })
-      }
-    }
-
-    window.addEventListener("mousemove", handleMouseMove)
-    return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
   return (
@@ -94,72 +78,6 @@ export function Hero() {
               How It Works
               <span className="inline-block group-hover:translate-y-1 transition-transform">↓</span>
             </a>
-          </div>
-
-          <div
-            ref={containerRef}
-            className={`relative max-w-2xl mx-auto mt-4 transition-all duration-700 delay-500 ${
-              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 md:gap-12">
-              <div
-                className="group relative"
-                style={{
-                  transform: `translateY(${mousePosition.y * -10}px)`,
-                  transition: "transform 0.3s ease-out"
-                }}
-              >
-                <div className="absolute -inset-4 bg-gradient-to-r from-[#4fc3f7]/20 to-[#4fc3f7]/0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative flex items-center gap-3 px-5 py-3 bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-[#4fc3f7]/20 rounded-2xl group-hover:border-[#4fc3f7]/50 transition-all duration-300">
-                  <div className="w-10 h-10 rounded-xl bg-[#4fc3f7]/10 border border-[#4fc3f7]/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-5 h-5 text-[#4fc3f7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <div className="h-8 w-px bg-[#4fc3f7]/20" />
-                  <div className="text-sm font-medium text-slate-400 group-hover:text-[#4fc3f7] transition-colors duration-300">Instant Submit</div>
-                </div>
-              </div>
-
-              <div
-                className="group relative"
-                style={{
-                  transform: `translateY(${mousePosition.y * 10}px)`,
-                  transition: "transform 0.3s ease-out"
-                }}
-              >
-                <div className="absolute -inset-4 bg-gradient-to-r from-[#FFD166]/20 to-[#FFD166]/0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative flex items-center gap-3 px-5 py-3 bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-[#FFD166]/20 rounded-2xl group-hover:border-[#FFD166]/50 transition-all duration-300">
-                  <div className="w-10 h-10 rounded-xl bg-[#FFD166]/10 border border-[#FFD166]/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-5 h-5 text-[#FFD166]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="h-8 w-px bg-[#FFD166]/20" />
-                  <div className="text-sm font-medium text-slate-400 group-hover:text-[#FFD166] transition-colors duration-300">Fair Voting</div>
-                </div>
-              </div>
-
-              <div
-                className="group relative"
-                style={{
-                  transform: `translateY(${mousePosition.y * -10}px)`,
-                  transition: "transform 0.3s ease-out"
-                }}
-              >
-                <div className="absolute -inset-4 bg-gradient-to-r from-[#00C2FF]/20 to-[#00C2FF]/0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative flex items-center gap-3 px-5 py-3 bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-[#00C2FF]/20 rounded-2xl group-hover:border-[#00C2FF]/50 transition-all duration-300">
-                  <div className="w-10 h-10 rounded-xl bg-[#00C2FF]/10 border border-[#00C2FF]/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <svg className="w-5 h-5 text-[#00C2FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="h-8 w-px bg-[#00C2FF]/20" />
-                  <div className="text-sm font-medium text-slate-400 group-hover:text-[#00C2FF] transition-colors duration-300">Win Prizes</div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
