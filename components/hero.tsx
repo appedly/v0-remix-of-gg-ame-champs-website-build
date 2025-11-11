@@ -1,6 +1,15 @@
+"use client"
+
 import Image from "next/image"
+import { useEffect, useState } from "react"
 
 export function Hero() {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-32 overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -8,42 +17,101 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/60 via-[#0B1020]/80 to-[#0B1020]" />
       </div>
 
-      {/* Subtle ambient glow effects */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b0a_1px,transparent_1px),linear-gradient(to_bottom,#1e293b0a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] z-0" />
+
       <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#4fc3f7]/5 rounded-full blur-[120px] pointer-events-none z-0" />
       <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-[#4A6CFF]/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="container mx-auto px-4 py-20 relative z-10">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFD166]/10 border border-[#FFD166]/30 rounded-full mb-8">
+        <div className="max-w-6xl mx-auto text-center">
+          <div
+            className={`inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#FFD166]/10 to-[#4fc3f7]/10 border border-[#FFD166]/20 rounded-full mb-8 backdrop-blur-sm transition-all duration-700 ${
+              mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+            }`}
+          >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFD166] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFD166]"></span>
             </span>
-            <span className="text-[#FFD166] text-sm font-semibold">PRE-LAUNCH • JOIN THE WAITLIST</span>
+            <span className="text-[#FFD166] text-sm font-semibold tracking-wide">PRE-LAUNCH • EARLY ACCESS AVAILABLE</span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-semibold text-white mb-6 text-balance leading-[1.1] tracking-tight">
-            Turn Your Gaming Clips into{" "}
+          <h1
+            className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-8 text-balance leading-[1.1] tracking-tight transition-all duration-700 delay-100 ${
+              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
+            Compete. Dominate.{" "}
             <span className="relative inline-block">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#29b6f6]">
-                Glory
+                Win Prizes.
               </span>
+              <div className="absolute -bottom-2 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#4fc3f7] to-transparent" />
             </span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-white/50 mb-12 text-pretty max-w-3xl mx-auto leading-relaxed font-light">
-            Join tournaments, showcase clips, and rise through the ranks before anyone else.
+          <p
+            className={`text-lg sm:text-xl md:text-2xl text-slate-300 mb-10 text-pretty max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
+              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
+            Submit your best gaming moments, compete in weekly tournaments, and climb the leaderboard. 
+            Your skills deserve recognition.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
+          <div
+            className={`flex flex-col sm:flex-row gap-4 justify-center mb-16 transition-all duration-700 delay-300 ${
+              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
             <a
               href="#early-access"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#0a0f1e] rounded-full font-semibold text-lg hover:bg-white/90 transition-all hover:scale-105 shadow-lg hover:shadow-xl"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#4fc3f7] to-[#00C2FF] text-[#0a0f1e] rounded-full font-semibold text-lg hover:shadow-[0_0_40px_rgba(79,195,247,0.3)] transition-all duration-300 hover:scale-105 shadow-lg"
             >
-              Pre Register Now
+              Get Early Access
               <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
             </a>
+            <a
+              href="#how-it-works"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm"
+            >
+              How It Works
+              <span className="inline-block group-hover:translate-y-1 transition-transform">↓</span>
+            </a>
           </div>
+
+          <div
+            className={`grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto transition-all duration-700 delay-500 ${
+              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
+            <div className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-[#4fc3f7]/30 transition-all duration-300 hover:scale-105">
+              <div className="text-3xl font-bold text-[#4fc3f7] mb-2">5K+</div>
+              <div className="text-slate-400 text-sm font-medium">Players Ready</div>
+            </div>
+            <div className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-[#FFD166]/30 transition-all duration-300 hover:scale-105">
+              <div className="text-3xl font-bold text-[#FFD166] mb-2">$10K+</div>
+              <div className="text-slate-400 text-sm font-medium">Prize Pool</div>
+            </div>
+            <div className="bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-[#00C2FF]/30 transition-all duration-300 hover:scale-105">
+              <div className="text-3xl font-bold text-[#00C2FF] mb-2">24/7</div>
+              <div className="text-slate-400 text-sm font-medium">Live Tournaments</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+        <div className="flex flex-col items-center gap-2 text-white/40 hover:text-white/60 transition-colors cursor-pointer">
+          <span className="text-xs font-medium tracking-wider">SCROLL TO EXPLORE</span>
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
         </div>
       </div>
     </section>
