@@ -52,35 +52,35 @@ export function EarlyAccess() {
   }
 
   return (
-    <section id="early-access" className="py-20 relative">
-      <div className="container mx-auto px-4">
+    <section id="early-access" className="py-16 sm:py-20 md:py-24 relative">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Join Early Access</h2>
-            <p className="text-lg text-white/70">Be among the first to experience the future of competitive gaming</p>
+          <div className="text-center mb-10 sm:mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 sm:mb-6">Join Early Access</h2>
+            <p className="text-base sm:text-lg text-white/70">Be among the first to experience the future of competitive gaming</p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-start lg:items-center">
             {/* Benefits */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {benefits.map((benefit, index) => (
                 <div
                   key={index}
-                  className="flex items-start gap-4 p-4 bg-[#1a2332] rounded-lg border border-[#2a3342] hover:translate-x-2 transition-transform"
+                  className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-[#1a2332] rounded-lg border border-[#2a3342] hover:translate-x-2 transition-transform"
                   style={{
                     animationDelay: `${index * 100}ms`,
                   }}
                 >
-                  <div className="w-6 h-6 bg-[#00C2FF]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="w-4 h-4 text-[#00C2FF]" />
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#00C2FF]/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="w-3 h-3 sm:w-4 sm:h-4 text-[#00C2FF]" />
                   </div>
-                  <p className="text-white/80">{benefit}</p>
+                  <p className="text-sm sm:text-base text-white/80">{benefit}</p>
                 </div>
               ))}
             </div>
 
             <div className="relative">
-              <div className="bg-[#151b2e]/50 backdrop-blur-sm p-8 rounded-2xl border border-white/5 shadow-2xl">
+              <div className="bg-[#151b2e]/50 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-white/5 shadow-2xl">
                 {success ? (
                   <div className="text-center py-8">
                     <div className="w-16 h-16 bg-[#00C2FF]/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -136,7 +136,7 @@ export function EarlyAccess() {
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full px-6 py-3 bg-[#4A6CFF] text-white rounded-xl font-medium text-base hover:bg-[#5A7CFF] transition-all shadow-lg shadow-[#4A6CFF]/20 disabled:opacity-50 disabled:cursor-not-allowed h-12"
+                      className="w-full px-5 sm:px-6 py-3 bg-[#4A6CFF] text-white rounded-xl font-medium text-sm sm:text-base hover:bg-[#5A7CFF] transition-all shadow-lg shadow-[#4A6CFF]/20 disabled:opacity-50 disabled:cursor-not-allowed h-12"
                     >
                       {isLoading ? "Creating account..." : "Pre-Register"}
                     </button>
