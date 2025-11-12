@@ -1,32 +1,22 @@
 "use client"
 
-import { useEffect, useMemo, useState, useRef } from "react"
-import { Trophy, Zap, Skull, Swords, Award, Crosshair } from "lucide-react"
+import { useEffect, useState, useRef } from "react"
+import { Play, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function CTASection() {
   const [isVisible, setIsVisible] = useState(false)
-  const [typedText, setTypedText] = useState("")
-  const [showCursor, setShowCursor] = useState(true)
+  const [isRecording, setIsRecording] = useState(false)
   const sectionRef = useRef<HTMLDivElement>(null)
-  
-  const fullText = "> READY_TO_COMPETE?"
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 20 }, () => ({
-        left: Math.random() * 100,
-        top: Math.random() * 100,
-        duration: 3 + Math.random() * 4,
-        delay: Math.random() * 2,
-      })),
-    []
-  )
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries
         setIsVisible(entry.isIntersecting)
+        if (entry.isIntersecting) {
+          setTimeout(() => setIsRecording(true), 500)
+        }
       },
       { threshold: 0.3 }
     )
@@ -38,311 +28,169 @@ export function CTASection() {
     return () => observer.disconnect()
   }, [])
 
-  useEffect(() => {
-    if (!isVisible) {
-      setTypedText("")
-      return
-    }
-
-    let currentIndex = 0
-    const typingInterval = setInterval(() => {
-      if (currentIndex <= fullText.length) {
-        setTypedText(fullText.slice(0, currentIndex))
-        currentIndex++
-      } else {
-        clearInterval(typingInterval)
-      }
-    }, 80)
-
-    return () => clearInterval(typingInterval)
-  }, [isVisible])
-
-  useEffect(() => {
-    const cursorInterval = setInterval(() => {
-      setShowCursor((prev) => !prev)
-    }, 500)
-    return () => clearInterval(cursorInterval)
-  }, [])
-
   return (
     <section ref={sectionRef} className="py-20 sm:py-24 md:py-32 relative overflow-hidden">
-      {/* Dark tech background */}
-      <div className="absolute inset-0 bg-[#050810]" />
+      {/* Clean gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020] via-[#0f1419] to-[#0B1020]" />
       
-      {/* Animated grid */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,170,0.3)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,170,0.3)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black_40%,transparent_100%)]" />
+      {/* Subtle grid */}
+      <div className="absolute inset-0 opacity-[0.03]">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] bg-[size:60px_60px]" />
       </div>
 
-      {/* Scanlines effect */}
-      <div className="absolute inset-0 pointer-events-none opacity-10">
-        <div
-          className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,255,170,0.1)_50%)] bg-[length:100%_4px]"
-          style={{ animation: "scan 12s linear infinite" }}
-        />
-      </div>
-
-      {/* Floating particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {particles.map((particle, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-50"
-            style={{
-              left: `${particle.left}%`,
-              top: `${particle.top}%`,
-              animation: `float-particle ${particle.duration}s ease-in-out infinite`,
-              animationDelay: `${particle.delay}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Corner decorations */}
-      <div className="absolute top-8 left-8 w-16 h-16 border-l-2 border-t-2 border-cyan-400/50" />
-      <div className="absolute top-8 right-8 w-16 h-16 border-r-2 border-t-2 border-cyan-400/50" />
-      <div className="absolute bottom-8 left-8 w-16 h-16 border-l-2 border-b-2 border-cyan-400/50" />
-      <div className="absolute bottom-8 right-8 w-16 h-16 border-r-2 border-b-2 border-cyan-400/50" />
+      {/* Ambient glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-full blur-[120px]" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-5xl mx-auto">
-          {/* Console Header */}
-          <div className="mb-8 sm:mb-12 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-black/40 border border-cyan-400/30 backdrop-blur-sm mb-4">
-              <div className="flex gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" style={{ animationDelay: "0.2s" }} />
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" style={{ animationDelay: "0.4s" }} />
+          {/* Recording indicator */}
+          <div className="flex justify-center mb-8 sm:mb-10">
+            <div
+              className={cn(
+                "inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/20 backdrop-blur-sm border transition-all duration-500",
+                isRecording
+                  ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.3)]"
+                  : "border-white/10"
+              )}
+            >
+              <div className="relative">
+                <Circle
+                  className={cn(
+                    "w-2 h-2 transition-all duration-500",
+                    isRecording ? "fill-red-500 text-red-500" : "fill-gray-500 text-gray-500"
+                  )}
+                />
+                {isRecording && (
+                  <Circle className="absolute inset-0 w-2 h-2 fill-red-500 text-red-500 animate-ping" />
+                )}
               </div>
-              <span className="text-cyan-400 text-xs font-mono">SYSTEM_READY</span>
+              <span
+                className={cn(
+                  "text-xs font-medium transition-colors duration-500",
+                  isRecording ? "text-red-400" : "text-gray-400"
+                )}
+              >
+                {isRecording ? "RECORDING" : "STANDBY"}
+              </span>
             </div>
           </div>
 
-          {/* Main Console Card */}
+          {/* Main content card */}
           <div className="relative">
-            {/* Glowing border animation */}
-            <div className="absolute -inset-[2px] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 rounded-2xl opacity-75 blur-xl animate-pulse-glow" />
+            {/* Subtle glow behind card */}
+            <div className="absolute -inset-px bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
             {/* Main card */}
-            <div className="relative bg-gradient-to-br from-[#0a1628] via-[#0d1b2a] to-[#0a1628] rounded-2xl overflow-hidden border border-cyan-400/30 shadow-2xl">
-              {/* Top HUD bar */}
-              <div className="flex items-center justify-between px-6 py-3 bg-black/40 border-b border-cyan-400/20">
-                <div className="flex items-center gap-3">
-                  <Crosshair className="w-4 h-4 text-cyan-400 animate-pulse" />
-                  <span className="text-cyan-400 text-xs font-mono">TARGET_ACQUIRED</span>
-                </div>
-                <div className="flex gap-2">
-                  <div className="w-16 h-1 bg-cyan-400/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-cyan-400 animate-pulse-bar" />
-                  </div>
-                  <div className="w-16 h-1 bg-purple-400/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-purple-400 animate-pulse-bar" style={{ animationDelay: "0.5s" }} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Glitch effect overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 to-purple-500/5 mix-blend-overlay pointer-events-none animate-glitch" />
-
+            <div className="relative bg-gradient-to-br from-slate-900/80 via-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+              {/* Subtle top border accent */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+              
               {/* Content */}
-              <div className="relative p-8 sm:p-12 md:p-16">
-                {/* Floating gaming icons */}
-                <div className="absolute inset-0 pointer-events-none hidden lg:block overflow-hidden">
-                  {[
-                    { Icon: Trophy, pos: "top-20 left-12", delay: "0s" },
-                    { Icon: Zap, pos: "top-32 right-16", delay: "0.3s" },
-                    { Icon: Skull, pos: "bottom-24 left-20", delay: "0.6s" },
-                    { Icon: Swords, pos: "bottom-32 right-12", delay: "0.9s" },
-                    { Icon: Award, pos: "top-1/2 left-8", delay: "0.2s" },
-                    { Icon: Crosshair, pos: "top-1/2 right-8", delay: "0.5s" },
-                  ].map(({ Icon, pos, delay }, i) => (
-                    <div
-                      key={i}
-                      className={cn(
-                        "absolute",
-                        pos,
-                        isVisible ? "opacity-20" : "opacity-0"
-                      )}
-                      style={{
-                        animation: isVisible ? `float-icon ${3 + i}s ease-in-out infinite` : "none",
-                        animationDelay: delay,
-                      }}
-                    >
-                      <Icon className="w-8 h-8 text-cyan-400" />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Terminal-style heading */}
-                <div className="mb-8 sm:mb-10">
-                  <div className="flex items-start gap-2 mb-6">
-                    <span className="text-cyan-400 font-mono text-sm sm:text-base flex-shrink-0">$</span>
-                    <div className="flex-1">
-                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-mono text-white leading-tight">
-                        {typedText}
-                        {showCursor && isVisible && <span className="text-cyan-400 animate-pulse">▊</span>}
-                      </h2>
-                    </div>
-                  </div>
+              <div className="p-8 sm:p-12 md:p-16 lg:p-20">
+                {/* Heading */}
+                <div className="text-center mb-10 sm:mb-12">
+                  <h2
+                    className={cn(
+                      "text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 transition-all duration-1000",
+                      isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                    )}
+                  >
+                    Clip It.{" "}
+                    <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+                      Submit It.
+                    </span>
+                    <br />
+                    Win It.
+                  </h2>
                   
-                  {/* Achievement unlock style */}
-                  <div className="inline-flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg backdrop-blur-sm mb-6">
-                    <Trophy className="w-5 h-5 text-yellow-400 animate-bounce" />
-                    <span className="text-yellow-300 text-sm font-semibold">ACHIEVEMENT UNLOCKED</span>
+                  <p
+                    className={cn(
+                      "text-lg sm:text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-200",
+                      isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                    )}
+                  >
+                    Turn your greatest gaming moments into competitive glory.
+                    <br className="hidden sm:block" />
+                    <span className="text-slate-400">No gimmicks. Just pure skill.</span>
+                  </p>
+                </div>
+
+                {/* Features grid - clean and minimal */}
+                <div
+                  className={cn(
+                    "grid md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto transition-all duration-1000 delay-400",
+                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  )}
+                >
+                  <div className="flex flex-col items-center text-center p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 hover:border-cyan-500/30 transition-all duration-300 group">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <Play className="w-6 h-6 text-cyan-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2">Upload Clips</h3>
+                    <p className="text-sm text-slate-400">Share your best plays</p>
+                  </div>
+
+                  <div className="flex flex-col items-center text-center p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 hover:border-blue-500/30 transition-all duration-300 group">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2">Compete</h3>
+                    <p className="text-sm text-slate-400">Join weekly tournaments</p>
+                  </div>
+
+                  <div className="flex flex-col items-center text-center p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300 group">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2">Win Prizes</h3>
+                    <p className="text-sm text-slate-400">Earn real rewards</p>
                   </div>
                 </div>
 
-                {/* Console output text */}
-                <div className="space-y-4 mb-8 sm:mb-12 max-w-2xl mx-auto">
-                  <div className="flex items-start gap-2 text-left">
-                    <span className="text-cyan-400 font-mono text-sm flex-shrink-0">&gt;</span>
-                    <p className="text-base sm:text-lg text-gray-300 font-mono leading-relaxed">
-                      Join <span className="text-cyan-400 font-bold">10,000+ gamers</span> competing for{" "}
-                      <span className="text-yellow-400 font-bold">real prizes</span>
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-start gap-2 text-left">
-                    <span className="text-purple-400 font-mono text-sm flex-shrink-0">&gt;</span>
-                    <p className="text-base sm:text-lg text-gray-300 font-mono leading-relaxed">
-                      Early access: <span className="text-purple-400 font-bold">Exclusive perks</span> +{" "}
-                      <span className="text-green-400 font-bold">FREE tournaments</span>
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-2 text-left">
-                    <span className="text-green-400 font-mono text-sm flex-shrink-0">&gt;</span>
-                    <p className="text-base sm:text-lg text-gray-300 font-mono leading-relaxed">
-                      Status: <span className="text-green-400 font-bold animate-pulse">REGISTRATION_OPEN</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Stats display */}
-                <div className="grid grid-cols-3 gap-4 mb-10 max-w-2xl mx-auto">
-                  <div className="bg-black/40 border border-cyan-400/30 rounded-lg p-4 text-center">
-                    <div className="text-2xl sm:text-3xl font-bold text-cyan-400 font-mono">1K+</div>
-                    <div className="text-xs sm:text-sm text-gray-400 font-mono mt-1">PLAYERS</div>
-                  </div>
-                  <div className="bg-black/40 border border-yellow-400/30 rounded-lg p-4 text-center">
-                    <div className="text-2xl sm:text-3xl font-bold text-yellow-400 font-mono">$50K</div>
-                    <div className="text-xs sm:text-sm text-gray-400 font-mono mt-1">PRIZES</div>
-                  </div>
-                  <div className="bg-black/40 border border-purple-400/30 rounded-lg p-4 text-center">
-                    <div className="text-2xl sm:text-3xl font-bold text-purple-400 font-mono">24/7</div>
-                    <div className="text-xs sm:text-sm text-gray-400 font-mono mt-1">ACTIVE</div>
-                  </div>
-                </div>
-
-                {/* Action button */}
-                <div className="text-center">
+                {/* CTA Button */}
+                <div
+                  className={cn(
+                    "text-center transition-all duration-1000 delay-600",
+                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  )}
+                >
                   <a
                     href="#early-access"
-                    className="group relative inline-flex items-center gap-3 px-8 sm:px-12 py-4 sm:py-5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg font-bold font-mono text-sm sm:text-base uppercase tracking-wider overflow-hidden transition-all hover:scale-105"
+                    className="group relative inline-flex items-center gap-3 px-8 sm:px-10 md:px-12 py-4 sm:py-5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white rounded-full font-semibold text-base sm:text-lg overflow-hidden shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:shadow-[0_0_60px_rgba(59,130,246,0.5)] transition-all duration-300 hover:scale-105"
                   >
-                    {/* Animated background */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {/* Animated shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                     
-                    {/* Button content */}
-                    <span className="relative z-10 flex items-center gap-3">
-                      <Zap className="w-5 h-5 animate-pulse" />
-                      INITIALIZE_ACCESS
-                      <span className="inline-block group-hover:translate-x-1 transition-transform">&gt;&gt;</span>
-                    </span>
-
-                    {/* Glowing border effect */}
-                    <div className="absolute inset-0 border-2 border-cyan-400 opacity-0 group-hover:opacity-100 animate-pulse" />
+                    <span className="relative z-10">Get Early Access</span>
+                    
+                    <svg 
+                      className="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-1" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
                   </a>
 
-                  {/* Sub text */}
-                  <p className="mt-4 text-xs sm:text-sm text-gray-500 font-mono">
-                    &gt; Press to continue | ESC to cancel
+                  <p className="mt-6 text-sm text-slate-500">
+                    Join the platform. Start competing.
                   </p>
                 </div>
               </div>
-
-              {/* Bottom HUD bar */}
-              <div className="flex items-center justify-between px-6 py-3 bg-black/40 border-t border-cyan-400/20">
-                <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span>ONLINE</span>
-                </div>
-                <div className="text-xs font-mono text-gray-500">
-                  PING: <span className="text-green-400">12ms</span>
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* Bottom terminal line */}
-          <div className="mt-8 text-center">
-            <p className="text-xs sm:text-sm font-mono text-gray-600">
-              <span className="text-cyan-400">$</span> sudo join_tournament --access=early --mode=competitive
-            </p>
+          {/* Bottom accent line */}
+          <div className="mt-12 flex justify-center">
+            <div className="h-px w-48 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
           </div>
         </div>
       </div>
-
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes scan {
-          0% { background-position: 0 0; }
-          100% { background-position: 0 100%; }
-        }
-        
-        @keyframes pulse-glow {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 1; }
-        }
-        
-        @keyframes pulse-bar {
-          0%, 100% { width: 0%; }
-          50% { width: 100%; }
-        }
-        
-        @keyframes glitch {
-          0%, 100% { 
-            transform: translate(0, 0);
-            opacity: 1;
-          }
-          20% { 
-            transform: translate(-2px, 2px);
-            opacity: 0.8;
-          }
-          40% { 
-            transform: translate(-2px, -2px);
-            opacity: 0.9;
-          }
-          60% { 
-            transform: translate(2px, 2px);
-            opacity: 0.8;
-          }
-          80% { 
-            transform: translate(2px, -2px);
-            opacity: 0.9;
-          }
-        }
-        
-        @keyframes float-particle {
-          0%, 100% { 
-            transform: translate(0, 0);
-            opacity: 0.3;
-          }
-          50% { 
-            transform: translate(10px, -20px);
-            opacity: 0.6;
-          }
-        }
-        
-        @keyframes float-icon {
-          0%, 100% { 
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% { 
-            transform: translateY(-20px) rotate(5deg);
-          }
-        }
-      `}</style>
     </section>
   )
 }
