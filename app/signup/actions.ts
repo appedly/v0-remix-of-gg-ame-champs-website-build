@@ -65,8 +65,8 @@ export async function signup(formData: FormData) {
         .update({ used_by: authData.user.id, used_at: new Date().toISOString() })
         .eq("id", codeData[0].id)
 
-      // Update user with access code reference
-      await supabase.from("users").update({ access_code_id: codeData[0].id }).eq("id", authData.user.id)
+      // Update user with access code reference and approve them
+      await supabase.from("users").update({ access_code_id: codeData[0].id, approved: true }).eq("id", authData.user.id)
 
       redirect("/dashboard")
     }

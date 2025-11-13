@@ -11,6 +11,9 @@ import { useState } from "react"
 import { signup } from "./actions"
 import { signupWithGoogle } from "./oauth-actions"
 
+// Force dynamic rendering since this page uses auth functionality
+export const dynamic = 'force-dynamic'
+
 export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [accessCode, setAccessCode] = useState("")

@@ -36,17 +36,25 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      if (accessCode) {
-        const { data: codeData, error: codeError } = await supabase
-          .from("access_codes")
-          .select("*")
-          .eq("code", accessCode.toUpperCase())
+      const { data: userData } = await supabase.auth.getUser()
+      
+      if (userData.user) {
+        // Check if user already exists and is approved
+        const { data: existingUser } = await supabase
+          .from("users")
+          .select("approved")
+          .eq("id", userData.user.id)
+          .single()
 
-        if (!codeError && codeData && codeData.length > 0) {
-          const accessCodeRecord = codeData[0]
-          const { data: userData } = await supabase.auth.getUser()
+        if (accessCode) {
+          const { data: codeData, error: codeError } = await supabase
+            .from("access_codes")
+            .select("*")
+            .eq("code", accessCode.toUpperCase())
 
-          if (userData.user) {
+          if (!codeError && codeData && codeData.length > 0) {
+            const accessCodeRecord = codeData[0]
+
             // Mark access code as used
             await supabase
               .from("access_codes")
@@ -58,39 +66,47 @@ export async function GET(request: NextRequest) {
               .from("users")
               .update({ access_code_id: accessCodeRecord.id, approved: true })
               .eq("id", userData.user.id)
+            
+            // If user used an access code, redirect to dashboard
+            if (isAdmin) {
+              return NextResponse.redirect(`${origin}/admin/dashboard`)
+            }
+            return NextResponse.redirect(`${origin}/dashboard`)
           }
         }
-      } else {
-        // Add to waitlist if no access code
-        const { data: userData } = await supabase.auth.getUser()
-        if (userData.user) {
-          const { data: existingWaitlist } = await supabase
-            .from("waitlist")
-            .select("id")
-            .eq("email", userData.user.email)
+        
+        // If user is already approved, redirect to dashboard
+        if (existingUser?.approved) {
+          if (isAdmin) {
+            return NextResponse.redirect(`${origin}/admin/dashboard`)
+          }
+          return NextResponse.redirect(`${origin}/dashboard`)
+        }
+        
+        // Add to waitlist if no access code and not approved
+        const { data: existingWaitlist } = await supabase
+          .from("waitlist")
+          .select("id")
+          .eq("email", userData.user.email)
 
-          if (existingWaitlist && existingWaitlist.length > 0) {
-            await supabase
-              .from("waitlist")
-              .update({
-                display_name: userData.user.user_metadata?.display_name || userData.user.email,
-                access_code_used: false,
-              })
-              .eq("email", userData.user.email)
-          } else {
-            await supabase.from("waitlist").insert({
-              email: userData.user.email,
+        if (existingWaitlist && existingWaitlist.length > 0) {
+          await supabase
+            .from("waitlist")
+            .update({
               display_name: userData.user.user_metadata?.display_name || userData.user.email,
               access_code_used: false,
             })
-          }
+            .eq("email", userData.user.email)
+        } else {
+          await supabase.from("waitlist").insert({
+            email: userData.user.email,
+            display_name: userData.user.user_metadata?.display_name || userData.user.email,
+            access_code_used: false,
+          })
         }
       }
 
-      if (isAdmin) {
-        return NextResponse.redirect(`${origin}/admin/dashboard`)
-      }
-
+      // Redirect to waitlist confirmation for non-approved users
       return NextResponse.redirect(`${origin}/waitlist-confirmation`)
     }
   }

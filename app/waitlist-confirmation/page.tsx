@@ -7,12 +7,14 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 
+// Force dynamic rendering since this page uses client-side Supabase
+export const dynamic = 'force-dynamic'
+
 export default function WaitlistConfirmationPage() {
   const [accessCode, setAccessCode] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   const handleAccessCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,6 +22,7 @@ export default function WaitlistConfirmationPage() {
     setError(null)
 
     try {
+      const supabase = createClient()
       const { data: userData } = await supabase.auth.getUser()
       if (!userData.user) {
         setError("User not found")
@@ -66,6 +69,7 @@ export default function WaitlistConfirmationPage() {
   }
 
   const handleLogout = async () => {
+    const supabase = createClient()
     await supabase.auth.signOut()
     router.push("/login")
   }
