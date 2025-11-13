@@ -56,7 +56,11 @@ export default function WaitlistConfirmationPage() {
 
       await supabase
         .from("access_codes")
-        .update({ used_by: userData.user.id, used_at: new Date().toISOString() })
+        .update({ 
+          used_by: userData.user.id, 
+          used_at: new Date().toISOString(),
+          is_used: true 
+        })
         .eq("id", codeData.id)
 
       await supabase.from("users").update({ access_code_id: codeData.id, approved: true }).eq("id", userData.user.id)

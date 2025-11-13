@@ -39,44 +39,75 @@ export async function GET(request: NextRequest) {
       const { data: userData } = await supabase.auth.getUser()
       
       if (userData.user) {
-        // Check if user already exists and is approved
+        // Check if user already exists in users table
         const { data: existingUser } = await supabase
           .from("users")
-          .select("approved")
+          .select("id, approved, email")
           .eq("id", userData.user.id)
           .single()
 
+        // If user doesn't exist in users table, they'll be created by the trigger
+        // Wait a moment for the trigger to create the user
+        if (!existingUser) {
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          
+          // Check again after waiting
+          const { data: newUser } = await supabase
+            .from("users")
+            .select("id, approved, email")
+            .eq("id", userData.user.id)
+            .single()
+          
+          if (!newUser) {
+            console.error("User not created in users table")
+          }
+        }
+
+        // Handle access code if provided
         if (accessCode) {
           const { data: codeData, error: codeError } = await supabase
             .from("access_codes")
             .select("*")
             .eq("code", accessCode.toUpperCase())
+            .single()
 
-          if (!codeError && codeData && codeData.length > 0) {
-            const accessCodeRecord = codeData[0]
+          if (!codeError && codeData) {
+            // Check if code is valid and not used
+            if (!codeData.used_at && (!codeData.expires_at || new Date(codeData.expires_at) > new Date())) {
+              // Mark access code as used
+              await supabase
+                .from("access_codes")
+                .update({ 
+                  used_by: userData.user.id, 
+                  used_at: new Date().toISOString(),
+                  is_used: true 
+                })
+                .eq("id", codeData.id)
 
-            // Mark access code as used
-            await supabase
-              .from("access_codes")
-              .update({ used_by: userData.user.id, used_at: new Date().toISOString() })
-              .eq("id", accessCodeRecord.id)
-
-            // Update user with access code
-            await supabase
-              .from("users")
-              .update({ access_code_id: accessCodeRecord.id, approved: true })
-              .eq("id", userData.user.id)
-            
-            // If user used an access code, redirect to dashboard
-            if (isAdmin) {
-              return NextResponse.redirect(`${origin}/admin/dashboard`)
+              // Update user with access code and approve them
+              await supabase
+                .from("users")
+                .update({ access_code_id: codeData.id, approved: true })
+                .eq("id", userData.user.id)
+              
+              // If user used an access code, redirect to dashboard
+              if (isAdmin) {
+                return NextResponse.redirect(`${origin}/admin/dashboard`)
+              }
+              return NextResponse.redirect(`${origin}/dashboard`)
             }
-            return NextResponse.redirect(`${origin}/dashboard`)
           }
         }
         
+        // Check approval status again (might have been updated)
+        const { data: currentUser } = await supabase
+          .from("users")
+          .select("approved")
+          .eq("id", userData.user.id)
+          .single()
+        
         // If user is already approved, redirect to dashboard
-        if (existingUser?.approved) {
+        if (currentUser?.approved) {
           if (isAdmin) {
             return NextResponse.redirect(`${origin}/admin/dashboard`)
           }
@@ -84,23 +115,31 @@ export async function GET(request: NextRequest) {
         }
         
         // Add to waitlist if no access code and not approved
+        const userEmail = userData.user.email || ""
+        const displayName = userData.user.user_metadata?.display_name || userData.user.user_metadata?.full_name || userEmail.split("@")[0]
+        
         const { data: existingWaitlist } = await supabase
           .from("waitlist")
           .select("id")
-          .eq("email", userData.user.email)
+          .eq("email", userEmail)
+          .maybeSingle()
 
-        if (existingWaitlist && existingWaitlist.length > 0) {
+        if (existingWaitlist) {
+          // Update existing waitlist entry
           await supabase
             .from("waitlist")
             .update({
-              display_name: userData.user.user_metadata?.display_name || userData.user.email,
+              display_name: displayName,
+              user_id: userData.user.id,
               access_code_used: false,
             })
-            .eq("email", userData.user.email)
+            .eq("email", userEmail)
         } else {
+          // Create new waitlist entry
           await supabase.from("waitlist").insert({
-            email: userData.user.email,
-            display_name: userData.user.user_metadata?.display_name || userData.user.email,
+            email: userEmail,
+            display_name: displayName,
+            user_id: userData.user.id,
             access_code_used: false,
           })
         }
