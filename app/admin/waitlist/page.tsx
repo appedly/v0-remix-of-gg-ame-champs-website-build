@@ -73,7 +73,7 @@ export default function WaitlistPage() {
     const supabase = createClient()
 
     // Check if already approved
-    const { data: existingEntry } = await supabase.from("waitlist").select("status").eq("id", id).single()
+    const { data: existingEntry } = await supabase.from("waitlist").select("status, user_id").eq("id", id).single()
 
     if (existingEntry?.status === "approved") {
       setApprovingId(null)
@@ -83,6 +83,17 @@ export default function WaitlistPage() {
     const { error } = await supabase.from("waitlist").update({ status: "approved" }).eq("id", id)
 
     if (!error) {
+      // Also update the user's approved status if they have a user_id
+      if (existingEntry?.user_id) {
+        await supabase.from("users").update({ approved: true }).eq("id", existingEntry.user_id)
+      } else {
+        // If no user_id, find user by email and approve them
+        const { data: userData } = await supabase.from("users").select("id").eq("email", email).single()
+        if (userData) {
+          await supabase.from("users").update({ approved: true }).eq("id", userData.id)
+        }
+      }
+      
       setEntries(entries.map((e) => (e.id === id ? { ...e, status: "approved" } : e)))
     } else {
       alert("Error approving entry: " + error.message)

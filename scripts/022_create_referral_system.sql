@@ -47,19 +47,24 @@ $$ LANGUAGE plpgsql;
 
 -- Function to create user-generated access codes
 CREATE OR REPLACE FUNCTION create_user_access_code(user_id UUID)
-RETURNS TABLE(code TEXT, id UUID) AS $$
+RETURNS TABLE(code TEXT, id UUID) AS $
+DECLARE
+  admin_id UUID;
 BEGIN
   -- Check user exists and is approved
-  IF NOT EXISTS (SELECT 1 FROM public.users WHERE id = user_id AND approved = true) THEN
+  IF NOT EXISTS (SELECT 1 FROM public.users WHERE users.id = user_id AND approved = true) THEN
     RAISE EXCEPTION 'User not found or not approved';
   END IF;
+
+  -- Get an admin user ID
+  SELECT users.id INTO admin_id FROM public.users WHERE role = 'admin' LIMIT 1;
 
   -- Generate new access code
   RETURN QUERY
   INSERT INTO public.access_codes (code, created_by, is_used, is_referral_code, generated_by, expires_at)
   VALUES (
-    substring(md5(user_id::text || now()::text || random()::text), 1, 10),
-    (SELECT id FROM public.users WHERE role = 'admin' LIMIT 1),
+    UPPER(substring(md5(user_id::text || now()::text || random()::text), 1, 10)),
+    admin_id,
     false,
     true,
     user_id,
@@ -67,7 +72,7 @@ BEGIN
   )
   RETURNING access_codes.code, access_codes.id;
 END;
-$$ LANGUAGE plpgsql;
+$ LANGUAGE plpgsql;
 
 -- Function to track referral when access code is redeemed
 CREATE OR REPLACE FUNCTION track_referral_on_code_use()
@@ -97,17 +102,22 @@ EXECUTE FUNCTION track_referral_on_code_use();
 
 -- Function to award bonus access code when user approves referral
 CREATE OR REPLACE FUNCTION award_bonus_access_code(referrer_id UUID)
-RETURNS void AS $$
+RETURNS void AS $
+DECLARE
+  admin_id UUID;
 BEGIN
+  -- Get an admin user ID
+  SELECT users.id INTO admin_id FROM public.users WHERE role = 'admin' LIMIT 1;
+
   -- Create bonus access code for the referrer
   INSERT INTO public.access_codes (code, created_by, is_used, is_referral_code, generated_by, expires_at)
   VALUES (
-    substring(md5(referrer_id::text || now()::text || random()::text), 1, 10),
-    (SELECT id FROM public.users WHERE role = 'admin' LIMIT 1),
+    UPPER(substring(md5(referrer_id::text || now()::text || random()::text), 1, 10)),
+    admin_id,
     false,
     true,
     referrer_id,
     now() + interval '30 days'
   );
 END;
-$$ LANGUAGE plpgsql;
+$ LANGUAGE plpgsql;

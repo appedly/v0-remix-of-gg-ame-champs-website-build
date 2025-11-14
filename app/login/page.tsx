@@ -12,6 +12,9 @@ import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { loginWithGoogle } from "./oauth-actions"
 
+// Force dynamic rendering since this page uses client-side Supabase
+export const dynamic = 'force-dynamic'
+
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)

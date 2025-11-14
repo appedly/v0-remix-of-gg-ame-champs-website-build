@@ -43,8 +43,7 @@ export async function signup(formData: FormData) {
       data: {
         display_name: displayName,
       },
-      emailRedirectTo:
-        process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL || `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`,
     },
   })
 
@@ -62,11 +61,15 @@ export async function signup(formData: FormData) {
     if (codeData && codeData.length > 0) {
       await supabase
         .from("access_codes")
-        .update({ used_by: authData.user.id, used_at: new Date().toISOString() })
+        .update({ 
+          used_by: authData.user.id, 
+          used_at: new Date().toISOString(),
+          is_used: true 
+        })
         .eq("id", codeData[0].id)
 
-      // Update user with access code reference
-      await supabase.from("users").update({ access_code_id: codeData[0].id }).eq("id", authData.user.id)
+      // Update user with access code reference and approve them
+      await supabase.from("users").update({ access_code_id: codeData[0].id, approved: true }).eq("id", authData.user.id)
 
       redirect("/dashboard")
     }

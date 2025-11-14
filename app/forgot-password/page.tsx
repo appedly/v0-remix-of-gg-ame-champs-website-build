@@ -10,6 +10,9 @@ import Image from "next/image"
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 
+// Force dynamic rendering since this page uses client-side Supabase
+export const dynamic = 'force-dynamic'
+
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
