@@ -46,48 +46,48 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
     .maybeSingle()
 
   return (
-    <div className="min-h-screen bg-[#0B1020]">
+    <div className="min-h-screen bg-slate-900">
       <UserNav userName={userData?.display_name || "User"} />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Tournament Header */}
-        <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-8 mb-8">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-white mb-2">{tournament.title}</h1>
-              <p className="text-white/60 text-lg">{tournament.game}</p>
+        <div className="bg-slate-800 rounded-xl border border-slate-700 p-8 mb-8">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold text-white mb-2">{tournament.title}</h1>
+              <p className="text-slate-400 text-lg">{tournament.game}</p>
             </div>
             <span
-              className={`px-3 py-1 rounded text-sm font-medium ${
+              className={`px-4 py-1 rounded-full text-sm font-medium ${
                 tournament.status === "active"
-                  ? "bg-green-500/20 text-green-400"
+                  ? "bg-green-500/10 text-green-400 border border-green-500/20"
                   : tournament.status === "upcoming"
-                    ? "bg-blue-500/20 text-blue-400"
-                    : "bg-gray-500/20 text-gray-400"
+                    ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                    : "bg-slate-500/10 text-slate-400 border border-slate-500/20"
               }`}
             >
               {tournament.status}
             </span>
           </div>
 
-          {tournament.description && <p className="text-white/70 mb-6">{tournament.description}</p>}
+          {tournament.description && <p className="text-slate-300 mb-6">{tournament.description}</p>}
 
-          <div className="grid md:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-4 gap-6 pt-6 border-t border-slate-700">
             <div>
-              <p className="text-white/40 text-sm mb-1">Prize Pool</p>
-              <p className="text-2xl font-bold text-[#00C2FF]">${tournament.prize_pool.toLocaleString()}</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wide mb-2">Prize Pool</p>
+              <p className="text-2xl font-bold text-blue-400">${tournament.prize_pool.toLocaleString()}</p>
             </div>
             <div>
-              <p className="text-white/40 text-sm mb-1">Start Date</p>
-              <p className="text-white font-semibold">{new Date(tournament.start_date).toLocaleDateString()}</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wide mb-2">Start Date</p>
+              <p className="text-slate-300 font-semibold">{new Date(tournament.start_date).toLocaleDateString()}</p>
             </div>
             <div>
-              <p className="text-white/40 text-sm mb-1">End Date</p>
-              <p className="text-white font-semibold">{new Date(tournament.end_date).toLocaleDateString()}</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wide mb-2">End Date</p>
+              <p className="text-slate-300 font-semibold">{new Date(tournament.end_date).toLocaleDateString()}</p>
             </div>
             <div>
-              <p className="text-white/40 text-sm mb-1">Submissions</p>
-              <p className="text-white font-semibold">{submissions?.length || 0}</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wide mb-2">Submissions</p>
+              <p className="text-slate-300 font-semibold">{submissions?.length || 0}</p>
             </div>
           </div>
         </div>
@@ -95,19 +95,19 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Submission Form */}
           <div className="lg:col-span-1">
-            <h2 className="text-2xl font-bold text-white mb-4">Submit Your Clip</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Submit Your Clip</h2>
             {tournament.status === "active" ? (
               userSubmission ? (
-                <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-                  <p className="text-white/60 mb-2">You've already submitted to this tournament</p>
-                  <p className="text-white font-semibold">{userSubmission.title}</p>
+                <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
+                  <p className="text-slate-400 mb-3">Already submitted</p>
+                  <p className="text-white font-semibold mb-3">{userSubmission.title}</p>
                   <span
-                    className={`inline-block mt-3 px-2 py-1 rounded text-xs font-medium ${
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
                       userSubmission.status === "approved"
-                        ? "bg-green-500/20 text-green-400"
+                        ? "bg-green-500/10 text-green-400 border border-green-500/20"
                         : userSubmission.status === "pending"
-                          ? "bg-yellow-500/20 text-yellow-400"
-                          : "bg-red-500/20 text-red-400"
+                          ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                          : "bg-red-500/10 text-red-400 border border-red-500/20"
                     }`}
                   >
                     {userSubmission.status}
@@ -117,8 +117,8 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
                 <SubmissionForm tournamentId={tournament.id} userId={user.id} />
               )
             ) : (
-              <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-                <p className="text-white/60">
+              <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
+                <p className="text-slate-400">
                   {tournament.status === "upcoming"
                     ? "This tournament hasn't started yet"
                     : "This tournament has ended"}
@@ -129,7 +129,7 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
 
           {/* Submissions List */}
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold text-white mb-4">Submissions</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Submissions</h2>
             <TournamentSubmissions submissions={submissions || []} userId={user.id} />
           </div>
         </div>

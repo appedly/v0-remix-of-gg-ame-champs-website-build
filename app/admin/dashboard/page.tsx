@@ -90,34 +90,37 @@ export default function AdminDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0B1020] flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-slate-300">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1020]">
+    <div className="min-h-screen bg-slate-900">
       <AdminNav userName={userName} />
 
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-white mb-8">Welcome back, {userName}!</h1>
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold text-white mb-2">Welcome back, {userName}!</h1>
+          <p className="text-slate-400">Manage your platform from here</p>
+        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-            <h3 className="text-white/60 text-sm mb-2">Total Users</h3>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-slate-600 transition-colors">
+            <h3 className="text-slate-500 text-xs uppercase tracking-wide mb-3 font-medium">Total Users</h3>
             <p className="text-3xl font-bold text-white">{stats.usersCount}</p>
           </div>
-          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-            <h3 className="text-white/60 text-sm mb-2">Active Tournaments</h3>
+          <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-slate-600 transition-colors">
+            <h3 className="text-slate-500 text-xs uppercase tracking-wide mb-3 font-medium">Active Tournaments</h3>
             <p className="text-3xl font-bold text-white">{stats.tournamentsCount}</p>
           </div>
-          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-            <h3 className="text-white/60 text-sm mb-2">Total Submissions</h3>
+          <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-slate-600 transition-colors">
+            <h3 className="text-slate-500 text-xs uppercase tracking-wide mb-3 font-medium">Total Submissions</h3>
             <p className="text-3xl font-bold text-white">{stats.submissionsCount}</p>
           </div>
-          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-            <h3 className="text-white/60 text-sm mb-2">Waitlist</h3>
+          <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-slate-600 transition-colors">
+            <h3 className="text-slate-500 text-xs uppercase tracking-wide mb-3 font-medium">Waitlist</h3>
             <p className="text-3xl font-bold text-white">{stats.waitlistCount}</p>
           </div>
         </div>
@@ -125,34 +128,34 @@ export default function AdminDashboardPage() {
         <div className="grid md:grid-cols-2 gap-6">
           <a
             href="/admin/tournaments"
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 hover:border-[#4A6CFF] transition-colors group block"
+            className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all group block"
           >
-            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#4A6CFF]">Manage Tournaments</h3>
-            <p className="text-white/60">Create, edit, and manage tournament schedules</p>
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">Manage Tournaments</h3>
+            <p className="text-slate-400">Create, edit, and manage tournament schedules</p>
           </a>
 
           <a
             href="/admin/submissions"
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 hover:border-[#4A6CFF] transition-colors group block"
+            className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all group block"
           >
-            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#4A6CFF]">Review Submissions</h3>
-            <p className="text-white/60">Approve or reject user clip submissions</p>
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">Review Submissions</h3>
+            <p className="text-slate-400">Approve or reject user clip submissions</p>
           </a>
 
           <a
             href="/admin/users"
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 hover:border-[#4A6CFF] transition-colors group block"
+            className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all group block"
           >
-            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#4A6CFF]">User Management</h3>
-            <p className="text-white/60">View and manage user accounts</p>
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">User Management</h3>
+            <p className="text-slate-400">View and manage user accounts</p>
           </a>
 
           <a
             href="/admin/settings"
-            className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 hover:border-[#4A6CFF] transition-colors group block"
+            className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all group block"
           >
-            <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-[#4A6CFF]">Platform Settings</h3>
-            <p className="text-white/60">Configure feature flags and platform settings</p>
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">Platform Settings</h3>
+            <p className="text-slate-400">Configure feature flags and platform settings</p>
           </a>
         </div>
       </main>

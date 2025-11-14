@@ -46,9 +46,9 @@ export function SubmissionForm({ tournamentId, userId }: { tournamentId: string;
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6 space-y-4">
+    <form onSubmit={handleSubmit} className="bg-slate-800 rounded-xl border border-slate-700 p-6 space-y-4">
       <div>
-        <Label htmlFor="title" className="text-white">
+        <Label htmlFor="title" className="text-slate-300 font-medium">
           Clip Title
         </Label>
         <Input
@@ -58,12 +58,12 @@ export function SubmissionForm({ tournamentId, userId }: { tournamentId: string;
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40"
+          className="mt-2 bg-slate-900 border-slate-600 text-white placeholder:text-slate-500"
         />
       </div>
 
       <div>
-        <Label htmlFor="videoUrl" className="text-white">
+        <Label htmlFor="videoUrl" className="text-slate-300 font-medium">
           Video URL
         </Label>
         <Input
@@ -73,13 +73,13 @@ export function SubmissionForm({ tournamentId, userId }: { tournamentId: string;
           required
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
-          className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40"
+          className="mt-2 bg-slate-900 border-slate-600 text-white placeholder:text-slate-500"
         />
-        <p className="text-white/40 text-xs mt-1">YouTube, Twitch, or direct video link</p>
+        <p className="text-slate-500 text-xs mt-1">YouTube, Twitch, or direct video link</p>
       </div>
 
       <div>
-        <Label htmlFor="description" className="text-white">
+        <Label htmlFor="description" className="text-slate-300 font-medium">
           Description (optional)
         </Label>
         <Textarea
@@ -87,7 +87,7 @@ export function SubmissionForm({ tournamentId, userId }: { tournamentId: string;
           placeholder="Tell us about your play..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40 min-h-[80px]"
+          className="mt-2 bg-slate-900 border-slate-600 text-white placeholder:text-slate-500 min-h-[80px]"
         />
       </div>
 
@@ -97,7 +97,7 @@ export function SubmissionForm({ tournamentId, userId }: { tournamentId: string;
         </div>
       )}
 
-      <Button type="submit" className="w-full bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white" disabled={isLoading}>
+      <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium" disabled={isLoading}>
         {isLoading ? "Submitting..." : "Submit Clip"}
       </Button>
     </form>

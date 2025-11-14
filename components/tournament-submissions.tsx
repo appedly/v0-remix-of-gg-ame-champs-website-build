@@ -79,8 +79,8 @@ export function TournamentSubmissions({ submissions, userId }: { submissions: Su
 
   if (submissions.length === 0) {
     return (
-      <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-12 text-center">
-        <p className="text-white/60">No submissions yet. Be the first!</p>
+      <div className="bg-slate-800 rounded-xl border border-slate-700 p-12 text-center">
+        <p className="text-slate-400">No submissions yet. Be the first!</p>
       </div>
     )
   }
@@ -92,31 +92,31 @@ export function TournamentSubmissions({ submissions, userId }: { submissions: Su
           const voteCount = submission.votes?.length || 0
 
           return (
-            <div key={submission.id} className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-              <div className="flex items-start justify-between mb-3">
+            <div key={submission.id} className="bg-slate-800 rounded-xl border border-slate-700 p-6">
+              <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-1">{submission.title}</h3>
-                  <p className="text-white/60 text-sm">by {submission.user.display_name}</p>
-                  {submission.description && <p className="text-white/70 text-sm mt-2">{submission.description}</p>}
+                  <h3 className="text-lg font-bold text-white mb-1">{submission.title}</h3>
+                  <p className="text-slate-400 text-sm">by {submission.user.display_name}</p>
+                  {submission.description && <p className="text-slate-300 text-sm mt-2">{submission.description}</p>}
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 border-t border-slate-700 pt-4">
                 <button
                   onClick={() => setSelectedSubmission(submission)}
-                  className="text-[#4A6CFF] hover:text-[#6A5CFF] text-sm"
+                  className="text-blue-400 hover:text-blue-300 text-sm font-medium"
                 >
                   Watch Video →
                 </button>
 
-                <div className="ml-auto flex items-center gap-3">
+                <div className="ml-auto flex items-center gap-2">
                   <button
                     onClick={() => handleLike(submission.id)}
                     disabled={likingFor === submission.id}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors disabled:opacity-50 ${
                       likes[submission.id]
-                        ? "bg-red-500/20 text-red-400"
-                        : "bg-[#4A6CFF]/20 text-[#4A6CFF] hover:bg-[#4A6CFF]/30"
+                        ? "bg-red-500/10 text-red-400 border border-red-500/20"
+                        : "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border border-blue-500/20"
                     }`}
                   >
                     <Heart className="w-4 h-4" fill={likes[submission.id] ? "currentColor" : "none"} />
@@ -125,10 +125,10 @@ export function TournamentSubmissions({ submissions, userId }: { submissions: Su
                   <button
                     onClick={() => handleVote(submission.id)}
                     disabled={votingFor === submission.id}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#4A6CFF]/20 text-[#4A6CFF] rounded-lg hover:bg-[#4A6CFF]/30 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-3 py-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-colors disabled:opacity-50 border border-blue-500/20"
                   >
                     <ThumbsUp className="w-4 h-4" />
-                    <span>{voteCount}</span>
+                    <span className="text-sm">{voteCount}</span>
                   </button>
                 </div>
               </div>
@@ -139,21 +139,21 @@ export function TournamentSubmissions({ submissions, userId }: { submissions: Su
 
       {selectedSubmission && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-slate-800 rounded-xl border border-slate-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-white">{selectedSubmission.title}</h2>
-                  <p className="text-white/60 text-sm mt-1">By {selectedSubmission.user.display_name}</p>
+                  <p className="text-slate-400 text-sm mt-1">By {selectedSubmission.user.display_name}</p>
                 </div>
-                <button onClick={() => setSelectedSubmission(null)} className="text-white/60 hover:text-white text-2xl">
+                <button onClick={() => setSelectedSubmission(null)} className="text-slate-400 hover:text-white text-2xl">
                   ×
                 </button>
               </div>
 
               <VideoPlayer url={selectedSubmission.clip_url} title={selectedSubmission.title} />
 
-              {selectedSubmission.description && <p className="text-white/70 mt-4">{selectedSubmission.description}</p>}
+              {selectedSubmission.description && <p className="text-slate-300 mt-4">{selectedSubmission.description}</p>}
             </div>
           </div>
         </div>
