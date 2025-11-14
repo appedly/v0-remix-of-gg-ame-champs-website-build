@@ -32,6 +32,7 @@ export default function ProfilePage() {
   const [badges, setBadges] = useState([])
   const [earlyBirdBonus, setEarlyBirdBonus] = useState(null)
   const [referralCount, setReferralCount] = useState(0)
+  const [isFoundingMember, setIsFoundingMember] = useState(false)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -62,6 +63,7 @@ export default function ProfilePage() {
       if (userData) {
         setDisplayName(userData.display_name || "")
         setBio(userData.bio || "")
+        setIsFoundingMember(userData.founding_member || false)
       }
 
       // Fetch user stats
@@ -206,57 +208,36 @@ export default function ProfilePage() {
         )}
 
         {/* Achievements & Bonuses */}
-        {(badges.length > 0 || earlyBirdBonus) && (
+        {(badges.length > 0 || earlyBirdBonus || isFoundingMember) && (
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-white mb-4">Achievements & Bonuses</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              {/* Badges */}
-              {badges.length > 0 && (
-                <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-                  <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                    <Award className="w-5 h-5 text-yellow-400" />
-                    Your Badges
-                  </h3>
-                  <div className="space-y-2">
-                    {badges.map((badge) => (
-                      <div
-                        key={badge.id}
-                        className="flex items-center gap-3 p-3 bg-[#0B1020] rounded-lg border border-[#2a3342]"
-                      >
-                        <Award className="w-4 h-4 text-yellow-400" />
-                        <div>
-                          <p className="text-white font-semibold text-sm">{badge.name}</p>
-                          <p className="text-white/40 text-xs">{badge.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-xl font-semibold text-white">Achievements</h2>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {/* Founding Member Badge */}
+              {isFoundingMember && (
+                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 rounded-full hover:border-yellow-500/40 transition-colors">
+                  <span className="text-lg">■</span>
+                  <span className="text-white font-semibold text-sm">Founding 100</span>
                 </div>
               )}
 
+              {/* Other Badges */}
+              {badges.map((badge) => (
+                <div
+                  key={badge.id}
+                  className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:border-white/20 transition-colors"
+                >
+                  <Award className="w-4 h-4 text-yellow-400" />
+                  <span className="text-white font-medium text-sm">{badge.name}</span>
+                </div>
+              ))}
+
               {/* Early Bird Bonus */}
               {earlyBirdBonus && (
-                <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
-                  <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-[#FDB022]" />
-                    Early Bird Bonus
-                  </h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-[#0B1020] rounded-lg border border-[#2a3342]">
-                      <span className="text-white/60">Tier</span>
-                      <span className="text-white font-semibold">Tier {earlyBirdBonus.bonus_tier}</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-[#0B1020] rounded-lg border border-[#2a3342]">
-                      <span className="text-white/60">Bonus Points</span>
-                      <span className="text-[#FDB022] font-semibold">{earlyBirdBonus.points_awarded}</span>
-                    </div>
-                    {earlyBirdBonus.tournament_access && (
-                      <div className="flex items-center justify-between p-3 bg-[#0B1020] rounded-lg border border-green-500/20">
-                        <span className="text-white/60">Special Access</span>
-                        <span className="text-green-400 font-semibold">Exclusive Tournaments</span>
-                      </div>
-                    )}
-                  </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:border-white/20 transition-colors">
+                  <Zap className="w-4 h-4 text-[#FDB022]" />
+                  <span className="text-white font-medium text-sm">Early Bird Tier {earlyBirdBonus.bonus_tier}</span>
                 </div>
               )}
             </div>

@@ -58,9 +58,9 @@ export default async function UserProfilePage({ params }: { params: { userId: st
               <div className="flex items-center gap-3 mb-2 flex-wrap">
                 <h1 className="text-3xl font-bold text-white">{profileUser.display_name}</h1>
                 {profileUser.founding_member && (
-                  <div className="flex items-center gap-1 px-3 py-1 bg-yellow-500/20 border border-yellow-500/30 rounded-full">
-                    <Award className="w-4 h-4 text-yellow-400" />
-                    <span className="text-xs font-semibold text-yellow-400">Founding Member</span>
+                  <div className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 rounded-full">
+                    <span className="text-sm">■</span>
+                    <span className="text-xs font-semibold text-yellow-400">Founding 100</span>
                   </div>
                 )}
               </div>

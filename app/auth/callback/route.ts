@@ -40,23 +40,23 @@ export async function GET(request: NextRequest) {
       
       if (userData.user) {
         // Check if user already exists in users table
-        const { data: existingUser } = await supabase
+        const { data: existingUser, error: existingError } = await supabase
           .from("users")
-          .select("id, approved, email")
+          .select("id, approved, email, founding_member")
           .eq("id", userData.user.id)
-          .single()
+          .maybeSingle()
 
         // If user doesn't exist in users table, they'll be created by the trigger
         // Wait a moment for the trigger to create the user
-        if (!existingUser) {
+        if (!existingUser && !existingError) {
           await new Promise(resolve => setTimeout(resolve, 1000))
           
           // Check again after waiting
           const { data: newUser } = await supabase
             .from("users")
-            .select("id, approved, email")
+            .select("id, approved, email, founding_member")
             .eq("id", userData.user.id)
-            .single()
+            .maybeSingle()
           
           if (!newUser) {
             console.error("User not created in users table")
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
             .from("access_codes")
             .select("*")
             .eq("code", accessCode.toUpperCase())
-            .single()
+            .maybeSingle()
 
           if (!codeError && codeData) {
             // Check if code is valid and not used
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
           .from("users")
           .select("approved")
           .eq("id", userData.user.id)
-          .single()
+          .maybeSingle()
         
         // If user is already approved, redirect to dashboard
         if (currentUser?.approved) {
