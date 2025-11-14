@@ -23,27 +23,53 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
     notFound()
   }
 
-  // Get submissions for this tournament
+  // Get submissions for this tournament - ordered by score (vote points)
   const { data: submissions } = await supabase
     .from("submissions")
     .select(
       `
       *,
-      user:users(display_name),
-      votes:votes(count)
+      user:users(display_name, id)
     `,
     )
     .eq("tournament_id", tournament.id)
     .eq("status", "approved")
-    .order("created_at", { ascending: false })
+    .order("score", { ascending: false })
 
-  // Check if user has already submitted
+  // Check if user has already submitted and if it's approved
   const { data: userSubmission } = await supabase
     .from("submissions")
     .select("*")
     .eq("tournament_id", tournament.id)
     .eq("user_id", user.id)
     .maybeSingle()
+
+  // Check if user has an approved submission (can vote)
+  const canVote = userSubmission?.status === "approved"
+
+  // Get all votes and likes for the submissions
+  const submissionIds = submissions?.map((s) => s.id) || []
+
+  const { data: allVotes } = await supabase
+    .from("votes")
+    .select("submission_id, user_id, rank")
+    .in("submission_id", submissionIds)
+
+  const { data: allLikes } = await supabase.from("likes").select("submission_id, user_id").in("submission_id", submissionIds)
+
+  // Get user's votes for this tournament
+  const { data: userVotes } = await supabase
+    .from("votes")
+    .select("submission_id, rank")
+    .eq("user_id", user.id)
+    .in("submission_id", submissionIds)
+
+  // Get user's likes
+  const { data: userLikes } = await supabase
+    .from("likes")
+    .select("submission_id")
+    .eq("user_id", user.id)
+    .in("submission_id", submissionIds)
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -130,7 +156,16 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
           {/* Submissions List */}
           <div className="lg:col-span-2">
             <h2 className="text-xl font-bold text-white mb-4">Submissions</h2>
-            <TournamentSubmissions submissions={submissions || []} userId={user.id} />
+            <TournamentSubmissions
+              submissions={submissions || []}
+              userId={user.id}
+              tournamentId={tournament.id}
+              canVote={canVote}
+              allVotes={allVotes || []}
+              allLikes={allLikes || []}
+              userVotes={userVotes || []}
+              userLikes={userLikes || []}
+            />
           </div>
         </div>
       </main>
