@@ -100,15 +100,18 @@ export default function TournamentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1020]">
+    <div className="min-h-screen bg-slate-900">
       <AdminNav userName="Admin" />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-white">Tournaments ({tournaments.length})</h1>
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">Tournaments</h1>
+            <p className="text-slate-400">{tournaments.length} total tournaments</p>
+          </div>
           <Link
             href="/admin/tournaments/create"
-            className="px-4 py-2 bg-[#4A6CFF] text-white rounded-lg hover:bg-[#6A5CFF] transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
             Create Tournament
           </Link>
@@ -116,48 +119,39 @@ export default function TournamentsPage() {
 
         <div className="space-y-4">
           {tournaments.map((tournament) => (
-            <div key={tournament.id} className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-6">
+            <div key={tournament.id} className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-slate-600 transition-colors">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-white mb-2">{tournament.title}</h3>
-                  <p className="text-white/60 text-sm mb-2">{tournament.game}</p>
-                  <p className="text-white/40 text-sm line-clamp-2">{tournament.description}</p>
+                  <h3 className="text-xl font-bold text-white mb-1">{tournament.title}</h3>
+                  <p className="text-slate-400 text-sm mb-2">{tournament.game}</p>
+                  {tournament.description && <p className="text-slate-400 text-sm line-clamp-2">{tournament.description}</p>}
                 </div>
-                <span
-                                    className={`px-3 py-1 rounded text-xs font-medium ${
-                                      tournament.status === "active"
-                                        ? "bg-green-500/20 text-green-400"
-                                        : tournament.status === "upcoming"
-                                          ? "bg-blue-500/20 text-blue-400"
-                                          : tournament.status === "ended"
-                                            ? "bg-gray-500/20 text-gray-400"
-                                            : "bg-red-500/20 text-red-400"
-                                    }`}
-                                  >
-                                    {tournament.status === "ended" ? "Completed" : tournament.status}
-                                  </span>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 pt-4 border-t border-slate-700">
                 <div>
-                  <p className="text-white/40 text-xs mb-1">Prize Pool</p>
+                  <p className="text-slate-500 text-xs uppercase tracking-wide mb-1">Prize Pool</p>
                   <p className="text-white font-semibold">${tournament.prize_pool.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-white/40 text-xs mb-1">Start Date</p>
-                  <p className="text-white text-sm">{new Date(tournament.start_date).toLocaleDateString()}</p>
+                  <p className="text-slate-500 text-xs uppercase tracking-wide mb-1">Start Date</p>
+                  <p className="text-slate-300 text-sm">{new Date(tournament.start_date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className="text-white/40 text-xs mb-1">End Date</p>
-                  <p className="text-white text-sm">{new Date(tournament.end_date).toLocaleDateString()}</p>
+                  <p className="text-slate-500 text-xs uppercase tracking-wide mb-1">End Date</p>
+                  <p className="text-slate-300 text-sm">{new Date(tournament.end_date).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 text-xs uppercase tracking-wide mb-1">Status</p>
+                  <p className="text-slate-300 text-sm capitalize">{tournament.status}</p>
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-4 border-t border-slate-700">
                 <select
                   value={tournament.status}
                   onChange={(e) => handleStatusChange(tournament.id, e.target.value)}
-                  className="px-3 py-1 bg-[#0B1020] border border-[#2a3342] text-white rounded text-sm"
+                  className="px-3 py-2 bg-slate-900 border border-slate-600 text-slate-300 rounded-lg text-sm hover:border-slate-500 transition-colors"
                 >
                   <option value="upcoming">Upcoming</option>
                   <option value="active">Active</option>
@@ -177,14 +171,19 @@ export default function TournamentsPage() {
           ))}
 
           {tournaments.length === 0 && (
-            <div className="bg-[#1a2332] rounded-lg border border-[#2a3342] p-12 text-center">
-              <p className="text-white/60 mb-4">No tournaments created yet</p>
-              <Link
-                href="/admin/tournaments/create"
-                className="inline-block px-4 py-2 bg-[#4A6CFF] text-white rounded-lg hover:bg-[#6A5CFF] transition-colors"
-              >
-                Create Your First Tournament
-              </Link>
+            <div className="bg-slate-800 rounded-xl border border-slate-700 p-12 text-center">
+              <div className="max-w-md mx-auto">
+                <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl text-slate-400">●</span>
+                </div>
+                <p className="text-slate-300 mb-4 font-medium">No tournaments created yet</p>
+                <Link
+                  href="/admin/tournaments/create"
+                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                >
+                  Create Your First Tournament
+                </Link>
+              </div>
             </div>
           )}
         </div>

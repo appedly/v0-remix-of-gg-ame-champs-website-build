@@ -1,11 +1,21 @@
 "use client"
 
+import { useEffect, useState } from "react"
+
 interface VideoPlayerProps {
   url: string
   title?: string
 }
 
 export function VideoPlayer({ url, title }: VideoPlayerProps) {
+  const [hostname, setHostname] = useState("")
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHostname(window.location.hostname)
+    }
+  }, [])
+
   // Detect video source and return appropriate embed
   const getEmbedUrl = (videoUrl: string) => {
     // YouTube
@@ -19,7 +29,7 @@ export function VideoPlayer({ url, title }: VideoPlayerProps) {
     // Twitch
     if (videoUrl.includes("twitch.tv")) {
       const channelOrVideo = videoUrl.split("twitch.tv/")[1]?.split("/")[0]
-      return `https://player.twitch.tv/?channel=${channelOrVideo}&parent=${typeof window !== "undefined" ? window.location.hostname : ""}`
+      return `https://player.twitch.tv/?channel=${channelOrVideo}&parent=${hostname || "localhost"}`
     }
 
     // Direct video link
