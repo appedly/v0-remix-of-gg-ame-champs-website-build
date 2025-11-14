@@ -28,24 +28,10 @@ export default function AdminLoginPage() {
 
     try {
       console.log("[v0] Admin login attempt with email:", email)
-      
-      // Hardcoded admin credentials
-      const HARDCODED_EMAIL = "ggiscool"
-      const HARDCODED_PASSWORD = "gg@coolasf17"
 
-      if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
-        console.log("[v0] Hardcoded admin credentials verified")
-        
-        // Set admin session in localStorage
-        localStorage.setItem("admin_session", "true")
-        console.log("[v0] Admin login successful, redirecting to dashboard")
-        router.push("/admin/dashboard")
-        return
-      }
-
-      // If hardcoded credentials don't match, try with Supabase
       const supabase = createClient()
 
+      // Try to authenticate with Supabase first (works for both hardcoded and real accounts)
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -58,6 +44,7 @@ export default function AdminLoginPage() {
 
       console.log("[v0] Admin authenticated successfully:", authData.user?.id)
 
+      // Verify the user has admin role
       const { data: userData, error: userError } = await supabase
         .from("users")
         .select("role")
@@ -82,6 +69,7 @@ export default function AdminLoginPage() {
         throw new Error("Access denied. Admin privileges required.")
       }
 
+      // Set admin session flag - now that we have a valid Supabase session with admin role
       localStorage.setItem("admin_session", "true")
       console.log("[v0] Admin login successful, redirecting to dashboard")
       router.push("/admin/dashboard")

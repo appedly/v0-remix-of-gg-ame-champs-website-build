@@ -24,7 +24,7 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
   }
 
   // Get submissions for this tournament - ordered by score (vote points)
-  const { data: submissions } = await supabase
+  const { data: submissionsData } = await supabase
     .from("submissions")
     .select(
       `
@@ -35,6 +35,9 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
     .eq("tournament_id", tournament.id)
     .eq("status", "approved")
     .order("score", { ascending: false })
+
+  // Filter out submissions with null user data (deleted users or RLS restricted)
+  const submissions = submissionsData?.filter(s => s.user !== null) || []
 
   // Check if user has already submitted and if it's approved
   const { data: userSubmission } = await supabase

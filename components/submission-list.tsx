@@ -11,8 +11,8 @@ type Submission = {
   description: string | null
   status: string
   created_at: string
-  user: { display_name: string; email: string }
-  tournament: { title: string; game: string }
+  user: { display_name: string; email: string } | null
+  tournament: { title: string; game: string } | null
 }
 
 export function SubmissionList({
@@ -77,11 +77,11 @@ export function SubmissionList({
                   </span>
                 </div>
                 <p className="text-white/60 text-sm mb-1">
-                  {submission.tournament.title} - {submission.tournament.game}
-                </p>
-                <p className="text-white/40 text-sm">
-                  By {submission.user.display_name} ({submission.user.email})
-                </p>
+                   {submission.tournament?.title || "Unknown Tournament"} - {submission.tournament?.game || "Unknown Game"}
+                 </p>
+                 <p className="text-white/40 text-sm">
+                   By {submission.user?.display_name || "Unknown User"} ({submission.user?.email || "No email"})
+                 </p>
                 {submission.description && <p className="text-white/70 text-sm mt-2">{submission.description}</p>}
               </div>
             </div>
@@ -135,7 +135,7 @@ export function SubmissionList({
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-white">{selectedSubmission.title}</h2>
-                  <p className="text-white/60 text-sm mt-1">By {selectedSubmission.user.display_name}</p>
+                  <p className="text-white/60 text-sm mt-1">By {selectedSubmission.user?.display_name || "Unknown User"}</p>
                 </div>
                 <button onClick={() => setSelectedSubmission(null)} className="text-white/60 hover:text-white text-2xl">
                   ×

@@ -13,8 +13,8 @@ type Submission = {
   description: string | null
   status: string
   created_at: string
-  user: { display_name: string; email: string }
-  tournament: { title: string; game: string }
+  user: { display_name: string; email: string } | null
+  tournament: { title: string; game: string } | null
 }
 
 export default function SubmissionsPage() {
