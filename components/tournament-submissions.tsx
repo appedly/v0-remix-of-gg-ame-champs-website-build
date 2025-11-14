@@ -13,7 +13,7 @@ type Submission = {
   description: string | null
   score: number
   user_id: string
-  user: { display_name: string; id: string }
+  user: { display_name: string; id: string } | null
 }
 
 type Vote = {
@@ -159,7 +159,7 @@ export function TournamentSubmissions({
                       </span>
                     )}
                   </div>
-                  <p className="text-slate-400 text-sm">by {submission.user.display_name}</p>
+                  <p className="text-slate-400 text-sm">by {submission.user?.display_name || "Unknown User"}</p>
                   {submission.description && <p className="text-slate-300 text-sm mt-2">{submission.description}</p>}
                 </div>
               </div>
@@ -267,7 +267,7 @@ export function TournamentSubmissions({
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-white">{selectedSubmission.title}</h2>
-                  <p className="text-slate-400 text-sm mt-1">By {selectedSubmission.user.display_name}</p>
+                  <p className="text-slate-400 text-sm mt-1">By {selectedSubmission.user?.display_name || "Unknown User"}</p>
                 </div>
                 <button onClick={() => setSelectedSubmission(null)} className="text-slate-400 hover:text-white text-2xl">
                   ×

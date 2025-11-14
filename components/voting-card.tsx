@@ -11,7 +11,7 @@ interface VotingCardProps {
     title: string
     description: string
     clip_url: string
-    user: { display_name: string }
+    user: { display_name: string } | null
     votes: number
     likes: number
     comments: number
@@ -122,7 +122,7 @@ export function VotingCard({ submission, tournamentId, userSession, onVoteUpdate
 
       <div className="p-6">
         <h3 className="text-lg font-semibold text-white mb-2">{submission.title}</h3>
-        <p className="text-white/60 text-sm mb-2">Posted by {submission.user.display_name}</p>
+        <p className="text-white/60 text-sm mb-2">Posted by {submission.user?.display_name || "Unknown User"}</p>
         {submission.description && <p className="text-white/40 text-sm mb-4 line-clamp-2">{submission.description}</p>}
 
         <div className="bg-[#0B1020]/50 rounded-lg p-4 mb-4">
