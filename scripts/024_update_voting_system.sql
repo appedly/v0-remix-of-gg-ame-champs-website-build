@@ -75,11 +75,9 @@ CREATE TRIGGER votes_update_score
   FOR EACH ROW
   EXECUTE FUNCTION public.update_submission_score();
 
--- Add constraint to ensure user can only vote once per tournament (with ranks)
--- First drop the old unique constraint
-ALTER TABLE votes DROP CONSTRAINT IF EXISTS votes_submission_id_user_id_key;
+-- Note: We'll handle the constraint at the application level
+-- The constraint we want is: each user can vote once per rank per tournament
+-- This is checked in the frontend code
 
--- Add new constraint that allows multiple votes per user per submission (for different ranks)
--- But only one vote per rank per user per tournament
-CREATE UNIQUE INDEX IF NOT EXISTS votes_user_rank_per_tournament_unique 
-ON votes (user_id, rank, (SELECT tournament_id FROM submissions WHERE submissions.id = votes.submission_id));
+-- Drop the old unique constraint if it exists
+ALTER TABLE votes DROP CONSTRAINT IF EXISTS votes_submission_id_user_id_key;

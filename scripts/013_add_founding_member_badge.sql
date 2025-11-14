@@ -3,7 +3,7 @@ ALTER TABLE public.users ADD COLUMN IF NOT EXISTS founding_member BOOLEAN DEFAUL
 
 -- Create a function to mark first 50 users as founding members
 CREATE OR REPLACE FUNCTION mark_founding_members()
-RETURNS void AS $
+RETURNS void AS $$
 BEGIN
   UPDATE public.users
   SET founding_member = TRUE
@@ -13,7 +13,7 @@ BEGIN
     LIMIT 50
   );
 END;
-$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 -- Execute the function to mark first 50 users
 SELECT mark_founding_members();
