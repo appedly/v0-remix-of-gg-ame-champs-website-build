@@ -82,7 +82,7 @@ export default function TournamentsPage() {
     }
   }, [filteredTournaments])
 
-  // Auto-rotate tournaments every 8 seconds
+  // Auto-rotate tournaments every 8 seconds with smooth transitions
   useEffect(() => {
     if (filteredTournaments.length === 0) return
 
@@ -97,12 +97,18 @@ export default function TournamentsPage() {
     return () => clearInterval(interval)
   }, [filteredTournaments])
 
-  // Auto-scroll to selected tournament
+  // Auto-scroll to selected tournament with smooth behavior
   useEffect(() => {
     if (selectedTournament && carouselRef.current) {
       const selectedElement = carouselRef.current.querySelector(`[data-tournament-id="${selectedTournament.id}"]`)
       if (selectedElement) {
-        selectedElement.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+        setTimeout(() => {
+          selectedElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            inline: 'center', 
+            block: 'nearest' 
+          })
+        }, 100)
       }
     }
   }, [selectedTournament])
@@ -526,52 +532,52 @@ export default function TournamentsPage() {
                   setSelectedTournament(tournament)
                   setCurrentTournamentIndex(index)
                 }}
-                className={`group cursor-pointer transition-all duration-300 flex-shrink-0 w-80 ${
+                className={`group cursor-pointer transition-all duration-300 ease-out flex-shrink-0 w-80 ${
                   selectedTournament?.id === tournament.id 
                     ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-900 scale-105" 
-                    : "hover:scale-105"
+                    : "hover:scale-102"
                 }`}
               >
-                <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 h-full">
+                <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden hover:border-blue-500/50 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 h-full">
                   {/* Enhanced Game Image */}
                   <div className="relative h-48 overflow-hidden">
                     <img
                       src={getTournamentImage(tournament)}
                       alt={`${tournament.game} tournament`}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
                     
-                    {/* Animated Status Badge */}
-                    <div className="absolute top-3 right-3 z-10">
-                      <div className={`px-3 py-1 rounded-full ${getStatusStyles(tournament.status).bg} ${getStatusStyles(tournament.status).border} border backdrop-blur-sm shadow-lg transition-all duration-300 ${
+                    {/* Status Badge - Moved to top-left corner to avoid overlap */}
+                    <div className="absolute top-2 left-2 z-10">
+                      <div className={`px-2.5 py-1 rounded-full ${getStatusStyles(tournament.status).bg} ${getStatusStyles(tournament.status).border} border backdrop-blur-sm shadow-md transition-all duration-300 ${
                         tournament.status === "active" ? "animate-pulse" : ""
                       }`}>
                         <span className="text-white font-bold text-xs uppercase tracking-wide flex items-center gap-1.5">
-                          {tournament.status === "active" && <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>}
+                          {tournament.status === "active" && <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>}
                           {tournament.status}
                         </span>
                       </div>
                     </div>
 
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    {/* Subtle Hover overlay - Reduced intensity */}
+                    <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"></div>
                   </div>
 
                   {/* Enhanced Content */}
                   <div className="p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                      <h3 className="text-lg font-bold text-white">{tournament.game}</h3>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full"></div>
+                      <h3 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors duration-200">{tournament.game}</h3>
                     </div>
-                    <h4 className="text-base font-semibold text-white/90 mb-3 line-clamp-1 group-hover:text-white transition-colors duration-200">{tournament.title}</h4>
+                    <h4 className="text-base font-semibold text-white/90 mb-4 line-clamp-1 group-hover:text-white transition-colors duration-200 leading-tight">{tournament.title}</h4>
 
                     <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2 px-2 py-1 bg-slate-700/50 rounded-lg">
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-700/60 backdrop-blur-sm rounded-lg border border-slate-600/30 hover:bg-slate-700/80 transition-all duration-200">
                         <Trophy className="w-4 h-4 text-yellow-400" />
                         <span className="text-yellow-400 font-semibold text-sm">${tournament.prize_pool.toLocaleString()}</span>
                       </div>
-                      <div className="flex items-center gap-2 px-2 py-1 bg-slate-700/50 rounded-lg">
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-700/60 backdrop-blur-sm rounded-lg border border-slate-600/30 hover:bg-slate-700/80 transition-all duration-200">
                         <Calendar className="w-4 h-4 text-slate-400" />
                         <span className="text-slate-400 text-sm">{new Date(tournament.end_date).toLocaleDateString()}</span>
                       </div>
@@ -583,16 +589,19 @@ export default function TournamentsPage() {
                           e.stopPropagation()
                           openTournamentModal(tournament)
                         }}
-                        className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
+                        className="flex-1 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-300 ease-out transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 border border-blue-500/30"
                       >
-                        {tournament.status === "active" ? "Join Now" : tournament.status === "upcoming" ? "View Details" : "View Results"}
+                        <span className="relative z-10">
+                          {tournament.status === "active" ? "Join Now" : tournament.status === "upcoming" ? "View Details" : "View Results"}
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur"></div>
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
                           openTournamentModal(tournament)
                         }}
-                        className="px-4 py-2 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600 text-white font-bold rounded-lg transition-all duration-300 border border-slate-600 hover:border-slate-500 transform hover:scale-105"
+                        className="px-4 py-2.5 bg-slate-700/80 backdrop-blur-sm hover:bg-slate-600 text-white font-semibold rounded-lg transition-all duration-300 ease-out border border-slate-600/50 hover:border-slate-500 transform hover:scale-105"
                       >
                         Learn More
                       </button>
