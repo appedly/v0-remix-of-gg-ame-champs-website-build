@@ -535,7 +535,7 @@ export default function TournamentsPage() {
                 className={`group cursor-pointer transition-all duration-300 ease-out flex-shrink-0 w-80 ${
                   selectedTournament?.id === tournament.id 
                     ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-900 scale-105" 
-                    : "hover:scale-102"
+                    : "hover:scale-101"
                 }`}
               >
                 <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden hover:border-blue-500/50 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 h-full">
@@ -544,28 +544,28 @@ export default function TournamentsPage() {
                     <img
                       src={getTournamentImage(tournament)}
                       alt={`${tournament.game} tournament`}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-102"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
                     
-                    {/* Status Badge - Moved to top-left corner to avoid overlap */}
-                    <div className="absolute top-2 left-2 z-10">
-                      <div className={`px-2.5 py-1 rounded-full ${getStatusStyles(tournament.status).bg} ${getStatusStyles(tournament.status).border} border backdrop-blur-sm shadow-md transition-all duration-300 ${
-                        tournament.status === "active" ? "animate-pulse" : ""
-                      }`}>
-                        <span className="text-white font-bold text-xs uppercase tracking-wide flex items-center gap-1.5">
-                          {tournament.status === "active" && <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>}
-                          {tournament.status}
-                        </span>
-                      </div>
-                    </div>
-
                     {/* Subtle Hover overlay - Reduced intensity */}
                     <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"></div>
                   </div>
 
                   {/* Enhanced Content */}
                   <div className="p-4">
+                    {/* Status Badge - Positioned below image */}
+                    <div className="flex justify-center mb-3">
+                      <div className={`px-3 py-1 rounded-full ${getStatusStyles(tournament.status).bg} ${getStatusStyles(tournament.status).border} border backdrop-blur-sm shadow-md transition-all duration-300 ${
+                        tournament.status === "active" ? "animate-pulse" : ""
+                      }`}>
+                        <span className="text-white font-bold text-xs uppercase tracking-wide flex items-center gap-1.5">
+                          {tournament.status === "active" && <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>}
+                          {tournament.status}
+                        </span>
+                      </div>
+                    </div>
+                    
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-blue-500 rounded-full"></div>
                       <h3 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors duration-200">{tournament.game}</h3>
