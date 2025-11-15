@@ -27,13 +27,28 @@ const gameImages: { [key: string]: string } = {
   "CS2": "/tactical-shooter-scene.png",
   "Overwatch 2": "/overwatch-2-game.jpg",
   "Rocket League": "/rocket-league-game.jpg",
-  "Minecraft": "/placeholder.jpg",
-  "FIFA": "/placeholder.jpg",
-  "NBA 2K": "/placeholder.jpg",
-  "Madden": "/placeholder.jpg",
+  "Minecraft": "/minecraft-game.jpg",
+  "FIFA": "/fifa-game.jpg",
+  "NBA 2K": "/nba-2k-game.jpg",
+  "Madden": "/madden-game.jpg",
   "Fortnite Creative": "/generic-battle-royale.png",
   "Warzone": "/call-of-duty-game.jpg",
 }
+
+// Function to get tournament image with fallback to game image
+const getTournamentImage = (tournament: Tournament) => {
+  // Use custom tournament image if available (admin uploaded)
+  if (tournament.image_url && tournament.image_url.trim() !== "") {
+    return tournament.image_url
+  }
+  // Fallback to game-specific image
+  return gameImages[tournament.game] || "/placeholder.jpg"
+}
+
+// Recommended image sizes for tournaments
+// For custom tournament images: 1024x576 (16:9 aspect ratio) works best
+// This provides good quality while maintaining reasonable file size
+// For hero section display, this size ensures sharp images on most screens
 
 export default function TournamentsPage() {
   const [tournaments, setTournaments] = useState<Tournament[]>([])
@@ -49,7 +64,10 @@ export default function TournamentsPage() {
   const [filterPrize, setFilterPrize] = useState("all")
   const [showFilters, setShowFilters] = useState(false)
   const [currentTournamentIndex, setCurrentTournamentIndex] = useState(0)
+  const [displayCount, setDisplayCount] = useState(8)
+  const [hasMore, setHasMore] = useState(true)
   const carouselRef = useRef<HTMLDivElement>(null)
+  const loadMoreRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetchUser()
@@ -58,6 +76,8 @@ export default function TournamentsPage() {
 
   useEffect(() => {
     filterTournaments()
+    // Reset display count when filters change
+    setDisplayCount(8)
   }, [tournaments, searchTerm, filterGame, filterStatus, filterPrize])
 
   useEffect(() => {
@@ -65,7 +85,9 @@ export default function TournamentsPage() {
       setSelectedTournament(filteredTournaments[0])
       setCurrentTournamentIndex(0)
     }
-  }, [filteredTournaments])
+    // Update hasMore based on filtered tournaments
+    setHasMore(filteredTournaments.length > displayCount)
+  }, [filteredTournaments, displayCount])
 
   // Auto-rotate tournaments every 8 seconds
   useEffect(() => {
@@ -81,6 +103,32 @@ export default function TournamentsPage() {
 
     return () => clearInterval(interval)
   }, [filteredTournaments])
+
+  // Infinite scroll functionality
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0]
+        if (target.isIntersecting && hasMore && !loading) {
+          setDisplayCount((prev) => Math.min(prev + 8, filteredTournaments.length))
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '100px'
+      }
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => {
+      if (loadMoreRef.current) {
+        observer.unobserve(loadMoreRef.current)
+      }
+    }
+  }, [hasMore, loading, filteredTournaments.length, displayCount])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -230,8 +278,8 @@ export default function TournamentsPage() {
             {/* Clean Game Image Background */}
             <div className="absolute inset-0">
               <img
-                src={gameImages[selectedTournament.game] || "/placeholder.jpg"}
-                alt={selectedTournament.game}
+                src={getTournamentImage(selectedTournament)}
+                alt={`${selectedTournament.game} tournament`}
                 className="w-full h-full object-cover transition-transform duration-1000 ease-out hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
@@ -502,7 +550,7 @@ export default function TournamentsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredTournaments.map((tournament, index) => (
+            {filteredTournaments.slice(0, displayCount).map((tournament, index) => (
               <div
                 key={tournament.id}
                 onClick={() => {
@@ -519,8 +567,8 @@ export default function TournamentsPage() {
                   {/* Enhanced Game Image */}
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={gameImages[tournament.game] || "/placeholder.jpg"}
-                      alt={tournament.game}
+                      src={getTournamentImage(tournament)}
+                      alt={`${tournament.game} tournament`}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
@@ -585,6 +633,16 @@ export default function TournamentsPage() {
               </div>
             ))}
 
+            {/* Load More Trigger for Infinite Scroll */}
+            {hasMore && (
+              <div ref={loadMoreRef} className="col-span-full flex justify-center py-8">
+                <div className="flex items-center gap-3 px-6 py-3 bg-slate-700/50 backdrop-blur-sm rounded-lg border border-slate-600/30">
+                  <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-slate-300 text-sm font-medium">Loading more tournaments...</span>
+                </div>
+              </div>
+            )}
+
             {filteredTournaments.length === 0 && (
               <div className="w-full py-12 text-center">
                 <div className="max-w-md mx-auto">
@@ -624,8 +682,8 @@ export default function TournamentsPage() {
             <div className="relative h-56 overflow-hidden">
               <div className="absolute inset-0">
                 <img
-                  src={gameImages[selectedTournament.game] || "/placeholder.jpg"}
-                  alt={selectedTournament.game}
+                  src={getTournamentImage(selectedTournament)}
+                  alt={`${selectedTournament.game} tournament`}
                   className="w-full h-full object-cover transition-transform duration-1000"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>

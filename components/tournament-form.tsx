@@ -31,9 +31,91 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
   const [endDate, setEndDate] = useState(tournament?.end_date?.split("T")[0] || "")
   const [status, setStatus] = useState(tournament?.status || "upcoming")
   const [maxSubmissions, setMaxSubmissions] = useState(tournament?.max_submissions?.toString() || "")
+  const [imageUrl, setImageUrl] = useState(tournament?.image_url || "")
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+
+  const handleImageUpload = async (file: File) => {
+    if (!file) return null
+
+    setUploadingImage(true)
+    const supabase = createClient()
+    
+    try {
+      // Create a unique file name
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+      const filePath = `tournament-images/${fileName}`
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('tournament-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+      if (error) {
+        console.error('Image upload error:', error)
+        throw error
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('tournament-images')
+        .getPublicUrl(filePath)
+
+      return publicUrl
+    } catch (error) {
+      console.error('Image upload failed:', error)
+      return null
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file')
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be less than 5MB')
+      return
+    }
+
+    // Validate image dimensions (recommend 1024x576 for 16:9 aspect ratio)
+    const img = new Image()
+    img.onload = function() {
+      const width = this.width
+      const height = this.height
+      const aspectRatio = width / height
+      
+      // Check if aspect ratio is close to 16:9 (1.78)
+      if (Math.abs(aspectRatio - 1.78) > 0.2) {
+        console.warn('For best results, use images with 16:9 aspect ratio (1024x576 recommended)')
+      }
+    }
+    img.src = URL.createObjectURL(file)
+
+    setImageFile(file)
+    
+    // Preview the image immediately
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setImageUrl(e.target?.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,6 +142,19 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
 
     console.log("[v0] Creating tournament with user:", session.user.id)
 
+    // Upload image if a new file was selected
+    let finalImageUrl = imageUrl
+    if (imageFile && imageUrl.startsWith('blob:')) {
+      const uploadedUrl = await handleImageUpload(imageFile)
+      if (uploadedUrl) {
+        finalImageUrl = uploadedUrl
+      } else {
+        setError("Failed to upload image. Please try again.")
+        setIsLoading(false)
+        return
+      }
+    }
+
     const tournamentData = {
       title,
       game,
@@ -70,6 +165,7 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
       status,
       max_participants: maxSubmissions ? Number.parseInt(maxSubmissions) : null,
       created_by: session.user.id, // Add created_by field with authenticated user ID
+      image_url: finalImageUrl || null, // Add image_url field
     }
 
     console.log("[v0] Tournament data:", tournamentData)
@@ -152,6 +248,70 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="image" className="text-white">
+          Tournament Image (Recommended: 1024x576, 16:9 aspect ratio)
+        </Label>
+        <div className="mt-2 space-y-3">
+          {imageUrl && (
+            <div className="relative">
+              <img
+                src={imageUrl}
+                alt="Tournament preview"
+                className="w-full h-48 object-cover rounded-lg border border-[#2a3342]"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setImageUrl("")
+                  setImageFile(null)
+                }}
+                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
+          <div className="relative">
+            <Input
+              id="image"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+              disabled={uploadingImage}
+            />
+            <button
+              type="button"
+              onClick={() => document.getElementById('image')?.click()}
+              disabled={uploadingImage}
+              className="w-full px-4 py-3 bg-[#0B1020] border-[#2a3342] border-2 border-dashed rounded-lg text-white hover:bg-[#1a2332] transition-colors disabled:opacity-50"
+            >
+              {uploadingImage ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Uploading...</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  <span>{imageUrl ? 'Change Image' : 'Upload Image'}</span>
+                </div>
+              )}
+            </button>
+          </div>
+          <p className="text-xs text-white/60">
+            • Max file size: 5MB<br/>
+            • Recommended size: 1024x576px (16:9 aspect ratio)<br/>
+            • Formats: JPG, PNG, WebP
+          </p>
+        </div>
       </div>
 
       <div>
@@ -253,8 +413,19 @@ export function TournamentForm({ tournament }: { tournament?: any }) {
       )}
 
       <div className="flex gap-4">
-        <Button type="submit" className="bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white" disabled={isLoading}>
-          {isLoading ? "Saving..." : tournament ? "Update Tournament" : "Create Tournament"}
+        <Button 
+          type="submit" 
+          className="bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white" 
+          disabled={isLoading || uploadingImage}
+        >
+          {isLoading || uploadingImage ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>{uploadingImage ? "Uploading Image..." : "Saving..."}</span>
+            </div>
+          ) : (
+            tournament ? "Update Tournament" : "Create Tournament"
+          )}
         </Button>
         <Button
           type="button"
