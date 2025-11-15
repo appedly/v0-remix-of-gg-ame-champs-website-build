@@ -3,13 +3,26 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
-import { UserNav } from "@/components/user-nav"
-import Link from "next/link"
+import { Navigation } from "@/components/ui/navigation"
+import { StatCard } from "@/components/ui/stat-card"
+import { TournamentCard } from "@/components/ui/tournament-card"
+import { SubmissionCard } from "@/components/ui/submission-card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Progress } from "@/components/ui/progress"
+import { 
+  Trophy, 
+  FileVideo, 
+  Clock, 
+  Users, 
+  TrendingUp,
+  Plus,
+  ChevronRight,
+  Activity
+} from "lucide-react"
+import Link from "next/link"
 
 interface Tournament {
   id: string
@@ -152,39 +165,47 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner size="lg" className="mx-auto mb-6" />
-          <div className="text-white text-lg font-medium">Loading your dashboard...</div>
-          <div className="text-slate-400 text-sm mt-2">Preparing your stats</div>
+          <div className="text-h3 font-semibold text-primary mb-2">Loading your dashboard...</div>
+          <div className="text-body-small text-secondary">Preparing your stats and tournaments</div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      <UserNav userName={userData?.display_name || user?.email?.split("@")[0] || "User"} />
+    <div className="min-h-screen bg-bg-base">
+      <Navigation 
+        user={user ? {
+          username: userData?.display_name || user.email?.split("@")[0],
+          email: user.email || '',
+          avatar: undefined,
+          notificationCount: 0
+        } : undefined}
+        currentPage="dashboard"
+      />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="pt-20 px-4 lg:px-8 pb-12">
         {/* Hero Section */}
         <div className="mb-12">
-          <div className="bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-800 p-8 relative overflow-hidden">
+          <div className="bg-bg-elevated rounded-2xl border border-border p-8 relative overflow-hidden animate-slideInUp">
             <div className="relative z-10">
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                Welcome back, <span className="text-blue-500">{userData?.display_name || user?.email?.split("@")[0]}</span>
+              <h1 className="text-h1 font-bold text-primary mb-4">
+                Welcome back, <span className="text-primary">{userData?.display_name || user?.email?.split("@")[0]}</span>
               </h1>
-              <p className="text-slate-300 text-lg mb-6">Ready to compete? Your next challenge awaits.</p>
+              <p className="text-body-large text-secondary mb-6">Ready to compete? Your next challenge awaits.</p>
               
               {/* Quick Actions */}
               <div className="flex flex-wrap gap-3">
-                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Button asChild>
                   <Link href="/tournaments">Browse Tournaments</Link>
                 </Button>
-                <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+                <Button variant="secondary">
                   <Link href="/tournaments">Submit Clip</Link>
                 </Button>
-                <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+                <Button variant="tertiary">
                   <Link href="/leaderboard">View Rankings</Link>
                 </Button>
               </div>
@@ -193,141 +214,101 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-blue-500 text-xl">●</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Total Submissions</h3>
-              <p className="text-3xl font-bold text-white">{userStats.totalSubmissions}</p>
-            </CardContent>
-          </Card>
+        <div className="grid-12 mb-12">
+          <StatCard
+            size="primary"
+            title="Total Submissions"
+            value={userStats.totalSubmissions}
+            icon={FileVideo}
+            trend={{ value: 15, label: "vs last week" }}
+            sparkline={[20, 35, 30, 45, 40, 55, 50]}
+          />
+          
+          <StatCard
+            size="primary"
+            title="Active Tournaments Joined"
+            value={userStats.joinedTournaments}
+            icon={Trophy}
+            trend={{ value: 8, label: "vs last week" }}
+            sparkline={[10, 15, 12, 18, 16, 20, 22]}
+          />
 
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-green-500 text-xl">✓</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Approved Clips</h3>
-              <p className="text-3xl font-bold text-white">{userStats.approvedSubmissions}</p>
-            </CardContent>
-          </Card>
+          <StatCard
+            size="secondary"
+            title="Approved Clips"
+            value={userStats.approvedSubmissions}
+            icon={Trophy}
+            trend={{ value: 5, label: "vs last week" }}
+            sparkline={[8, 12, 10, 14, 13, 16, 15]}
+          />
 
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-amber-500 text-xl">◐</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Pending Review</h3>
-              <p className="text-3xl font-bold text-white">{userStats.pendingSubmissions}</p>
-            </CardContent>
-          </Card>
+          <StatCard
+            size="secondary"
+            title="Pending Review"
+            value={userStats.pendingSubmissions}
+            icon={Clock}
+            trend={{ value: -2, label: "vs last week" }}
+            sparkline={[6, 4, 5, 3, 4, 2, 3]}
+          />
 
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-purple-500 text-xl">◆</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Tournaments Joined</h3>
-              <p className="text-3xl font-bold text-white">{userStats.joinedTournaments}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-red-500 text-xl">♦</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Votes Received</h3>
-              <p className="text-3xl font-bold text-white">{userStats.totalVotes}</p>
-            </CardContent>
-          </Card>
+          <StatCard
+            size="secondary"
+            title="Votes Received"
+            value={userStats.totalVotes}
+            icon={Users}
+            trend={{ value: 12, label: "vs last week" }}
+            sparkline={[15, 22, 18, 25, 28, 30, 32]}
+          />
         </div>
 
         {/* Active Tournaments */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Active Tournaments</h2>
-              <p className="text-slate-400">Compete in these tournaments and win prizes</p>
+              <h2 className="text-h2 font-bold text-primary mb-2">Active Tournaments</h2>
+              <p className="text-body-standard text-secondary">Compete in these tournaments and win prizes</p>
             </div>
-            <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
-              <Link href="/tournaments">View All →</Link>
+            <Button variant="tertiary">
+              <Link href="/tournaments">View All <ChevronRight className="size-4" /></Link>
             </Button>
           </div>
 
           {activeTournaments.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeTournaments.slice(0, 6).map((tournament) => (
-                <Card key={tournament.id} className="hover:shadow-lg transition-all hover:scale-[1.02]">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                        <span className="text-blue-500 text-lg">■</span>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-white line-clamp-1">
-                          {tournament.title}
-                        </h3>
-                        <p className="text-slate-400 text-sm">{tournament.game}</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400 text-sm">Prize Pool</span>
-                        <span className="text-blue-500 font-bold text-lg">${tournament.prize_pool.toLocaleString()}</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400 text-sm">Ends In</span>
-                        <span className="text-slate-300 text-sm font-medium">
-                          {Math.ceil((new Date(tournament.end_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
-                        </span>
-                      </div>
-
-                      <div className="pt-3 border-t border-slate-700">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-slate-500">Started</span>
-                          <span className="text-slate-400">{new Date(tournament.start_date).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Button asChild className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white">
-                      <Link href={`/tournaments/${tournament.id}`}>
-                        View Tournament Details →
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {activeTournaments.slice(0, 8).map((tournament) => (
+                <TournamentCard
+                  key={tournament.id}
+                  title={tournament.title}
+                  game={tournament.game}
+                  image={`/api/placeholder/400/225`}
+                  prizePool={`${tournament.prize_pool.toLocaleString()}`}
+                  participantCount={Math.floor(Math.random() * 50) + 10}
+                  maxParticipants={100}
+                  submissionCount={Math.floor(Math.random() * 30) + 5}
+                  startDate={tournament.start_date}
+                  endDate={tournament.end_date}
+                  status={
+                    new Date(tournament.end_date).getTime() - new Date().getTime() < 24 * 60 * 60 * 1000 
+                      ? 'ending_soon' 
+                      : 'active'
+                  }
+                  onJoin={() => router.push(`/tournaments/${tournament.id}`)}
+                  onViewDetails={() => router.push(`/tournaments/${tournament.id}`)}
+                />
               ))}
             </div>
           ) : (
-            <Card>
-              <CardContent className="p-16 text-center">
-                <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-4xl">○</span>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3">No Active Tournaments</h3>
-                <p className="text-slate-400 mb-6 max-w-md mx-auto">
-                  Check back soon! New tournaments are launching regularly with prizes and competition.
-                </p>
-                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Link href="/tournaments">View All Tournaments</Link>
-                </Button>
-              </CardContent>
+            <Card className="text-center p-16">
+              <div className="w-20 h-20 bg-bg-hover rounded-full flex items-center justify-center mx-auto mb-6">
+                <Trophy className="size-10 text-muted" />
+              </div>
+              <h3 className="text-h3 font-bold text-primary mb-3">No Active Tournaments</h3>
+              <p className="text-body-standard text-secondary mb-6 max-w-md mx-auto">
+                Check back soon! New tournaments are launching regularly with prizes and competition.
+              </p>
+              <Button>
+                <Link href="/tournaments">View All Tournaments</Link>
+              </Button>
             </Card>
           )}
         </div>
@@ -338,139 +319,97 @@ export default function DashboardPage() {
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Your Recent Submissions</h2>
-                <p className="text-slate-400">Track your clip submissions and their status</p>
+                <h2 className="text-h2 font-bold text-primary mb-2">Your Recent Submissions</h2>
+                <p className="text-body-standard text-secondary">Track your clip submissions and their status</p>
               </div>
-              <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
-                <Link href="/submissions">View All →</Link>
+              <Button variant="tertiary">
+                <Link href="/submissions">View All <ChevronRight className="size-4" /></Link>
               </Button>
             </div>
 
             {submissions.length > 0 ? (
-              <div className="space-y-4">
-                {submissions.slice(0, 5).map((submission) => (
-                  <Card key={submission.id} className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                              <span className="text-blue-500 text-sm">▣</span>
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-semibold text-white">
-                                {submission.title}
-                              </h3>
-                              <p className="text-slate-400 text-sm">
-                                {submission.tournament.title} • {submission.tournament.game}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-4 text-xs text-slate-500">
-                            <span>Submitted {new Date(submission.created_at).toLocaleDateString()}</span>
-                            <span>•</span>
-                            <span>ID: {submission.id.slice(0, 8)}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col items-end gap-2">
-                          <Badge
-                            variant={
-                              submission.status === "approved"
-                                ? "success"
-                                : submission.status === "pending"
-                                  ? "warning"
-                                  : "destructive"
-                            }
-                          >
-                            {submission.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {submissions.slice(0, 4).map((submission) => (
+                  <SubmissionCard
+                    key={submission.id}
+                    id={submission.id}
+                    title={submission.title}
+                    thumbnail={`/api/placeholder/400/225`}
+                    game={submission.tournament.game}
+                    tournament={submission.tournament.title}
+                    status={submission.status as 'approved' | 'pending' | 'rejected'}
+                    views={Math.floor(Math.random() * 1000) + 100}
+                    votes={Math.floor(Math.random() * 50) + 1}
+                    likes={Math.floor(Math.random() * 100) + 10}
+                    submittedAt={new Date(submission.created_at).toLocaleDateString()}
+                    author={{
+                      username: userData?.display_name || user?.email?.split("@")[0],
+                      avatar: undefined
+                    }}
+                    onShare={() => console.log('Share submission', submission.id)}
+                    onAnalytics={() => router.push(`/submissions/${submission.id}/analytics`)}
+                    onPlay={() => router.push(`/submissions/${submission.id}`)}
+                  />
                 ))}
               </div>
             ) : (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-3xl">↑</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-3">No Submissions Yet</h3>
-                  <p className="text-slate-400 mb-6">Start competing by submitting your best gaming clips!</p>
-                  <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <Link href="/tournaments">Browse Tournaments</Link>
-                  </Button>
-                </CardContent>
+              <Card className="text-center p-16">
+                <div className="w-16 h-16 bg-bg-hover rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Plus className="size-8 text-muted" />
+                </div>
+                <h3 className="text-h3 font-bold text-primary mb-3">No Submissions Yet</h3>
+                <p className="text-body-standard text-secondary mb-6">Start competing by submitting your best gaming clips!</p>
+                <Button>
+                  <Link href="/tournaments">Browse Tournaments</Link>
+                </Button>
               </Card>
             )}
           </div>
 
-          {/* Tournament Participation */}
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Tournament Participation</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
-                  <span className="text-slate-400">Active Tournaments</span>
-                  <span className="text-2xl font-bold text-blue-500">{activeTournaments.length}</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
-                  <span className="text-slate-400">Total Participated</span>
-                  <span className="text-2xl font-bold text-green-500">{userStats.joinedTournaments}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions & Tips */}
+          {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Actions */}
+            {/* Tournament Participation */}
             <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <Button asChild className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
-                    <Link href="/tournaments">
-                      Submit New Clip
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-800">
-                    <Link href="/profile">
-                      Edit Profile
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-800">
-                    <Link href="/leaderboard">
-                      View Leaderboard
-                    </Link>
-                  </Button>
+              <CardHeader>
+                <CardTitle className="text-h4 font-bold text-primary">Tournament Participation</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-bg-hover rounded-lg">
+                  <span className="text-body-small text-secondary">Active Tournaments</span>
+                  <span className="text-h4 font-bold text-success">{activeTournaments.length}</span>
+                </div>
+                <div className="flex items-center justify-between p-4 bg-bg-hover rounded-lg">
+                  <span className="text-body-small text-secondary">Total Participated</span>
+                  <span className="text-h4 font-bold text-primary">{userStats.joinedTournaments}</span>
                 </div>
               </CardContent>
             </Card>
 
             {/* Recent Activity */}
             <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-white mb-4">Recent Activity</h3>
+              <CardHeader>
+                <CardTitle className="text-h4 font-bold text-primary flex items-center gap-2">
+                  <Activity className="size-5" />
+                  Recent Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-3">
                   {submissions.slice(0, 3).map((submission) => (
-                    <div key={submission.id} className="flex items-center gap-3 p-3 bg-slate-800 rounded-lg">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div key={submission.id} className="flex items-center gap-3 p-3 bg-bg-hover rounded-lg">
+                      <div className="w-2 h-2 bg-primary rounded-full"></div>
                       <div className="flex-1">
-                        <p className="text-slate-300 text-sm">
+                        <p className="text-body-small text-primary">
                           Submitted "{submission.title}" to {submission.tournament.title}
                         </p>
-                        <p className="text-slate-500 text-xs">
+                        <p className="text-caption text-secondary">
                           {new Date(submission.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
                   ))}
                   {submissions.length === 0 && (
-                    <p className="text-slate-400 text-sm">No recent activity</p>
+                    <p className="text-body-small text-secondary">No recent activity</p>
                   )}
                 </div>
               </CardContent>
@@ -484,10 +423,10 @@ export default function DashboardPage() {
         <Button
           asChild
           size="lg"
-          className="w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-700 shadow-2xl hover:scale-110 transition-all"
+          className="w-16 h-16 rounded-full shadow-2xl hover:scale-110 transition-all"
         >
           <Link href="/tournaments">
-            <span className="text-2xl">+</span>
+            <Plus className="size-6" />
           </Link>
         </Button>
       </div>
