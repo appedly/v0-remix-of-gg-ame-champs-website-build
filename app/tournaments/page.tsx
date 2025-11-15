@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { UserNav } from "@/components/user-nav"
-import { Search, Filter, ChevronLeft, ChevronRight, Trophy, Calendar, DollarSign, Gamepad2, Clock, Users, X, Play, Info, Star } from "lucide-react"
+import { Search, Filter, ChevronLeft, ChevronRight, Trophy, Calendar, DollarSign, Gamepad2, Clock, Users, X, Play, Info, Star, ExternalLink, TrendingUp } from "lucide-react"
 import Link from "next/link"
 
 interface Tournament {
@@ -48,9 +48,8 @@ export default function TournamentsPage() {
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterPrize, setFilterPrize] = useState("all")
   const [showFilters, setShowFilters] = useState(false)
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+  const [currentTournamentIndex, setCurrentTournamentIndex] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
-  const [isAutoScrolling, setIsAutoScrolling] = useState(true)
 
   useEffect(() => {
     fetchUser()
@@ -64,39 +63,39 @@ export default function TournamentsPage() {
   useEffect(() => {
     if (filteredTournaments.length > 0 && !selectedTournament) {
       setSelectedTournament(filteredTournaments[0])
+      setCurrentTournamentIndex(0)
     }
   }, [filteredTournaments])
 
+  // Auto-rotate tournaments every 8 seconds
   useEffect(() => {
-    if (!isAutoScrolling || !carouselRef.current) return
+    if (filteredTournaments.length === 0) return
 
-    const scrollContainer = carouselRef.current
-    let scrollAmount = 0
-    const scrollSpeed = 0.3
+    const interval = setInterval(() => {
+      setCurrentTournamentIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % filteredTournaments.length
+        setSelectedTournament(filteredTournaments[nextIndex])
+        return nextIndex
+      })
+    }, 8000)
 
-    const scroll = () => {
-      if (!scrollContainer) return
-      
-      scrollAmount += scrollSpeed
-      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth
-      
-      if (scrollAmount >= maxScroll) {
-        scrollAmount = 0
-      }
-      
-      scrollContainer.scrollLeft = scrollAmount
-    }
-
-    const interval = setInterval(scroll, 30)
     return () => clearInterval(interval)
-  }, [isAutoScrolling, filteredTournaments])
+  }, [filteredTournaments])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
-        scrollCarousel("left")
+        setCurrentTournamentIndex((prevIndex) => {
+          const newIndex = prevIndex === 0 ? filteredTournaments.length - 1 : prevIndex - 1
+          setSelectedTournament(filteredTournaments[newIndex])
+          return newIndex
+        })
       } else if (e.key === "ArrowRight") {
-        scrollCarousel("right")
+        setCurrentTournamentIndex((prevIndex) => {
+          const newIndex = (prevIndex + 1) % filteredTournaments.length
+          setSelectedTournament(filteredTournaments[newIndex])
+          return newIndex
+        })
       } else if (e.key === "Escape" && showModal) {
         setShowModal(false)
       }
@@ -104,7 +103,7 @@ export default function TournamentsPage() {
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [showModal])
+  }, [showModal, filteredTournaments])
 
   const fetchUser = async () => {
     const supabase = createClient()
@@ -162,23 +161,6 @@ export default function TournamentsPage() {
     }
 
     setFilteredTournaments(filtered)
-  }
-
-  const scrollCarousel = (direction: "left" | "right") => {
-    setIsAutoScrolling(false)
-    if (carouselRef.current) {
-      const scrollAmount = 400
-      carouselRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth"
-      })
-      setTimeout(() => setIsAutoScrolling(true), 5000)
-    }
-  }
-
-  const handleCarouselInteraction = () => {
-    setIsAutoScrolling(false)
-    setTimeout(() => setIsAutoScrolling(true), 5000)
   }
 
   const getStatusStyles = (status: string) => {
@@ -246,7 +228,7 @@ export default function TournamentsPage() {
                 alt={selectedTournament.game}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
             </div>
 
             {/* Hero Content - Simple and Clean */}
@@ -267,6 +249,8 @@ export default function TournamentsPage() {
                   <div className="flex items-center gap-3 mb-6">
                     <Gamepad2 className="w-5 h-5 text-blue-400" />
                     <span className="text-lg font-semibold text-white">{selectedTournament.game}</span>
+                    <TrendingUp className="w-4 h-4 text-green-400" />
+                    <span className="text-white/80 text-sm">Featured Tournament</span>
                   </div>
                   
                   {selectedTournament.description && (
@@ -353,7 +337,10 @@ export default function TournamentsPage() {
             <div className="mt-4 p-4 bg-slate-700 rounded-lg border border-slate-600">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-slate-300 text-sm font-medium mb-2">Game</label>
+                  <label className="block text-slate-300 text-sm font-medium mb-2">
+                    <Gamepad2 className="inline w-4 h-4 mr-1" />
+                    Game
+                  </label>
                   <select
                     value={filterGame}
                     onChange={(e) => setFilterGame(e.target.value)}
@@ -367,7 +354,10 @@ export default function TournamentsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 text-sm font-medium mb-2">Status</label>
+                  <label className="block text-slate-300 text-sm font-medium mb-2">
+                    <Star className="inline w-4 h-4 mr-1" />
+                    Status
+                  </label>
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
@@ -381,7 +371,10 @@ export default function TournamentsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 text-sm font-medium mb-2">Prize Pool</label>
+                  <label className="block text-slate-300 text-sm font-medium mb-2">
+                    <Trophy className="inline w-4 h-4 mr-1" />
+                    Prize Pool
+                  </label>
                   <select
                     value={filterPrize}
                     onChange={(e) => setFilterPrize(e.target.value)}
@@ -414,22 +407,36 @@ export default function TournamentsPage() {
         </div>
       </div>
 
-      {/* Tournament Carousel */}
+      {/* Tournament Cards */}
       <div className="py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <h2 className="text-2xl md:text-3xl font-bold text-white">Tournaments</h2>
+              <div className="hidden sm:flex items-center gap-2 text-slate-400 text-sm">
+                <span>Use</span>
+                <kbd className="px-2 py-1 bg-slate-700 rounded text-xs">←</kbd>
+                <kbd className="px-2 py-1 bg-slate-700 rounded text-xs">→</kbd>
+                <span>to navigate</span>
+              </div>
             </div>
             <div className="flex gap-2">
               <button
-                onClick={() => scrollCarousel("left")}
+                onClick={() => setCurrentTournamentIndex((prevIndex) => {
+                  const newIndex = prevIndex === 0 ? filteredTournaments.length - 1 : prevIndex - 1
+                  setSelectedTournament(filteredTournaments[newIndex])
+                  return newIndex
+                })}
                 className="p-2 bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white rounded-lg transition-colors duration-200"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
-                onClick={() => scrollCarousel("right")}
+                onClick={() => setCurrentTournamentIndex((prevIndex) => {
+                  const newIndex = (prevIndex + 1) % filteredTournaments.length
+                  setSelectedTournament(filteredTournaments[newIndex])
+                  return newIndex
+                })}
                 className="p-2 bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white rounded-lg transition-colors duration-200"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -437,28 +444,23 @@ export default function TournamentsPage() {
             </div>
           </div>
 
-          <div
-            ref={carouselRef}
-            className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            onMouseEnter={handleCarouselInteraction}
-            onTouchStart={handleCarouselInteraction}
-          >
-            {filteredTournaments.map((tournament) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredTournaments.map((tournament, index) => (
               <div
                 key={tournament.id}
-                onClick={() => setSelectedTournament(tournament)}
-                onMouseEnter={() => setHoveredCard(tournament.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-                className={`flex-shrink-0 w-72 cursor-pointer transition-all duration-200 ${
+                onClick={() => {
+                  setSelectedTournament(tournament)
+                  setCurrentTournamentIndex(index)
+                }}
+                className={`cursor-pointer transition-all duration-200 ${
                   selectedTournament?.id === tournament.id 
                     ? "ring-2 ring-blue-500" 
-                    : hoveredCard === tournament.id ? "scale-105" : ""
+                    : "hover:scale-105"
                 }`}
               >
                 <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden hover:border-blue-500/50 transition-all duration-200">
                   {/* Clean Game Image */}
-                  <div className="relative h-40">
+                  <div className="relative h-48">
                     <img
                       src={gameImages[tournament.game] || "/placeholder.jpg"}
                       alt={tournament.game}
@@ -492,15 +494,26 @@ export default function TournamentsPage() {
                       </div>
                     </div>
 
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        openTournamentModal(tournament)
-                      }}
-                      className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors duration-200"
-                    >
-                      {tournament.status === "active" ? "Join Now" : tournament.status === "upcoming" ? "View Details" : "View Results"}
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          openTournamentModal(tournament)
+                        }}
+                        className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors duration-200"
+                      >
+                        {tournament.status === "active" ? "Join Now" : tournament.status === "upcoming" ? "View Details" : "View Results"}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          openTournamentModal(tournament)
+                        }}
+                        className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition-colors duration-200"
+                      >
+                        Learn More
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -639,13 +652,6 @@ export default function TournamentsPage() {
       )}
 
       <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
         .line-clamp-1 {
           display: -webkit-box;
           -webkit-line-clamp: 1;
