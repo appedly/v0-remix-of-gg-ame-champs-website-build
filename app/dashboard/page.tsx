@@ -5,11 +5,7 @@ import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { UserNav } from "@/components/user-nav"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { LoadingSpinner } from "@/components/ui/loading-spinner"
-import { Progress } from "@/components/ui/progress"
+import { Trophy, Zap, Target, TrendingUp, Clock, AlertCircle, ChevronRight, Bell } from "lucide-react"
 
 interface Tournament {
   id: string
@@ -55,6 +51,7 @@ export default function DashboardPage() {
     joinedTournaments: 0,
   })
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedStatTab, setSelectedStatTab] = useState(0)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -65,10 +62,7 @@ export default function DashboardPage() {
           error: sessionError,
         } = await supabase.auth.getSession()
 
-        console.log("[v0] Dashboard - Session check:", { session: !!session, error: sessionError })
-
         if (!session || sessionError) {
-          console.log("[v0] No active session, redirecting to login")
           router.push("/login")
           return
         }
@@ -81,10 +75,7 @@ export default function DashboardPage() {
           .eq("id", session.user.id)
           .single()
 
-        console.log("[v0] User data fetch:", { data: userDataResult, error: userError })
-
         if (userError && userError.code === "PGRST116") {
-          console.log("[v0] User not found in users table, creating...")
           const { data: newUser, error: createError } = await supabase
             .from("users")
             .insert({
@@ -95,9 +86,7 @@ export default function DashboardPage() {
             .select()
             .single()
 
-          if (createError) {
-            console.error("[v0] Error creating user:", createError)
-          } else {
+          if (!createError) {
             setUserData(newUser)
           }
         } else {
@@ -123,12 +112,9 @@ export default function DashboardPage() {
 
         setActiveTournaments(tournamentsData || [])
 
-        // Calculate user stats
         const totalSubmissions = submissionsData?.length || 0
         const approvedSubmissions = submissionsData?.filter(s => s.status === "approved").length || 0
         const pendingSubmissions = submissionsData?.filter(s => s.status === "pending").length || 0
-        
-        // Get unique tournaments user has participated in
         const uniqueTournaments = new Set(submissionsData?.map(s => s.tournament_id) || [])
         const joinedTournaments = uniqueTournaments.size
 
@@ -136,13 +122,13 @@ export default function DashboardPage() {
           totalSubmissions,
           approvedSubmissions,
           pendingSubmissions,
-          totalVotes: 0, // TODO: Implement votes counting
+          totalVotes: 0,
           joinedTournaments,
         })
 
         setIsLoading(false)
       } catch (err: any) {
-        console.error("[v0] Dashboard error:", err)
+        console.error("Dashboard error:", err)
         router.push("/login")
       }
     }
@@ -154,343 +140,273 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <LoadingSpinner size="lg" className="mx-auto mb-6" />
-          <div className="text-white text-lg font-medium">Loading your dashboard...</div>
-          <div className="text-slate-400 text-sm mt-2">Preparing your stats</div>
+          <div className="w-12 h-12 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="text-white font-semibold">Loading dashboard...</div>
+          <div className="text-slate-400 text-sm mt-1">Setting up your gaming hub</div>
         </div>
       </div>
     )
   }
 
+  const displayName = userData?.display_name || user?.email?.split("@")[0] || "Player"
+
   return (
     <div className="min-h-screen bg-slate-900">
-      <UserNav userName={userData?.display_name || user?.email?.split("@")[0] || "User"} />
+      <UserNav userName={displayName} />
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <div className="mb-12">
-          <div className="bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-800 p-8 relative overflow-hidden">
-            <div className="relative z-10">
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                Welcome back, <span className="text-blue-500">{userData?.display_name || user?.email?.split("@")[0]}</span>
-              </h1>
-              <p className="text-slate-300 text-lg mb-6">Ready to compete? Your next challenge awaits.</p>
-              
-              {/* Quick Actions */}
-              <div className="flex flex-wrap gap-3">
-                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Link href="/tournaments">Browse Tournaments</Link>
-                </Button>
-                <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
-                  <Link href="/tournaments">Submit Clip</Link>
-                </Button>
-                <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
-                  <Link href="/leaderboard">View Rankings</Link>
-                </Button>
+      <main className="container mx-auto px-4 py-6 max-w-7xl">
+        {/* Top Sticky Bar - Quick Stats & Actions */}
+        <div className="sticky top-20 z-30 -mx-4 px-4 py-3 bg-slate-900/95 backdrop-blur border-b border-slate-800 mb-6">
+          <div className="flex items-center justify-between gap-4 overflow-x-auto">
+            <div className="flex items-center gap-3 min-w-fit">
+              <Zap className="w-5 h-5 text-blue-400" />
+              <div className="flex gap-4">
+                <div className="text-center">
+                  <div className="text-xs text-slate-400 font-semibold">APPROVED</div>
+                  <div className="text-lg font-bold text-green-400">{userStats.approvedSubmissions}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-slate-400 font-semibold">PENDING</div>
+                  <div className="text-lg font-bold text-amber-400">{userStats.pendingSubmissions}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-slate-400 font-semibold">TOURNAMENTS</div>
+                  <div className="text-lg font-bold text-blue-400">{userStats.joinedTournaments}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 ml-auto flex-shrink-0">
+              <button className="p-2 hover:bg-slate-800 rounded-lg transition-all">
+                <Bell className="w-5 h-5 text-slate-400 hover:text-blue-400" />
+              </button>
+              <Link
+                href="/tournaments"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all"
+              >
+                Browse Tournaments
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Hero Welcome Section - Compact */}
+        <div className="mb-6">
+          <div className="relative overflow-hidden rounded-xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-6">
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500 rounded-full blur-3xl"></div>
+            </div>
+            <div className="relative">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm text-slate-400 font-semibold mb-1">WELCOME BACK</div>
+                  <h1 className="text-2xl md:text-3xl font-black text-white mb-1">
+                    <span className="text-blue-400">{displayName}</span>
+                  </h1>
+                  <p className="text-sm text-slate-400">You have <span className="text-green-400 font-semibold">{userStats.approvedSubmissions}</span> approved clips competing</p>
+                </div>
+                <div className="text-right hidden md:block">
+                  <div className="text-xs text-slate-500 mb-2">Rank</div>
+                  <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">#1,234</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-blue-500 text-xl">●</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Total Submissions</h3>
-              <p className="text-3xl font-bold text-white">{userStats.totalSubmissions}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-green-500 text-xl">✓</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Approved Clips</h3>
-              <p className="text-3xl font-bold text-white">{userStats.approvedSubmissions}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-amber-500 text-xl">◐</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Pending Review</h3>
-              <p className="text-3xl font-bold text-white">{userStats.pendingSubmissions}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-purple-500 text-xl">◆</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Tournaments Joined</h3>
-              <p className="text-3xl font-bold text-white">{userStats.joinedTournaments}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-red-500 text-xl">♦</span>
-                </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Votes Received</h3>
-              <p className="text-3xl font-bold text-white">{userStats.totalVotes}</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Active Tournaments */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Tournaments & Submissions */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Active Tournaments - Horizontal Scroll */}
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Active Tournaments</h2>
-              <p className="text-slate-400">Compete in these tournaments and win prizes</p>
-            </div>
-            <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
-              <Link href="/tournaments">View All →</Link>
-            </Button>
-          </div>
-
-          {activeTournaments.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeTournaments.slice(0, 6).map((tournament) => (
-                <Card key={tournament.id} className="hover:shadow-lg transition-all hover:scale-[1.02]">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                        <span className="text-blue-500 text-lg">■</span>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-white line-clamp-1">
-                          {tournament.title}
-                        </h3>
-                        <p className="text-slate-400 text-sm">{tournament.game}</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400 text-sm">Prize Pool</span>
-                        <span className="text-blue-500 font-bold text-lg">${tournament.prize_pool.toLocaleString()}</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400 text-sm">Ends In</span>
-                        <span className="text-slate-300 text-sm font-medium">
-                          {Math.ceil((new Date(tournament.end_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
-                        </span>
-                      </div>
-
-                      <div className="pt-3 border-t border-slate-700">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-slate-500">Started</span>
-                          <span className="text-slate-400">{new Date(tournament.start_date).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Button asChild className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white">
-                      <Link href={`/tournaments/${tournament.id}`}>
-                        View Tournament Details →
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="p-16 text-center">
-                <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-4xl">○</span>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3">No Active Tournaments</h3>
-                <p className="text-slate-400 mb-6 max-w-md mx-auto">
-                  Check back soon! New tournaments are launching regularly with prizes and competition.
-                </p>
-                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Link href="/tournaments">View All Tournaments</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* User Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Recent Submissions */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Your Recent Submissions</h2>
-                <p className="text-slate-400">Track your clip submissions and their status</p>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold text-white">Active Tournaments</h2>
+                <Link href="/tournaments" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                  View All <ChevronRight className="w-3 h-3" />
+                </Link>
               </div>
-              <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
-                <Link href="/submissions">View All →</Link>
-              </Button>
-            </div>
 
-            {submissions.length > 0 ? (
-              <div className="space-y-4">
-                {submissions.slice(0, 5).map((submission) => (
-                  <Card key={submission.id} className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
+              {activeTournaments.length > 0 ? (
+                <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+                  {activeTournaments.slice(0, 4).map((tournament) => (
+                    <Link
+                      key={tournament.id}
+                      href={`/tournaments/${tournament.id}`}
+                      className="flex-shrink-0 w-48 md:w-56 p-4 bg-slate-800/60 hover:bg-slate-800 border border-slate-700 hover:border-blue-500/50 rounded-lg transition-all group"
+                    >
+                      <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                              <span className="text-blue-500 text-sm">▣</span>
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-semibold text-white">
-                                {submission.title}
-                              </h3>
-                              <p className="text-slate-400 text-sm">
-                                {submission.tournament.title} • {submission.tournament.game}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-4 text-xs text-slate-500">
-                            <span>Submitted {new Date(submission.created_at).toLocaleDateString()}</span>
-                            <span>•</span>
-                            <span>ID: {submission.id.slice(0, 8)}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col items-end gap-2">
-                          <Badge
-                            variant={
-                              submission.status === "approved"
-                                ? "success"
-                                : submission.status === "pending"
-                                  ? "warning"
-                                  : "destructive"
-                            }
-                          >
-                            {submission.status}
-                          </Badge>
+                          <p className="text-xs text-blue-400 font-bold uppercase mb-1">{tournament.game}</p>
+                          <h3 className="text-sm font-bold text-white group-hover:text-blue-400 line-clamp-2 transition-colors">
+                            {tournament.title}
+                          </h3>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      <div className="space-y-2 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-400">Prize</span>
+                          <span className="text-blue-400 font-bold">${(tournament.prize_pool / 1000).toFixed(0)}K</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-400">Ends</span>
+                          <span className="text-slate-300">
+                            {Math.ceil((new Date(tournament.end_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}d
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-6 bg-slate-800/30 border border-slate-700 rounded-lg text-center">
+                  <AlertCircle className="w-8 h-8 text-slate-500 mx-auto mb-2" />
+                  <p className="text-slate-400 text-sm">No active tournaments right now</p>
+                </div>
+              )}
+            </div>
+
+            {/* Recent Submissions - Compact List */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold text-white">Your Submissions</h2>
+                <Link href="/submissions" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                  View All <ChevronRight className="w-3 h-3" />
+                </Link>
               </div>
-            ) : (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-3xl">↑</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-3">No Submissions Yet</h3>
-                  <p className="text-slate-400 mb-6">Start competing by submitting your best gaming clips!</p>
-                  <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <Link href="/tournaments">Browse Tournaments</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </div>
 
-          {/* Tournament Participation */}
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Tournament Participation</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
-                  <span className="text-slate-400">Active Tournaments</span>
-                  <span className="text-2xl font-bold text-blue-500">{activeTournaments.length}</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
-                  <span className="text-slate-400">Total Participated</span>
-                  <span className="text-2xl font-bold text-green-500">{userStats.joinedTournaments}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions & Tips */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <Button asChild className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
-                    <Link href="/tournaments">
-                      Submit New Clip
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-800">
-                    <Link href="/profile">
-                      Edit Profile
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-800">
-                    <Link href="/leaderboard">
-                      View Leaderboard
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recent Activity */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-white mb-4">Recent Activity</h3>
-                <div className="space-y-3">
-                  {submissions.slice(0, 3).map((submission) => (
-                    <div key={submission.id} className="flex items-center gap-3 p-3 bg-slate-800 rounded-lg">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-slate-300 text-sm">
-                          Submitted "{submission.title}" to {submission.tournament.title}
-                        </p>
-                        <p className="text-slate-500 text-xs">
-                          {new Date(submission.created_at).toLocaleDateString()}
-                        </p>
+              {submissions.length > 0 ? (
+                <div className="space-y-2">
+                  {submissions.slice(0, 4).map((submission) => (
+                    <div key={submission.id} className="p-3 bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700 rounded-lg transition-all">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-semibold text-white truncate">{submission.title}</h3>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            {submission.tournament.game} • {new Date(submission.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <span
+                            className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${
+                              submission.status === "approved"
+                                ? "bg-green-500/20 text-green-400"
+                                : submission.status === "pending"
+                                  ? "bg-amber-500/20 text-amber-400"
+                                  : "bg-red-500/20 text-red-400"
+                            }`}
+                          >
+                            {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
-                  {submissions.length === 0 && (
-                    <p className="text-slate-400 text-sm">No recent activity</p>
-                  )}
                 </div>
-              </CardContent>
-            </Card>
+              ) : (
+                <div className="p-6 bg-slate-800/30 border border-slate-700 rounded-lg text-center">
+                  <Target className="w-8 h-8 text-slate-500 mx-auto mb-2" />
+                  <p className="text-slate-400 text-sm">No submissions yet - start competing!</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column - Stats & Quick Actions */}
+          <div className="space-y-4">
+            {/* Performance Stats - Compact Card Stack */}
+            <div className="space-y-3">
+              <h3 className="text-lg font-bold text-white px-1">Performance</h3>
+
+              {/* Stat Cards */}
+              <div className="bg-slate-800/60 hover:bg-slate-800 border border-slate-700 rounded-lg p-4 transition-all cursor-pointer group">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-xs text-slate-400 font-bold uppercase">Total Submissions</div>
+                  <div className="w-8 h-8 bg-blue-500/10 group-hover:bg-blue-500/20 rounded-lg flex items-center justify-center transition-all">
+                    <Trophy className="w-4 h-4 text-blue-400" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-white">{userStats.totalSubmissions}</div>
+                <div className="text-xs text-slate-500 mt-2">Across {userStats.joinedTournaments} tournaments</div>
+              </div>
+
+              <div className="bg-slate-800/60 hover:bg-slate-800 border border-slate-700 rounded-lg p-4 transition-all cursor-pointer group">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-xs text-slate-400 font-bold uppercase">Approved Rate</div>
+                  <div className="w-8 h-8 bg-green-500/10 group-hover:bg-green-500/20 rounded-lg flex items-center justify-center transition-all">
+                    <TrendingUp className="w-4 h-4 text-green-400" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-white">
+                  {userStats.totalSubmissions > 0 ? Math.round((userStats.approvedSubmissions / userStats.totalSubmissions) * 100) : 0}%
+                </div>
+                <div className="w-full h-1.5 bg-slate-700 rounded-full mt-2 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-green-500 to-blue-500"
+                    style={{ width: `${userStats.totalSubmissions > 0 ? (userStats.approvedSubmissions / userStats.totalSubmissions) * 100 : 0}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-slate-800/60 hover:bg-slate-800 border border-slate-700 rounded-lg p-4 transition-all cursor-pointer group">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-xs text-slate-400 font-bold uppercase">Under Review</div>
+                  <div className="w-8 h-8 bg-amber-500/10 group-hover:bg-amber-500/20 rounded-lg flex items-center justify-center transition-all">
+                    <Clock className="w-4 h-4 text-amber-400" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-white">{userStats.pendingSubmissions}</div>
+                <div className="text-xs text-slate-500 mt-2">Waiting for admin review</div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-slate-800/40 border border-slate-700 rounded-lg p-4 space-y-2">
+              <h3 className="text-xs font-bold text-slate-400 uppercase mb-3">Quick Actions</h3>
+              <Link
+                href="/tournaments"
+                className="flex items-center gap-2 w-full px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-all"
+              >
+                <Zap className="w-4 h-4" />
+                Submit Clip
+              </Link>
+              <Link
+                href="/leaderboard"
+                className="flex items-center gap-2 w-full px-3 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-semibold rounded-lg transition-all"
+              >
+                <TrendingUp className="w-4 h-4" />
+                View Leaderboard
+              </Link>
+              <Link
+                href="/profile"
+                className="flex items-center gap-2 w-full px-3 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-semibold rounded-lg transition-all"
+              >
+                <Target className="w-4 h-4" />
+                Edit Profile
+              </Link>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-slate-800/40 border border-slate-700 rounded-lg p-4">
+              <h3 className="text-xs font-bold text-slate-400 uppercase mb-3">Recent Activity</h3>
+              <div className="space-y-2">
+                {submissions.slice(0, 3).map((submission) => (
+                  <div key={submission.id} className="flex items-start gap-2 p-2 bg-slate-900/50 rounded">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-slate-300 truncate">Submitted "{submission.title}"</p>
+                      <p className="text-xs text-slate-500">{new Date(submission.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
+                    </div>
+                  </div>
+                ))}
+                {submissions.length === 0 && (
+                  <p className="text-xs text-slate-500">No recent activity</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </main>
-
-      {/* Floating Action Button */}
-      <div className="fixed bottom-8 right-8 z-40">
-        <Button
-          asChild
-          size="lg"
-          className="w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-700 shadow-2xl hover:scale-110 transition-all"
-        >
-          <Link href="/tournaments">
-            <span className="text-2xl">+</span>
-          </Link>
-        </Button>
-      </div>
     </div>
   )
 }
