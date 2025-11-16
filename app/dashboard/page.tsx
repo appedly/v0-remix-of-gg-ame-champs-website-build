@@ -26,7 +26,9 @@ import {
   ChevronRight,
   Calendar,
   XCircle,
+  ChevronLeft,
 } from "lucide-react"
+import { useRef } from "react"
 
 interface Tournament {
   id: string
@@ -56,6 +58,107 @@ interface UserStats {
   pendingSubmissions: number
   totalVotes: number
   joinedTournaments: number
+}
+
+function TournamentScrollContainer({ children }: { children: React.ReactNode }) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [showLeftArrow, setShowLeftArrow] = useState(false)
+  const [showRightArrow, setShowRightArrow] = useState(true)
+  const [isDragging, setIsDragging] = useState(false)
+  const [startX, setStartX] = useState(0)
+  const [scrollLeft, setScrollLeft] = useState(0)
+
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
+      setShowLeftArrow(scrollLeft > 0)
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10)
+    }
+  }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scrollContainerRef.current) {
+      setIsDragging(true)
+      setStartX(e.pageX - scrollContainerRef.current.offsetLeft)
+      setScrollLeft(scrollContainerRef.current.scrollLeft)
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return
+    
+    e.preventDefault()
+    const x = e.pageX - scrollContainerRef.current.offsetLeft
+    const walk = (x - startX) * 2
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk
+    checkScroll()
+  }
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 400
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      })
+      setTimeout(checkScroll, 300)
+    }
+  }
+
+  useEffect(() => {
+    checkScroll()
+    const container = scrollContainerRef.current
+    if (container) {
+      container.addEventListener('scroll', checkScroll)
+      return () => container.removeEventListener('scroll', checkScroll)
+    }
+  }, [])
+
+  return (
+    <div className="relative group">
+      {showLeftArrow && (
+        <button
+          onClick={() => scroll('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-r from-slate-900 to-transparent pl-2 pr-4 py-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+        >
+          <ChevronLeft className="text-blue-500 hover:text-blue-400 transition-colors" size={28} />
+        </button>
+      )}
+
+      <div
+        ref={scrollContainerRef}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseUp}
+        className={`overflow-x-auto pb-4 -mx-4 px-4 scroll-smooth ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        } as any}
+      >
+        <style>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+        {children}
+      </div>
+
+      {showRightArrow && (
+        <button
+          onClick={() => scroll('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-l from-slate-900 to-transparent pr-2 pl-4 py-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+        >
+          <ChevronRight className="text-blue-500 hover:text-blue-400 transition-colors" size={28} />
+        </button>
+      )}
+    </div>
+  )
 }
 
 export default function DashboardPage() {
@@ -356,7 +459,7 @@ export default function DashboardPage() {
           </div>
 
           {activeTournaments.length > 0 ? (
-            <div className="overflow-x-auto pb-4 -mx-4 px-4">
+            <TournamentScrollContainer>
               <div className="flex gap-6 min-w-max">
                 {activeTournaments.map((tournament) => (
                   <div key={tournament.id} className="w-96 flex-shrink-0">
@@ -405,7 +508,7 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </TournamentScrollContainer>
           ) : (
             <Card className="border-slate-700">
               <CardContent className="p-16 text-center">
@@ -440,7 +543,7 @@ export default function DashboardPage() {
           </div>
 
           {upcomingTournaments.length > 0 ? (
-            <div className="overflow-x-auto pb-4 -mx-4 px-4">
+            <TournamentScrollContainer>
               <div className="flex gap-6 min-w-max">
                 {upcomingTournaments.map((tournament) => (
                   <div key={tournament.id} className="w-96 flex-shrink-0">
@@ -489,7 +592,7 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </TournamentScrollContainer>
           ) : (
             <Card className="border-slate-700">
               <CardContent className="p-12 text-center">
@@ -519,7 +622,7 @@ export default function DashboardPage() {
           </div>
 
           {expiredTournaments.length > 0 ? (
-            <div className="overflow-x-auto pb-4 -mx-4 px-4">
+            <TournamentScrollContainer>
               <div className="flex gap-6 min-w-max">
                 {expiredTournaments.slice(0, 10).map((tournament) => (
                   <div key={tournament.id} className="w-96 flex-shrink-0">
@@ -568,7 +671,7 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </TournamentScrollContainer>
           ) : (
             <Card className="border-slate-700">
               <CardContent className="p-12 text-center">
