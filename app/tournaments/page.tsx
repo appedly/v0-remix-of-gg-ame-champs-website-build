@@ -555,7 +555,7 @@ export default function TournamentsPage() {
             </div>
             </div>
 
-            {/* Horizontal Tournament Scroller */}
+            {/* Glassmorphic Tournament Scroller */}
           <div className="relative" ref={carouselRef}>
             <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 scroll-smooth">
               {filteredTournaments.map((tournament, index) => (
