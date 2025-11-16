@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Upload, Play, FileText, Link } from "lucide-react"
 
 export function SubmissionForm({ tournamentId, userId }: { tournamentId: string; userId: string }) {
   const [title, setTitle] = useState("")
@@ -46,60 +48,90 @@ export function SubmissionForm({ tournamentId, userId }: { tournamentId: string;
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-slate-800 rounded-xl border border-slate-700 p-6 space-y-4">
-      <div>
-        <Label htmlFor="title" className="text-slate-300 font-medium">
-          Clip Title
-        </Label>
-        <Input
-          id="title"
-          type="text"
-          placeholder="My Epic Play"
-          required
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="mt-2 bg-slate-900 border-slate-600 text-white placeholder:text-slate-500"
-        />
-      </div>
+    <Card className="border-slate-700 hover:border-slate-600 transition-all duration-300">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-white">
+          <Upload className="w-5 h-5 text-blue-500" />
+          Submit Your Clip
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="title" className="text-slate-300 font-medium flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Clip Title
+            </Label>
+            <Input
+              id="title"
+              type="text"
+              placeholder="My Epic Play"
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-300"
+            />
+          </div>
 
-      <div>
-        <Label htmlFor="videoUrl" className="text-slate-300 font-medium">
-          Video URL
-        </Label>
-        <Input
-          id="videoUrl"
-          type="url"
-          placeholder="https://youtube.com/watch?v=..."
-          required
-          value={videoUrl}
-          onChange={(e) => setVideoUrl(e.target.value)}
-          className="mt-2 bg-slate-900 border-slate-600 text-white placeholder:text-slate-500"
-        />
-        <p className="text-slate-500 text-xs mt-1">YouTube, Twitch, or direct video link</p>
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="videoUrl" className="text-slate-300 font-medium flex items-center gap-2">
+              <Link className="w-4 h-4" />
+              Video URL
+            </Label>
+            <Input
+              id="videoUrl"
+              type="url"
+              placeholder="https://youtube.com/watch?v=..."
+              required
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500 focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-300"
+            />
+            <p className="text-slate-500 text-xs flex items-center gap-1">
+              <Play className="w-3 h-3" />
+              YouTube, Twitch, or direct video link
+            </p>
+          </div>
 
-      <div>
-        <Label htmlFor="description" className="text-slate-300 font-medium">
-          Description (optional)
-        </Label>
-        <Textarea
-          id="description"
-          placeholder="Tell us about your play..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="mt-2 bg-slate-900 border-slate-600 text-white placeholder:text-slate-500 min-h-[80px]"
-        />
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="description" className="text-slate-300 font-medium flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Description (optional)
+            </Label>
+            <Textarea
+              id="description"
+              placeholder="Tell us about your play..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="bg-slate-800 border-slate-600 text-white placeholder:text-slate-500 min-h-[100px] focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-300 resize-none"
+            />
+          </div>
 
-      {error && (
-        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-          <p className="text-red-400 text-sm">{error}</p>
-        </div>
-      )}
+          {error && (
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+              <p className="text-red-400 text-sm">{error}</p>
+            </div>
+          )}
 
-      <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium" disabled={isLoading}>
-        {isLoading ? "Submitting..." : "Submit Clip"}
-      </Button>
-    </form>
+          <Button 
+            type="submit" 
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20" 
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Submitting...
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Upload className="w-4 h-4" />
+                Submit Clip
+              </div>
+            )}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
