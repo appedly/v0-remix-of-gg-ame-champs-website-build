@@ -296,7 +296,7 @@ export default function TournamentsPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-slate-400 text-sm">{filteredTournaments.length} tournaments</span>
+              <span className="text-slate-400 text-sm">{filteredTournaments.length}</span>
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-2 px-3 py-2 transition-all duration-300 rounded-lg border ${
@@ -382,70 +382,66 @@ export default function TournamentsPage() {
               </div>
 
               {/* Main Content */}
-              <div className="relative h-full flex flex-col justify-end p-12">
-                <div className="max-w-4xl space-y-6">
-                  {/* Status Badge */}
-                  <div className="flex items-center gap-4">
-                    <div className={`flex items-center gap-2 px-3 py-1 rounded-full border ${getStatusStyles(selectedTournament.status).bg} ${getStatusStyles(selectedTournament.status).border}`}>
-                      <div className={`w-2 h-2 rounded-full ${getStatusStyles(selectedTournament.status).dot} ${selectedTournament.status === 'active' ? 'animate-pulse' : ''}`}></div>
-                      <span className={`text-sm font-medium uppercase tracking-wide ${getStatusStyles(selectedTournament.status).text}`}>
-                        {selectedTournament.status}
-                      </span>
+              <div className="relative h-full flex flex-col justify-between p-12">
+                {/* Top Overlay with Join Button */}
+                <div className="flex justify-between items-start">
+                  <div className="space-y-4">
+                    {/* Status Badge */}
+                    <div className="flex items-center gap-4">
+                      <div className={`flex items-center gap-2 px-3 py-1 rounded-full border ${getStatusStyles(selectedTournament.status).bg} ${getStatusStyles(selectedTournament.status).border}`}>
+                        <div className={`w-2 h-2 rounded-full ${getStatusStyles(selectedTournament.status).dot} ${selectedTournament.status === 'active' ? 'animate-pulse' : ''}`}></div>
+                        <span className={`text-sm font-medium uppercase tracking-wide ${getStatusStyles(selectedTournament.status).text}`}>
+                          {selectedTournament.status}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-300">
+                        <Gamepad2 className="w-4 h-4" />
+                        <span className="font-medium">{selectedTournament.game}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 text-slate-300">
-                      <Gamepad2 className="w-4 h-4" />
-                      <span className="font-medium">{selectedTournament.game}</span>
-                    </div>
-                  </div>
 
-                  {/* Title */}
-                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
-                    {selectedTournament.title}
-                  </h1>
+                    {/* Title */}
+                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight" style={{ fontFamily: 'var(--font-inter)' }}>
+                      {selectedTournament.title}
+                    </h1>
 
-                  {/* Description */}
-                  {selectedTournament.description && (
-                    <p className="text-xl text-slate-200 max-w-3xl leading-relaxed">
-                      {selectedTournament.description}
-                    </p>
-                  )}
-
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                      <p className="text-slate-300 text-sm uppercase tracking-widest mb-2">Prize Pool</p>
-                      <p className="text-3xl font-bold text-white">${selectedTournament.prize_pool.toLocaleString()}</p>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                      <p className="text-slate-300 text-sm uppercase tracking-widest mb-2">Start Date</p>
-                      <p className="text-lg font-semibold text-white">{new Date(selectedTournament.start_date).toLocaleDateString()}</p>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                      <p className="text-slate-300 text-sm uppercase tracking-widest mb-2">End Date</p>
-                      <p className="text-lg font-semibold text-white">{new Date(selectedTournament.end_date).toLocaleDateString()}</p>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-                      <p className="text-slate-300 text-sm uppercase tracking-widest mb-2">Duration</p>
-                      <p className="text-lg font-semibold text-white">
-                        {Math.ceil((new Date(selectedTournament.end_date).getTime() - new Date(selectedTournament.start_date).getTime()) / (1000 * 60 * 60 * 24))} days
+                    {/* Description */}
+                    {selectedTournament.description && (
+                      <p className="text-xl text-slate-200 max-w-3xl leading-relaxed font-light" style={{ fontFamily: 'var(--font-inter)' }}>
+                        {selectedTournament.description}
                       </p>
-                    </div>
+                    )}
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-4">
-                    <Link
-                      href={`/tournaments/${selectedTournament.id}`}
-                      className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-600/25"
-                    >
-                      {selectedTournament.status === "active" ? "Join Tournament" : selectedTournament.status === "upcoming" ? "View Details" : "View Results"}
-                    </Link>
-                    <button
-                      onClick={() => openTournamentModal(selectedTournament)}
-                      className="px-8 py-4 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white font-bold rounded-xl transition-all duration-300 border border-white/20"
-                    >
-                      More Info
-                    </button>
+                  {/* Join Button - Top Right */}
+                  <Link
+                    href={`/tournaments/${selectedTournament.id}`}
+                    className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-blue-600/25 whitespace-nowrap"
+                    style={{ fontFamily: 'var(--font-inter)' }}
+                  >
+                    {selectedTournament.status === "active" ? "Join Tournament" : selectedTournament.status === "upcoming" ? "View Details" : "View Results"}
+                  </Link>
+                </div>
+
+                {/* Middle Section - Stats Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl">
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                    <p className="text-slate-300 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: 'var(--font-inter)' }}>Prize Pool</p>
+                    <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-inter)' }}>${selectedTournament.prize_pool.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                    <p className="text-slate-300 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: 'var(--font-inter)' }}>Starts</p>
+                    <p className="text-lg font-semibold text-white" style={{ fontFamily: 'var(--font-inter)' }}>{new Date(selectedTournament.start_date).toLocaleDateString()}</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                    <p className="text-slate-300 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: 'var(--font-inter)' }}>Ends</p>
+                    <p className="text-lg font-semibold text-white" style={{ fontFamily: 'var(--font-inter)' }}>{new Date(selectedTournament.end_date).toLocaleDateString()}</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                    <p className="text-slate-300 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: 'var(--font-inter)' }}>Duration</p>
+                    <p className="text-lg font-semibold text-white" style={{ fontFamily: 'var(--font-inter)' }}>
+                      {Math.ceil((new Date(selectedTournament.end_date).getTime() - new Date(selectedTournament.start_date).getTime()) / (1000 * 60 * 60 * 24))} days
+                    </p>
                   </div>
                 </div>
 
@@ -493,9 +489,8 @@ export default function TournamentsPage() {
 
         {/* Sidebar - 1/3 Tournament List */}
         <div className="w-1/3 bg-slate-800/50 backdrop-blur-md border-l border-slate-700 flex flex-col">
-          <div className="p-6 border-b border-slate-700">
-            <h2 className="text-xl font-bold text-white">All Tournaments</h2>
-            <p className="text-slate-400 text-sm mt-1">Click to view details</p>
+          <div className="p-4 border-b border-slate-700">
+            <h2 className="text-lg font-semibold text-white" style={{ fontFamily: 'var(--font-inter)' }}>Tournaments</h2>
           </div>
 
           <div 
@@ -515,22 +510,22 @@ export default function TournamentsPage() {
                     setIsTransitioning(false)
                   }, 300)
                 }}
-                className={`cursor-pointer transition-all duration-300 rounded-xl overflow-hidden ${
+                className={`cursor-pointer transition-all duration-300 rounded-xl overflow-hidden group ${
                   selectedTournament?.id === tournament.id 
                     ? "ring-2 ring-blue-500 bg-slate-700/50" 
                     : "bg-slate-800/50 hover:bg-slate-700/50"
                 }`}
               >
-                <div className="relative h-24 overflow-hidden">
+                <div className="relative h-32 overflow-hidden">
                   <img
                     src={getTournamentImage(tournament)}
                     alt={`${tournament.game} tournament`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
                   
                   {/* Status Badge */}
-                  <div className="absolute top-2 right-2">
+                  <div className="absolute top-3 right-3">
                     <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${getStatusStyles(tournament.status).bg} ${getStatusStyles(tournament.status).border}`}>
                       <div className={`w-1.5 h-1.5 rounded-full ${getStatusStyles(tournament.status).dot} ${tournament.status === 'active' ? 'animate-pulse' : ''}`}></div>
                       <span className={`font-medium ${getStatusStyles(tournament.status).text}`}>
@@ -538,13 +533,17 @@ export default function TournamentsPage() {
                       </span>
                     </div>
                   </div>
+
+                  {/* Game Badge */}
+                  <div className="absolute top-3 left-3">
+                    <div className="px-2 py-1 bg-slate-900/80 backdrop-blur-sm rounded-lg">
+                      <p className="text-xs text-slate-300 font-medium" style={{ fontFamily: 'var(--font-inter)' }}>{tournament.game}</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="p-4 space-y-2">
-                  <div>
-                    <p className="text-xs text-slate-400 uppercase tracking-widest mb-1">{tournament.game}</p>
-                    <h3 className="text-sm font-semibold text-white line-clamp-1">{tournament.title}</h3>
-                  </div>
+                <div className="p-4">
+                  <h3 className="text-sm font-semibold text-white line-clamp-1 mb-3" style={{ fontFamily: 'var(--font-inter)' }}>{tournament.title}</h3>
 
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-1">
@@ -552,19 +551,9 @@ export default function TournamentsPage() {
                       <span className="text-slate-300">${tournament.prize_pool.toLocaleString()}</span>
                     </div>
                     <div className="text-slate-400">
-                      {new Date(tournament.start_date).toLocaleDateString()}
+                      {new Date(tournament.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </div>
                   </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      openTournamentModal(tournament)
-                    }}
-                    className="w-full px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors duration-300"
-                  >
-                    {tournament.status === "active" ? "Join" : "View"}
-                  </button>
                 </div>
               </div>
             ))}
@@ -615,77 +604,49 @@ export default function TournamentsPage() {
                      <span className="font-medium">{selectedTournament.game}</span>
                    </div>
                  </div>
-                 <h2 className="text-3xl font-bold text-white mb-2">{selectedTournament.title}</h2>
-               </div>
-             </div>
-
-             {/* Modal Content */}
-             <div className="p-6">
-               <div className="grid md:grid-cols-4 gap-4 mb-6">
-                 <div className="bg-slate-700/50 rounded-xl p-4 border border-slate-600">
-                   <p className="text-slate-400 text-xs uppercase tracking-widest mb-2">Prize Pool</p>
-                   <p className="text-2xl font-bold text-white">${selectedTournament.prize_pool.toLocaleString()}</p>
-                 </div>
-                 <div className="bg-slate-700/50 rounded-xl p-4 border border-slate-600">
-                   <p className="text-slate-400 text-xs uppercase tracking-widest mb-2">Start Date</p>
-                   <p className="text-lg font-semibold text-white">{new Date(selectedTournament.start_date).toLocaleDateString()}</p>
-                 </div>
-                 <div className="bg-slate-700/50 rounded-xl p-4 border border-slate-600">
-                   <p className="text-slate-400 text-xs uppercase tracking-widest mb-2">End Date</p>
-                   <p className="text-lg font-semibold text-white">{new Date(selectedTournament.end_date).toLocaleDateString()}</p>
-                 </div>
-                 <div className="bg-slate-700/50 rounded-xl p-4 border border-slate-600">
-                   <p className="text-slate-400 text-xs uppercase tracking-widest mb-2">Duration</p>
-                   <p className="text-lg font-semibold text-white">
-                     {Math.ceil((new Date(selectedTournament.end_date).getTime() - new Date(selectedTournament.start_date).getTime()) / (1000 * 60 * 60 * 24))} days
-                   </p>
-                 </div>
+                 <h2 className="text-3xl font-bold text-white mb-2" style={{ fontFamily: 'var(--font-inter)' }}>{selectedTournament.title}</h2>
                </div>
 
-               <div className="space-y-6">
-                 <div>
-                   <h3 className="text-xl font-semibold text-white mb-3">About Tournament</h3>
-                   <p className="text-slate-300 leading-relaxed">
-                     {selectedTournament.description || "Compete in this exciting tournament and showcase your skills. Join players from around the world for a chance to win amazing prizes and recognition in the gaming community."}
-                   </p>
+               {/* Modal Content */}
+               <div className="p-6">
+                 <div className="grid md:grid-cols-2 gap-4 mb-6">
+                   <div className="bg-slate-700/50 rounded-xl p-4 border border-slate-600">
+                     <p className="text-slate-400 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: 'var(--font-inter)' }}>Prize Pool</p>
+                     <p className="text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-inter)' }}>${selectedTournament.prize_pool.toLocaleString()}</p>
+                   </div>
+                   <div className="bg-slate-700/50 rounded-xl p-4 border border-slate-600">
+                     <p className="text-slate-400 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: 'var(--font-inter)' }}>Duration</p>
+                     <p className="text-lg font-semibold text-white" style={{ fontFamily: 'var(--font-inter)' }}>
+                       {Math.ceil((new Date(selectedTournament.end_date).getTime() - new Date(selectedTournament.start_date).getTime()) / (1000 * 60 * 60 * 24))} days
+                     </p>
+                   </div>
                  </div>
 
-                 <div>
-                   <h3 className="text-xl font-semibold text-white mb-3">How to Participate</h3>
-                   <ul className="space-y-2 text-slate-300">
-                     <li className="flex items-start gap-2">
-                       <span className="text-blue-400 mt-1">●</span>
-                       <span>Register for the tournament using the "Join Tournament" button</span>
-                     </li>
-                     <li className="flex items-start gap-2">
-                       <span className="text-blue-400 mt-1">●</span>
-                       <span>Submit your best gameplay clips before the tournament deadline</span>
-                     </li>
-                     <li className="flex items-start gap-2">
-                       <span className="text-blue-400 mt-1">●</span>
-                       <span>Vote for other submissions to increase community engagement</span>
-                     </li>
-                     <li className="flex items-start gap-2">
-                       <span className="text-blue-400 mt-1">●</span>
-                       <span>Win prizes based on community votes and tournament rankings</span>
-                     </li>
-                   </ul>
-                 </div>
+                 <div className="space-y-6">
+                   <div>
+                     <h3 className="text-lg font-semibold text-white mb-3" style={{ fontFamily: 'var(--font-inter)' }}>About</h3>
+                     <p className="text-slate-300 leading-relaxed font-light" style={{ fontFamily: 'var(--font-inter)' }}>
+                       {selectedTournament.description || "Compete in this exciting tournament and showcase your skills. Join players from around the world for a chance to win amazing prizes and recognition."}
+                     </p>
+                   </div>
 
-                 <div className="flex gap-4">
-                   <Link
-                     href={`/tournaments/${selectedTournament.id}`}
-                     className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-300 text-center"
-                   >
-                     {selectedTournament.status === "active" ? "Join Tournament Now" : selectedTournament.status === "upcoming" ? "View Full Details" : "View Results"}
-                   </Link>
+                   <div className="flex gap-4">
+                     <Link
+                       href={`/tournaments/${selectedTournament.id}`}
+                       className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-300 text-center"
+                       style={{ fontFamily: 'var(--font-inter)' }}
+                     >
+                       {selectedTournament.status === "active" ? "Join Tournament" : selectedTournament.status === "upcoming" ? "View Details" : "View Results"}
+                     </Link>
 
-                   <button
-                     onClick={() => setShowModal(false)}
-                     className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-all duration-300"
-                   >
-                     Close
-                   </button>
+                     <button
+                       onClick={() => setShowModal(false)}
+                       className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-all duration-300"
+                       style={{ fontFamily: 'var(--font-inter)' }}
+                     >
+                       Close
+                     </button>
+                   </div>
                  </div>
                </div>
              </div>
