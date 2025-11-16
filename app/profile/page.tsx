@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Award, Gift, Zap, Crown } from "lucide-react"
+import { User, Lock, Trophy, TrendingUp, CheckCircle2, Users, Crown, Gift } from "lucide-react"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -189,23 +190,25 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-slate-900">
       <UserNav userName={user?.display_name || "User"} />
 
-      <main className="container mx-auto px-4 py-8 max-w-5xl">
+      <main className="container mx-auto px-4 py-8 max-w-6xl">
+        {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-4 mb-2">
-            <h1 className="text-3xl font-bold text-white">Profile Settings</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-bold text-white">Profile</h1>
             {isFoundingMember && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30">
-                <Crown className="w-5 h-5 text-yellow-400" />
-                <span className="text-yellow-400 font-bold text-sm">FOUNDING MEMBER</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30">
+                <Crown className="w-4 h-4 text-yellow-400" />
+                <span className="text-yellow-400 font-semibold text-xs uppercase tracking-wide">Founding Member</span>
               </div>
             )}
           </div>
           <p className="text-slate-400">Manage your account and view your stats</p>
         </div>
 
+        {/* Message Alert */}
         {message && (
           <div
-            className={`mb-6 p-4 rounded-lg border ${
+            className={`mb-6 p-4 rounded-xl border ${
               message.type === "success"
                 ? "bg-green-500/10 border-green-500/20 text-green-400"
                 : "bg-red-500/10 border-red-500/20 text-red-400"
@@ -215,186 +218,181 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Founding Member Badge (if applicable) */}
-        {isFoundingMember && (
-          <div className="mb-8">
-            <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl border border-yellow-500/20 p-8">
-              <div className="flex items-start gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                    <Crown className="w-10 h-10 text-white" />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                    Founding Member
-                    <span className="text-yellow-400">●</span>
-                  </h2>
-                  <p className="text-slate-300 mb-4">
-                    You're one of the first 50 members to join our community! This exclusive badge recognizes your early
-                    support and commitment to the platform.
-                  </p>
-                  <div className="flex flex-wrap gap-4">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
-                      <Zap className="w-4 h-4 text-yellow-400" />
-                      <span className="text-yellow-400 text-sm font-semibold">Early Supporter</span>
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                      <Award className="w-4 h-4 text-blue-400" />
-                      <span className="text-blue-400 text-sm font-semibold">Community Pioneer</span>
-                    </div>
-                  </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card className="hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                  <Trophy className="text-blue-500" size={20} />
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Total Clips</h3>
+              <p className="text-2xl font-bold text-white">{stats.totalSubmissions}</p>
+            </CardContent>
+          </Card>
 
-        {/* Referral Stats */}
-        <div className="mb-8 bg-slate-800 rounded-xl border border-slate-700 p-6">
-          <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-            <Gift className="w-5 h-5 text-blue-400" />
-            Referral Stats
-          </h3>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-slate-900 rounded-lg p-4 border border-slate-700">
-              <p className="text-slate-400 text-sm mb-1">Total Referrals</p>
-              <p className="text-3xl font-bold text-blue-400">{referralCount}</p>
-            </div>
-            <div className="bg-slate-900 rounded-lg p-4 border border-slate-700">
-              <p className="text-slate-400 text-sm mb-1">Access Codes Generated</p>
-              <p className="text-3xl font-bold text-blue-400">{stats.totalSubmissions}</p>
-            </div>
-            <a
-              href="/dashboard/referral-codes"
-              className="bg-blue-600 rounded-lg p-4 border border-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center"
-            >
-              Manage Referrals
-            </a>
-          </div>
+          <Card className="hover:shadow-lg hover:shadow-green-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                  <CheckCircle2 className="text-green-500" size={20} />
+                </div>
+              </div>
+              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Approved</h3>
+              <p className="text-2xl font-bold text-white">{stats.approvedSubmissions}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="text-purple-500" size={20} />
+                </div>
+              </div>
+              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Votes</h3>
+              <p className="text-2xl font-bold text-white">{stats.totalVotes}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                  <Users className="text-amber-500" size={20} />
+                </div>
+              </div>
+              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Referrals</h3>
+              <p className="text-2xl font-bold text-white">{referralCount}</p>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-slate-800 rounded-xl border border-slate-700 p-4">
-            <div className="text-slate-400 text-sm mb-1">Total Submissions</div>
-            <div className="text-2xl font-bold text-white">{stats.totalSubmissions}</div>
-          </div>
-          <div className="bg-slate-800 rounded-xl border border-slate-700 p-4">
-            <div className="text-slate-400 text-sm mb-1">Approved</div>
-            <div className="text-2xl font-bold text-green-400">{stats.approvedSubmissions}</div>
-          </div>
-          <div className="bg-slate-800 rounded-xl border border-slate-700 p-4">
-            <div className="text-slate-400 text-sm mb-1">Total Votes</div>
-            <div className="text-2xl font-bold text-blue-400">{stats.totalVotes}</div>
-          </div>
-          <div className="bg-slate-800 rounded-xl border border-slate-700 p-4">
-            <div className="text-slate-400 text-sm mb-1">Active Tournaments</div>
-            <div className="text-2xl font-bold text-blue-400">{stats.activeTournaments}</div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-2 gap-6">
           {/* Profile Information */}
-          <form
-            onSubmit={handleUpdateProfile}
-            className="bg-slate-800 rounded-xl border border-slate-700 p-6 md:p-8 space-y-6"
-          >
-            <div>
-              <h2 className="text-xl font-semibold text-white mb-4">Profile Information</h2>
-              <p className="text-slate-400 text-sm mb-6">Update your display name and bio</p>
-            </div>
+          <Card className="border-slate-700">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                  <User className="text-blue-500" size={20} />
+                </div>
+                <div>
+                  <CardTitle>Profile Information</CardTitle>
+                  <CardDescription>Update your display name and bio</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleUpdateProfile} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-slate-300 text-sm">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={user?.email || ""}
+                    disabled
+                    className="bg-slate-800 border-slate-700 text-slate-400"
+                  />
+                  <p className="text-slate-500 text-xs">Email cannot be changed</p>
+                </div>
 
-            <div>
-              <Label htmlFor="email" className="text-white">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={user?.email || ""}
-                disabled
-                className="mt-2 bg-slate-900 border-slate-700 text-slate-400"
-              />
-              <p className="text-slate-500 text-xs mt-1">Email cannot be changed</p>
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="displayName" className="text-slate-300 text-sm">
+                    Display Name
+                  </Label>
+                  <Input
+                    id="displayName"
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    required
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="displayName" className="text-white">
-                Display Name
-              </Label>
-              <Input
-                id="displayName"
-                type="text"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                required
-                className="mt-2 bg-slate-900 border-slate-700 text-white placeholder:text-slate-400"
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bio" className="text-slate-300 text-sm">
+                    Bio
+                  </Label>
+                  <Textarea
+                    id="bio"
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder="Tell us about yourself..."
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400 min-h-[80px] resize-none"
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="bio" className="text-white">
-                Bio
-              </Label>
-              <Textarea
-                id="bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                placeholder="Tell us about yourself..."
-                className="mt-2 bg-slate-900 border-slate-700 text-white placeholder:text-slate-400 min-h-[100px]"
-              />
-            </div>
-
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white" disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save Changes"}
-            </Button>
-          </form>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300" 
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Saving..." : "Save Changes"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
 
           {/* Change Password */}
-          <form
-            onSubmit={handleChangePassword}
-            className="bg-slate-800 rounded-xl border border-slate-700 p-6 md:p-8 space-y-6"
-          >
-            <div>
-              <h2 className="text-xl font-semibold text-white mb-4">Change Password</h2>
-              <p className="text-slate-400 text-sm mb-6">Update your password to keep your account secure</p>
-            </div>
+          <Card className="border-slate-700">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                  <Lock className="text-purple-500" size={20} />
+                </div>
+                <div>
+                  <CardTitle>Security</CardTitle>
+                  <CardDescription>Update your password</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleChangePassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword" className="text-slate-300 text-sm">
+                    New Password
+                  </Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    placeholder="Enter new password"
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="newPassword" className="text-white">
-                New Password
-              </Label>
-              <Input
-                id="newPassword"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                placeholder="Enter new password"
-                className="mt-2 bg-slate-900 border-slate-700 text-white placeholder:text-slate-400"
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-slate-300 text-sm">
+                    Confirm Password
+                  </Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    placeholder="Confirm new password"
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="confirmPassword" className="text-white">
-                Confirm New Password
-              </Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                placeholder="Confirm new password"
-                className="mt-2 bg-slate-900 border-slate-700 text-white placeholder:text-slate-400"
-              />
-            </div>
-
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white" disabled={isChangingPassword}>
-              {isChangingPassword ? "Changing..." : "Change Password"}
-            </Button>
-          </form>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white transition-all duration-300" 
+                  disabled={isChangingPassword}
+                >
+                  {isChangingPassword ? "Changing..." : "Change Password"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
