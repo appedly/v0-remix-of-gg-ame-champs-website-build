@@ -84,19 +84,18 @@ export function TournamentsSection() {
           <div ref={scrollRef} className="flex gap-4 sm:gap-5 md:gap-6 overflow-x-hidden px-2 sm:px-4" style={{ scrollBehavior: "auto" }}>
             {/* Duplicate games for infinite scroll effect */}
             {[...games, ...games].map((game, index) => (
-              <div key={index} className="flex-shrink-0 w-[240px] sm:w-[300px] md:w-[350px] h-[180px] sm:h-[200px] md:h-[220px] relative rounded-xl overflow-hidden group">
+              <div key={index} className="flex-shrink-0 w-[240px] sm:w-[300px] md:w-[350px] h-[180px] sm:h-[200px] md:h-[220px] relative rounded-lg overflow-hidden group">
                 <img
                   src={game.image || "/placeholder.svg"}
                   alt={game.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1020] via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white">{game.name}</h3>
-                  <p className="text-white/70 text-xs sm:text-sm mt-1">Tournaments Coming Soon</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1020] via-transparent to-transparent opacity-70" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white">{game.name}</h3>
+                  <p className="text-white/60 text-xs mt-1">Coming Soon</p>
                 </div>
-                <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#4fc3f7] transition-all duration-300 rounded-xl" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#4fc3f7]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
+                <div className="absolute inset-0 rounded-lg bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
             ))}
           </div>
