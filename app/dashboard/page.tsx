@@ -10,6 +10,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Progress } from "@/components/ui/progress"
+import {
+  FileText,
+  CheckCircle2,
+  Clock,
+  Trophy,
+  Award,
+  Gamepad2,
+  Circle,
+  Plus,
+  Square,
+  Activity,
+  TrendingUp,
+  Zap,
+  ChevronRight,
+  Calendar,
+  XCircle,
+  ChevronLeft,
+} from "lucide-react"
+import { useRef } from "react"
 
 interface Tournament {
   id: string
@@ -41,12 +60,115 @@ interface UserStats {
   joinedTournaments: number
 }
 
+function TournamentScrollContainer({ children }: { children: React.ReactNode }) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [showLeftArrow, setShowLeftArrow] = useState(false)
+  const [showRightArrow, setShowRightArrow] = useState(true)
+  const [isDragging, setIsDragging] = useState(false)
+  const [startX, setStartX] = useState(0)
+  const [scrollLeft, setScrollLeft] = useState(0)
+
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
+      setShowLeftArrow(scrollLeft > 0)
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 10)
+    }
+  }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scrollContainerRef.current) {
+      setIsDragging(true)
+      setStartX(e.pageX - scrollContainerRef.current.offsetLeft)
+      setScrollLeft(scrollContainerRef.current.scrollLeft)
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return
+    
+    e.preventDefault()
+    const x = e.pageX - scrollContainerRef.current.offsetLeft
+    const walk = (x - startX) * 2
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk
+    checkScroll()
+  }
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 400
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      })
+      setTimeout(checkScroll, 300)
+    }
+  }
+
+  useEffect(() => {
+    checkScroll()
+    const container = scrollContainerRef.current
+    if (container) {
+      container.addEventListener('scroll', checkScroll)
+      return () => container.removeEventListener('scroll', checkScroll)
+    }
+  }, [])
+
+  return (
+    <div className="relative group">
+      {showLeftArrow && (
+        <button
+          onClick={() => scroll('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-r from-slate-900 to-transparent pl-2 pr-4 py-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+        >
+          <ChevronLeft className="text-blue-500 hover:text-blue-400 transition-colors" size={28} />
+        </button>
+      )}
+
+      <div
+        ref={scrollContainerRef}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseUp}
+        className={`overflow-x-auto pb-4 -mx-4 px-4 scroll-smooth ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        } as any}
+      >
+        <style>{`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+        {children}
+      </div>
+
+      {showRightArrow && (
+        <button
+          onClick={() => scroll('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-gradient-to-l from-slate-900 to-transparent pr-2 pl-4 py-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+        >
+          <ChevronRight className="text-blue-500 hover:text-blue-400 transition-colors" size={28} />
+        </button>
+      )}
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [userData, setUserData] = useState<any>(null)
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [activeTournaments, setActiveTournaments] = useState<Tournament[]>([])
+  const [upcomingTournaments, setUpcomingTournaments] = useState<Tournament[]>([])
+  const [expiredTournaments, setExpiredTournaments] = useState<Tournament[]>([])
   const [userStats, setUserStats] = useState<UserStats>({
     totalSubmissions: 0,
     approvedSubmissions: 0,
@@ -123,6 +245,22 @@ export default function DashboardPage() {
 
         setActiveTournaments(tournamentsData || [])
 
+        const { data: upcomingData } = await supabase
+          .from("tournaments")
+          .select("*")
+          .eq("status", "upcoming")
+          .order("start_date", { ascending: true })
+
+        setUpcomingTournaments(upcomingData || [])
+
+        const { data: expiredData } = await supabase
+          .from("tournaments")
+          .select("*")
+          .eq("status", "completed")
+          .order("end_date", { ascending: false })
+
+        setExpiredTournaments(expiredData || [])
+
         // Calculate user stats
         const totalSubmissions = submissionsData?.length || 0
         const approvedSubmissions = submissionsData?.filter(s => s.status === "approved").length || 0
@@ -167,38 +305,88 @@ export default function DashboardPage() {
       <UserNav userName={userData?.display_name || user?.email?.split("@")[0] || "User"} />
 
       <main className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <div className="mb-12">
-          <div className="bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-800 p-8 relative overflow-hidden">
-            <div className="relative z-10">
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                Welcome back, <span className="text-blue-500">{userData?.display_name || user?.email?.split("@")[0]}</span>
-              </h1>
-              <p className="text-slate-300 text-lg mb-6">Ready to compete? Your next challenge awaits.</p>
-              
-              {/* Quick Actions */}
-              <div className="flex flex-wrap gap-3">
-                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Link href="/tournaments">Browse Tournaments</Link>
-                </Button>
-                <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
-                  <Link href="/tournaments">Submit Clip</Link>
-                </Button>
-                <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
-                  <Link href="/leaderboard">View Rankings</Link>
+        {/* Hero Section with Quick Actions and Recent Activity */}
+        <div className="mb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Welcome Card */}
+          <div className="lg:col-span-2">
+            <div className="bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-800 p-8 relative overflow-hidden transition-all duration-300 hover:border-slate-700 hover:shadow-lg hover:shadow-blue-500/5 h-full">
+              <div className="relative z-10">
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+                  Welcome back, <span className="text-blue-500">{userData?.display_name || user?.email?.split("@")[0]}</span>
+                </h1>
+                <p className="text-slate-300 text-lg mb-8">Ready to compete? Your next challenge awaits.</p>
+
+                {/* Quick Actions Inline */}
+                <div className="mb-8">
+                  <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wide mb-4 flex items-center gap-2">
+                    <Zap size={16} className="text-blue-500" />
+                    Quick Actions
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 justify-start">
+                      <Link href="/tournaments" className="flex items-center gap-2">
+                        <Plus size={18} />
+                        Submit Clip
+                      </Link>
+                    </Button>
+                    <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800 transition-all duration-300 justify-start">
+                      <Link href="/profile" className="flex items-center gap-2">
+                        <FileText size={18} />
+                        Edit Profile
+                      </Link>
+                    </Button>
+                    <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800 transition-all duration-300 justify-start">
+                      <Link href="/leaderboard" className="flex items-center gap-2">
+                        <Trophy size={18} />
+                        Leaderboard
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+
+                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300">
+                  <Link href="/tournaments">Browse All Tournaments</Link>
                 </Button>
               </div>
             </div>
           </div>
+
+          {/* Recent Activity Sidebar */}
+          <Card className="border-slate-700">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Activity size={20} className="text-blue-500" />
+                Recent Activity
+              </h3>
+              <div className="space-y-3">
+                {submissions.slice(0, 4).map((submission) => (
+                  <div key={submission.id} className="flex items-start gap-3 p-3 bg-slate-800 rounded-lg transition-all duration-300 hover:bg-slate-700">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1"></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-slate-300 text-sm truncate font-medium">
+                        {submission.title}
+                      </p>
+                      <p className="text-slate-500 text-xs">
+                        {new Date(submission.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {submissions.length === 0 && (
+                  <p className="text-slate-400 text-sm">No recent activity</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-blue-500 text-xl">●</span>
+                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                  <FileText className="text-blue-500" size={24} />
                 </div>
               </div>
               <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Total Submissions</h3>
@@ -206,11 +394,11 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="hover:shadow-lg hover:shadow-green-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-green-500 text-xl">✓</span>
+                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                  <CheckCircle2 className="text-green-500" size={24} />
                 </div>
               </div>
               <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Approved Clips</h3>
@@ -218,11 +406,11 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-amber-500 text-xl">◐</span>
+                <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                  <Clock className="text-amber-500" size={24} />
                 </div>
               </div>
               <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Pending Review</h3>
@@ -230,11 +418,11 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-purple-500 text-xl">◆</span>
+                <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                  <Gamepad2 className="text-purple-500" size={24} />
                 </div>
               </div>
               <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Tournaments Joined</h3>
@@ -242,11 +430,11 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
-                  <span className="text-red-500 text-xl">♦</span>
+                <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                  <Trophy className="text-red-500" size={24} />
                 </div>
               </div>
               <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Votes Received</h3>
@@ -255,12 +443,15 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Active Tournaments */}
+        {/* Active Tournaments - Horizontal Scroller */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Active Tournaments</h2>
-              <p className="text-slate-400">Compete in these tournaments and win prizes</p>
+              <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
+                <Zap size={32} className="text-blue-500" />
+                Active Tournaments
+              </h2>
+              <p className="text-slate-400">Compete now and win prizes</p>
             </div>
             <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
               <Link href="/tournaments">View All →</Link>
@@ -268,57 +459,61 @@ export default function DashboardPage() {
           </div>
 
           {activeTournaments.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeTournaments.slice(0, 6).map((tournament) => (
-                <Card key={tournament.id} className="hover:shadow-lg transition-all hover:scale-[1.02]">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                        <span className="text-blue-500 text-lg">■</span>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-white line-clamp-1">
-                          {tournament.title}
-                        </h3>
-                        <p className="text-slate-400 text-sm">{tournament.game}</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400 text-sm">Prize Pool</span>
-                        <span className="text-blue-500 font-bold text-lg">${tournament.prize_pool.toLocaleString()}</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400 text-sm">Ends In</span>
-                        <span className="text-slate-300 text-sm font-medium">
-                          {Math.ceil((new Date(tournament.end_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
-                        </span>
-                      </div>
-
-                      <div className="pt-3 border-t border-slate-700">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-slate-500">Started</span>
-                          <span className="text-slate-400">{new Date(tournament.start_date).toLocaleDateString()}</span>
+            <TournamentScrollContainer>
+              <div className="flex gap-6 min-w-max">
+                {activeTournaments.map((tournament) => (
+                  <div key={tournament.id} className="w-96 flex-shrink-0">
+                    <Card className="hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700 h-full">
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                            <Gamepad2 className="text-blue-500" size={24} />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-bold text-white line-clamp-1">
+                              {tournament.title}
+                            </h3>
+                            <p className="text-slate-400 text-sm">{tournament.game}</p>
+                          </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <Button asChild className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white">
-                      <Link href={`/tournaments/${tournament.id}`}>
-                        View Tournament Details →
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-400 text-sm">Prize Pool</span>
+                            <span className="text-blue-500 font-bold text-lg">${tournament.prize_pool.toLocaleString()}</span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-400 text-sm">Ends In</span>
+                            <span className="text-slate-300 text-sm font-medium">
+                              {Math.ceil((new Date(tournament.end_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
+                            </span>
+                          </div>
+
+                          <div className="pt-3 border-t border-slate-700">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-slate-500">Started</span>
+                              <span className="text-slate-400">{new Date(tournament.start_date).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Button asChild className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 group">
+                          <Link href={`/tournaments/${tournament.id}`}>
+                            View Details <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </TournamentScrollContainer>
           ) : (
-            <Card>
+            <Card className="border-slate-700">
               <CardContent className="p-16 text-center">
-                <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-4xl">○</span>
+                <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-300">
+                  <Circle className="text-slate-600" size={48} />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3">No Active Tournaments</h3>
                 <p className="text-slate-400 mb-6 max-w-md mx-auto">
@@ -327,6 +522,164 @@ export default function DashboardPage() {
                 <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
                   <Link href="/tournaments">View All Tournaments</Link>
                 </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Upcoming Tournaments - Horizontal Scroller */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
+                <Calendar size={32} className="text-amber-500" />
+                Upcoming Tournaments
+              </h2>
+              <p className="text-slate-400">Get ready for what's coming</p>
+            </div>
+            <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+              <Link href="/tournaments">View All →</Link>
+            </Button>
+          </div>
+
+          {upcomingTournaments.length > 0 ? (
+            <TournamentScrollContainer>
+              <div className="flex gap-6 min-w-max">
+                {upcomingTournaments.map((tournament) => (
+                  <div key={tournament.id} className="w-96 flex-shrink-0">
+                    <Card className="hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700 h-full">
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                            <Calendar className="text-amber-500" size={24} />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-bold text-white line-clamp-1">
+                              {tournament.title}
+                            </h3>
+                            <p className="text-slate-400 text-sm">{tournament.game}</p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-400 text-sm">Prize Pool</span>
+                            <span className="text-amber-500 font-bold text-lg">${tournament.prize_pool.toLocaleString()}</span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-400 text-sm">Starts In</span>
+                            <span className="text-slate-300 text-sm font-medium">
+                              {Math.ceil((new Date(tournament.start_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
+                            </span>
+                          </div>
+
+                          <div className="pt-3 border-t border-slate-700">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-slate-500">Starts</span>
+                              <span className="text-slate-400">{new Date(tournament.start_date).toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Button asChild className="w-full mt-4 bg-amber-600 hover:bg-amber-700 text-white transition-all duration-300 group">
+                          <Link href={`/tournaments/${tournament.id}`}>
+                            View Details <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </TournamentScrollContainer>
+          ) : (
+            <Card className="border-slate-700">
+              <CardContent className="p-12 text-center">
+                <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-300">
+                  <Calendar className="text-slate-600" size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">No Upcoming Tournaments</h3>
+                <p className="text-slate-400 mb-6">Stay tuned for exciting new tournaments coming soon!</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Expired Tournaments - Horizontal Scroller */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
+                <XCircle size={32} className="text-red-500" />
+                Completed Tournaments
+              </h2>
+              <p className="text-slate-400">Review past tournaments and winners</p>
+            </div>
+            <Button asChild variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+              <Link href="/tournaments">View All →</Link>
+            </Button>
+          </div>
+
+          {expiredTournaments.length > 0 ? (
+            <TournamentScrollContainer>
+              <div className="flex gap-6 min-w-max">
+                {expiredTournaments.slice(0, 10).map((tournament) => (
+                  <div key={tournament.id} className="w-96 flex-shrink-0">
+                    <Card className="hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700 h-full">
+                      <CardContent className="p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                            <XCircle className="text-red-500" size={24} />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-bold text-white line-clamp-1">
+                              {tournament.title}
+                            </h3>
+                            <p className="text-slate-400 text-sm">{tournament.game}</p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-400 text-sm">Prize Pool</span>
+                            <span className="text-red-500 font-bold text-lg">${tournament.prize_pool.toLocaleString()}</span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-400 text-sm">Ended</span>
+                            <span className="text-slate-300 text-sm font-medium">
+                              {new Date(tournament.end_date).toLocaleDateString()}
+                            </span>
+                          </div>
+
+                          <div className="pt-3 border-t border-slate-700">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-slate-500">Duration</span>
+                              <span className="text-slate-400">{Math.ceil((new Date(tournament.end_date).getTime() - new Date(tournament.start_date).getTime()) / (1000 * 60 * 60 * 24))} days</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Button asChild variant="outline" className="w-full mt-4 border-slate-600 text-slate-300 hover:bg-slate-800 transition-all duration-300 group">
+                          <Link href={`/tournaments/${tournament.id}`}>
+                            View Results <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </TournamentScrollContainer>
+          ) : (
+            <Card className="border-slate-700">
+              <CardContent className="p-12 text-center">
+                <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-300">
+                  <XCircle className="text-slate-600" size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">No Completed Tournaments Yet</h3>
+                <p className="text-slate-400 mb-6">Check back after tournaments finish to see results and winners!</p>
               </CardContent>
             </Card>
           )}
@@ -347,135 +700,92 @@ export default function DashboardPage() {
             </div>
 
             {submissions.length > 0 ? (
-              <div className="space-y-4">
-                {submissions.slice(0, 5).map((submission) => (
-                  <Card key={submission.id} className="hover:shadow-lg transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                              <span className="text-blue-500 text-sm">▣</span>
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-semibold text-white">
-                                {submission.title}
-                              </h3>
-                              <p className="text-slate-400 text-sm">
-                                {submission.tournament.title} • {submission.tournament.game}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-4 text-xs text-slate-500">
-                            <span>Submitted {new Date(submission.created_at).toLocaleDateString()}</span>
-                            <span>•</span>
-                            <span>ID: {submission.id.slice(0, 8)}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-col items-end gap-2">
-                          <Badge
-                            variant={
-                              submission.status === "approved"
-                                ? "success"
-                                : submission.status === "pending"
-                                  ? "warning"
-                                  : "destructive"
-                            }
-                          >
-                            {submission.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-3xl">↑</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-white mb-3">No Submissions Yet</h3>
-                  <p className="text-slate-400 mb-6">Start competing by submitting your best gaming clips!</p>
-                  <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <Link href="/tournaments">Browse Tournaments</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+               <div className="space-y-4">
+                 {submissions.slice(0, 5).map((submission) => (
+                   <Card key={submission.id} className="hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 border-slate-700">
+                     <CardContent className="p-6">
+                       <div className="flex items-start justify-between">
+                         <div className="flex-1">
+                           <div className="flex items-center gap-3 mb-3">
+                             <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                               <Square className="text-blue-500" size={20} />
+                             </div>
+                             <div>
+                               <h3 className="text-lg font-semibold text-white">
+                                 {submission.title}
+                               </h3>
+                               <p className="text-slate-400 text-sm">
+                                 {submission.tournament.title} • {submission.tournament.game}
+                               </p>
+                             </div>
+                           </div>
+
+                           <div className="flex items-center gap-4 text-xs text-slate-500">
+                             <span>Submitted {new Date(submission.created_at).toLocaleDateString()}</span>
+                             <span>•</span>
+                             <span>ID: {submission.id.slice(0, 8)}</span>
+                           </div>
+                         </div>
+
+                         <div className="flex flex-col items-end gap-2">
+                           <Badge
+                             variant={
+                               submission.status === "approved"
+                                 ? "success"
+                                 : submission.status === "pending"
+                                   ? "warning"
+                                   : "destructive"
+                             }
+                           >
+                             {submission.status}
+                           </Badge>
+                         </div>
+                       </div>
+                     </CardContent>
+                   </Card>
+                 ))}
+               </div>
+             ) : (
+               <Card className="border-slate-700">
+                 <CardContent className="p-12 text-center">
+                   <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-300">
+                     <TrendingUp className="text-slate-600" size={32} />
+                   </div>
+                   <h3 className="text-xl font-bold text-white mb-3">No Submissions Yet</h3>
+                   <p className="text-slate-400 mb-6">Start competing by submitting your best gaming clips!</p>
+                   <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+                     <Link href="/tournaments">Browse Tournaments</Link>
+                   </Button>
+                 </CardContent>
+               </Card>
+             )}
           </div>
 
           {/* Tournament Participation */}
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Tournament Participation</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
-                  <span className="text-slate-400">Active Tournaments</span>
-                  <span className="text-2xl font-bold text-blue-500">{activeTournaments.length}</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
-                  <span className="text-slate-400">Total Participated</span>
-                  <span className="text-2xl font-bold text-green-500">{userStats.joinedTournaments}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions & Tips */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <Button asChild className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
-                    <Link href="/tournaments">
-                      Submit New Clip
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-800">
-                    <Link href="/profile">
-                      Edit Profile
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="w-full justify-start border-slate-600 text-slate-300 hover:bg-slate-800">
-                    <Link href="/leaderboard">
-                      View Leaderboard
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recent Activity */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-white mb-4">Recent Activity</h3>
-                <div className="space-y-3">
-                  {submissions.slice(0, 3).map((submission) => (
-                    <div key={submission.id} className="flex items-center gap-3 p-3 bg-slate-800 rounded-lg">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-slate-300 text-sm">
-                          Submitted "{submission.title}" to {submission.tournament.title}
-                        </p>
-                        <p className="text-slate-500 text-xs">
-                          {new Date(submission.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                  {submissions.length === 0 && (
-                    <p className="text-slate-400 text-sm">No recent activity</p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="border-slate-700">
+             <CardContent className="p-6">
+               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                 <Award size={20} className="text-blue-500" />
+                 Tournament Participation
+               </h3>
+               <div className="space-y-4">
+                 <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg transition-all duration-300 hover:bg-slate-700">
+                   <span className="text-slate-400 flex items-center gap-2">
+                     <Zap size={16} className="text-blue-500" />
+                     Active Tournaments
+                   </span>
+                   <span className="text-2xl font-bold text-blue-500">{activeTournaments.length}</span>
+                 </div>
+                 <div className="flex items-center justify-between p-4 bg-slate-800 rounded-lg transition-all duration-300 hover:bg-slate-700">
+                   <span className="text-slate-400 flex items-center gap-2">
+                     <Activity size={16} className="text-green-500" />
+                     Total Participated
+                   </span>
+                   <span className="text-2xl font-bold text-green-500">{userStats.joinedTournaments}</span>
+                 </div>
+               </div>
+             </CardContent>
+           </Card>
         </div>
       </main>
 
@@ -484,10 +794,10 @@ export default function DashboardPage() {
         <Button
           asChild
           size="lg"
-          className="w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-700 shadow-2xl hover:scale-110 transition-all"
+          className="w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-700 shadow-2xl hover:shadow-blue-500/50 hover:scale-110 transition-all duration-300"
         >
           <Link href="/tournaments">
-            <span className="text-2xl">+</span>
+            <Plus size={28} />
           </Link>
         </Button>
       </div>
