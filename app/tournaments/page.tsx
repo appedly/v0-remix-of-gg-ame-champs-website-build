@@ -341,13 +341,12 @@ export default function TournamentsPage() {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-4">
+                  <div className="flex gap-4">
                     <button
                       onClick={() => openTournamentModal(selectedTournament)}
-                      className="group relative px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25"
                     >
-                      <span className="relative z-10">{selectedTournament.status === "active" ? "Join Tournament" : selectedTournament.status === "upcoming" ? "View Details" : "View Results"}</span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur"></div>
+                      {selectedTournament.status === "active" ? "Join Tournament" : selectedTournament.status === "upcoming" ? "View Details" : "View Results"}
                     </button>
                     <button
                       onClick={() => openTournamentModal(selectedTournament)}
@@ -519,9 +518,44 @@ export default function TournamentsPage() {
                 </button>
               </div>
             </div>
-          </div>
+            </div>
 
-          {/* Horizontal Tournament Scroller */}
+            {/* Minimalistic Filter Bar */}
+            <div className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800/50">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
+              <div className="flex flex-col lg:flex-row gap-3 items-center justify-between">
+                <div className="relative flex-1 w-full max-w-md">
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 w-1 h-1 bg-slate-600 rounded-full"></div>
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-8 pr-3 py-2 bg-slate-800/60 border border-slate-700/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:bg-slate-800/60 focus:ring-1 focus:ring-blue-500/20 transition-all duration-300"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2 w-full lg:w-auto justify-end">
+                  <div className="text-slate-500 text-sm">
+                    {filteredTournaments.length}
+                  </div>
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={`flex items-center gap-2 px-3 py-1.5 transition-all duration-300 rounded-lg border ${
+                      showFilters
+                        ? 'bg-blue-600 border-blue-500 text-white'
+                        : 'bg-slate-800/60 border-slate-700/30 text-slate-300 hover:bg-slate-800/60'
+                    }`}
+                  >
+                    <Filter className="w-3 h-3" />
+                    <span className="text-xs">Filters</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            </div>
+
+            {/* Horizontal Tournament Scroller */}
           <div className="relative" ref={carouselRef}>
             <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 scroll-smooth">
               {filteredTournaments.map((tournament, index) => (
@@ -534,8 +568,8 @@ export default function TournamentsPage() {
                 }}
                 className={`group cursor-pointer transition-all duration-300 ease-out flex-shrink-0 w-80 ${
                   selectedTournament?.id === tournament.id 
-                    ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-900 scale-105" 
-                    : ""
+                    ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-900 shadow-lg shadow-blue-500/20" 
+                    : "hover:ring-1 hover:ring-blue-400/50"
                 }`}
               >
                 <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden hover:border-blue-500/50 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 h-full">
