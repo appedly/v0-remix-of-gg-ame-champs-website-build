@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { UserNav } from "@/components/user-nav"
-import { Search, Filter, ChevronLeft, ChevronRight, Trophy, Calendar, Gamepad2, Clock, X, Play, Info, Star, Sparkles } from "lucide-react"
+import { Search, Filter, ChevronLeft, ChevronRight, Trophy, Calendar, Gamepad2, Clock, X, Play, Info, Star, Sparkles, Flame } from "lucide-react"
 import Link from "next/link"
 
 interface Tournament {
@@ -18,25 +18,25 @@ interface Tournament {
   image_url?: string
 }
 
-// High-quality game banners from official sources
+// High-quality game banners - local fallbacks with CDN options
 const gameImages: { [key: string]: string } = {
-  "Fortnite": "https://cdn2.unrealengine.com/fortnite-chapter-5-season-1-key-art-3840x2160-b0c71bf8f597.jpg",
-  "Valorant": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/4a9c5434b37e6aecfd9e63b48c6b4b48e457b635-1920x1080.jpg",
-  "Call of Duty": "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/blog/hero/mw-wz/WZ-Season-Three-Announce-TOUT.jpg",
-  "Apex Legends": "https://media.contentapi.ea.com/content/dam/apex-legends/common/articles/season-19-ignite/apex-section-ignite-4k-jpg.jpg",
-  "League of Legends": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/bb1f0b5e36c0b3b1e91d1d1f1e6a0a5e9e7e3f5a-3840x2160.jpg",
-  "CS2": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
-  "CSGO": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
-  "CS:GO": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
-  "Counter-Strike 2": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
-  "Overwatch 2": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt7c6c23d54bf6e0c7/62e283af5533cf0ee3c66555/OW2_KeyArt_Logo_6-9_PNG.png",
-  "Rocket League": "https://cdn2.unrealengine.com/24br2-egs-rocketleague-psyonixllc-s1-2560x1440-553143324.jpg",
+  "Fortnite": "/generic-battle-royale.png",
+  "Valorant": "/valorant-game.jpg",
+  "Call of Duty": "/call-of-duty-game.jpg",
+  "Apex Legends": "/futuristic-battle-arena.png",
+  "League of Legends": "/league-of-legends-game.jpg",
+  "CS2": "/tactical-shooter-scene.png",
+  "CSGO": "/tactical-shooter-scene.png",
+  "CS:GO": "/tactical-shooter-scene.png",
+  "Counter-Strike 2": "/tactical-shooter-scene.png",
+  "Overwatch 2": "/overwatch-2-game.jpg",
+  "Rocket League": "/rocket-league-game.jpg",
   "Minecraft": "https://www.minecraft.net/content/dam/games/minecraft/marketplace/mediablock-buzzybees.jpg",
   "FIFA": "https://media.contentapi.ea.com/content/dam/ea/fifa/fifa-23/common/featured-tiles/fifa-23-announce-featured-tile.jpg.adapt.crop191x100.1200w.jpg",
   "NBA 2K": "https://cdn2.unrealengine.com/egs-nba2k24-visualconcepts-g1a-00-1920x1080-b0c71bf8f597.jpg",
   "Madden": "https://media.contentapi.ea.com/content/dam/ea/madden-nfl/madden-nfl-24/common/featured-tiles/madden-24-featured-tile-16x9.jpg.adapt.crop191x100.1200w.jpg",
-  "Fortnite Creative": "https://cdn2.unrealengine.com/fortnite-chapter-5-season-1-key-art-3840x2160-b0c71bf8f597.jpg",
-  "Warzone": "https://www.callofduty.com/content/dam/atvi/callofduty/cod-touchui/blog/hero/mw-wz/WZ-Season-Three-Announce-TOUT.jpg",
+  "Fortnite Creative": "/generic-battle-royale.png",
+  "Warzone": "/call-of-duty-game.jpg",
   "Red Dead Redemption 2": "https://media-rockstargames-com.akamaized.net/rockstargames-newsite/img/global/games/fob/1280/reddeadredemption2.jpg",
   "RDR2": "https://media-rockstargames-com.akamaized.net/rockstargames-newsite/img/global/games/fob/1280/reddeadredemption2.jpg",
   "GTA V": "https://media-rockstargames-com.akamaized.net/rockstargames-newsite/img/global/games/fob/1280/V.jpg",
@@ -46,12 +46,10 @@ const gameImages: { [key: string]: string } = {
 
 // Function to get tournament image with fallback to game image
 const getTournamentImage = (tournament: Tournament) => {
-  // Use custom tournament image if available (admin uploaded)
   if (tournament.image_url && tournament.image_url.trim() !== "") {
     return tournament.image_url
   }
-  // Fallback to game-specific image
-  return gameImages[tournament.game] || "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1920&q=80"
+  return gameImages[tournament.game] || "/hero-bg.png"
 }
 
 export default function TournamentsPage() {
@@ -69,6 +67,7 @@ export default function TournamentsPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [currentTournamentIndex, setCurrentTournamentIndex] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
+  const [joinButtonHover, setJoinButtonHover] = useState(false)
 
   useEffect(() => {
     fetchUser()
@@ -86,7 +85,6 @@ export default function TournamentsPage() {
     }
   }, [filteredTournaments])
 
-  // Auto-rotate tournaments every 8 seconds with smooth transitions
   useEffect(() => {
     if (filteredTournaments.length === 0) return
 
@@ -101,7 +99,6 @@ export default function TournamentsPage() {
     return () => clearInterval(interval)
   }, [filteredTournaments])
 
-  // Auto-scroll to selected tournament with smooth behavior
   useEffect(() => {
     if (selectedTournament && carouselRef.current) {
       const selectedElement = carouselRef.current.querySelector(`[data-tournament-id="${selectedTournament.id}"]`)
@@ -139,6 +136,10 @@ export default function TournamentsPage() {
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [showModal, filteredTournaments])
+
+  useEffect(() => {
+    setJoinButtonHover(false)
+  }, [selectedTournament?.id])
 
   const fetchUser = async () => {
     const supabase = createClient()
@@ -198,38 +199,22 @@ export default function TournamentsPage() {
     setFilteredTournaments(filtered)
   }
 
-  const getStatusStyles = (status: string) => {
-    switch (status) {
-      case "active": 
-        return { 
-          bg: "bg-blue-600", 
-          text: "text-white",
-          border: "border-blue-600"
-        }
-      case "upcoming": 
-        return { 
-          bg: "bg-slate-600", 
-          text: "text-white",
-          border: "border-slate-600"
-        }
-      case "completed": 
-        return { 
-          bg: "bg-slate-700", 
-          text: "text-white",
-          border: "border-slate-700"
-        }
-      default: 
-        return { 
-          bg: "bg-slate-700", 
-          text: "text-white",
-          border: "border-slate-700"
-        }
-    }
-  }
-
   const openTournamentModal = (tournament: Tournament) => {
     setSelectedTournament(tournament)
     setShowModal(true)
+  }
+
+  const scrollCarousel = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = 320
+      const container = carouselRef.current.querySelector('.carousel-container')
+      if (container) {
+        container.scrollBy({
+          left: direction === 'left' ? -scrollAmount : scrollAmount,
+          behavior: 'smooth'
+        })
+      }
+    }
   }
 
   const uniqueGames = Array.from(new Set(tournaments.map(t => t.game)))
@@ -255,17 +240,15 @@ export default function TournamentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex flex-col">
+    <div className="min-h-screen bg-slate-900 text-white flex flex-col" style={{ fontFamily: 'system-ui, -apple-system, "Inter", sans-serif' }}>
       <UserNav userName={userData?.display_name || "User"} />
 
-      {/* Main Content Container - 2:1 Ratio Layout */}
       <div className="flex-1 flex flex-col">
         
-        {/* Hero Section - 2/3 of viewport height */}
+        {/* Hero Section - 2/3 */}
         <div className="relative h-[66vh] overflow-hidden">
           {selectedTournament && (
             <>
-              {/* Background Image with Parallax Effect */}
               <div className="absolute inset-0 transition-all duration-1000 ease-in-out">
                 <img
                   key={selectedTournament.id}
@@ -273,18 +256,15 @@ export default function TournamentsPage() {
                   alt={`${selectedTournament.game} tournament`}
                   className="w-full h-full object-cover scale-105 animate-ken-burns"
                 />
-                {/* Multi-layer gradient overlay for depth */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/40"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-transparent to-slate-900/60"></div>
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-900"></div>
               </div>
 
-              {/* Content Overlay */}
               <div className="relative z-10 h-full flex items-end">
                 <div className="container mx-auto px-6 lg:px-12 pb-12 lg:pb-16">
-                  <div className="max-w-4xl space-y-6">
+                  <div className="max-w-5xl space-y-6">
                     
-                    {/* Status Badge */}
                     {selectedTournament.status === "active" && (
                       <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 backdrop-blur-xl rounded-full border border-emerald-400/30">
                         <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
@@ -299,24 +279,22 @@ export default function TournamentsPage() {
                       </div>
                     )}
 
-                    {/* Game Tag */}
                     <div className="flex items-center gap-3">
                       <Gamepad2 className="w-5 h-5 text-blue-400" />
                       <span className="text-blue-300 font-semibold text-lg tracking-wide">{selectedTournament.game}</span>
                     </div>
 
-                    {/* Title with Fade-in Animation */}
                     <h1 
                       key={`title-${selectedTournament.id}`}
                       className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-tight animate-fade-in-up"
                       style={{ 
-                        textShadow: '0 4px 12px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3)'
+                        textShadow: '0 4px 12px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3)',
+                        letterSpacing: '-0.02em'
                       }}
                     >
                       {selectedTournament.title}
                     </h1>
 
-                    {/* Description */}
                     {selectedTournament.description && (
                       <p 
                         key={`desc-${selectedTournament.id}`}
@@ -329,56 +307,88 @@ export default function TournamentsPage() {
                       </p>
                     )}
 
-                    {/* Stats Grid */}
+                    {/* Redesigned Stats Grid */}
                     <div 
                       key={`stats-${selectedTournament.id}`}
-                      className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 animate-fade-in-up-delay-2"
+                      className="grid grid-cols-2 lg:grid-cols-4 gap-4 pt-6 animate-fade-in-up-delay-2"
                     >
-                      {/* Prize Pool */}
-                      <div className="group relative bg-gradient-to-br from-amber-500/20 to-orange-600/20 backdrop-blur-xl rounded-2xl p-5 border border-amber-400/30 hover:border-amber-400/60 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-amber-500/20">
-                        <div className="absolute inset-0 bg-gradient-to-br from-amber-400/0 to-orange-500/0 group-hover:from-amber-400/10 group-hover:to-orange-500/10 rounded-2xl transition-all duration-500"></div>
-                        <Trophy className="w-5 h-5 text-amber-400 mb-2" />
-                        <p className="text-xs text-amber-200/80 uppercase tracking-widest font-bold mb-1">Prize Pool</p>
-                        <p className="text-2xl font-black text-white">${selectedTournament.prize_pool.toLocaleString()}</p>
+                      <div className="relative overflow-hidden bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 group hover:border-amber-500/50 transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-orange-500/0 group-hover:from-amber-500/10 group-hover:to-orange-500/10 transition-all duration-300"></div>
+                        <div className="relative">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="p-2 bg-amber-500/20 rounded-lg">
+                              <Trophy className="w-4 h-4 text-amber-400" />
+                            </div>
+                            <p className="text-xs text-amber-300/70 uppercase tracking-[0.15em] font-bold">Prize Pool</p>
+                          </div>
+                          <p className="text-2xl font-black text-white">${selectedTournament.prize_pool.toLocaleString()}</p>
+                        </div>
                       </div>
 
-                      {/* Start Date */}
-                      <div className="group relative bg-gradient-to-br from-blue-500/20 to-indigo-600/20 backdrop-blur-xl rounded-2xl p-5 border border-blue-400/30 hover:border-blue-400/60 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-400/0 to-indigo-500/0 group-hover:from-blue-400/10 group-hover:to-indigo-500/10 rounded-2xl transition-all duration-500"></div>
-                        <Calendar className="w-5 h-5 text-blue-400 mb-2" />
-                        <p className="text-xs text-blue-200/80 uppercase tracking-widest font-bold mb-1">Starts</p>
-                        <p className="text-base font-bold text-white">{new Date(selectedTournament.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                      <div className="relative overflow-hidden bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 group hover:border-blue-500/50 transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/10 group-hover:to-indigo-500/10 transition-all duration-300"></div>
+                        <div className="relative">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="p-2 bg-blue-500/20 rounded-lg">
+                              <Calendar className="w-4 h-4 text-blue-400" />
+                            </div>
+                            <p className="text-xs text-blue-300/70 uppercase tracking-[0.15em] font-bold">Starts</p>
+                          </div>
+                          <p className="text-base font-bold text-white">{new Date(selectedTournament.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                        </div>
                       </div>
 
-                      {/* End Date */}
-                      <div className="group relative bg-gradient-to-br from-purple-500/20 to-pink-600/20 backdrop-blur-xl rounded-2xl p-5 border border-purple-400/30 hover:border-purple-400/60 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-400/0 to-pink-500/0 group-hover:from-purple-400/10 group-hover:to-pink-500/10 rounded-2xl transition-all duration-500"></div>
-                        <Clock className="w-5 h-5 text-purple-400 mb-2" />
-                        <p className="text-xs text-purple-200/80 uppercase tracking-widest font-bold mb-1">Ends</p>
-                        <p className="text-base font-bold text-white">{new Date(selectedTournament.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                      <div className="relative overflow-hidden bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 group hover:border-purple-500/50 transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-300"></div>
+                        <div className="relative">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="p-2 bg-purple-500/20 rounded-lg">
+                              <Clock className="w-4 h-4 text-purple-400" />
+                            </div>
+                            <p className="text-xs text-purple-300/70 uppercase tracking-[0.15em] font-bold">Ends</p>
+                          </div>
+                          <p className="text-base font-bold text-white">{new Date(selectedTournament.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                        </div>
                       </div>
 
-                      {/* Status */}
-                      <div className="group relative bg-gradient-to-br from-emerald-500/20 to-teal-600/20 backdrop-blur-xl rounded-2xl p-5 border border-emerald-400/30 hover:border-emerald-400/60 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20">
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/0 to-teal-500/0 group-hover:from-emerald-400/10 group-hover:to-teal-500/10 rounded-2xl transition-all duration-500"></div>
-                        <Star className="w-5 h-5 text-emerald-400 mb-2" />
-                        <p className="text-xs text-emerald-200/80 uppercase tracking-widest font-bold mb-1">Status</p>
-                        <p className="text-base font-bold text-white capitalize">{selectedTournament.status}</p>
+                      <div className="relative overflow-hidden bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 group hover:border-emerald-500/50 transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-teal-500/0 group-hover:from-emerald-500/10 group-hover:to-teal-500/10 transition-all duration-300"></div>
+                        <div className="relative">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="p-2 bg-emerald-500/20 rounded-lg">
+                              <Star className="w-4 h-4 text-emerald-400" />
+                            </div>
+                            <p className="text-xs text-emerald-300/70 uppercase tracking-[0.15em] font-bold">Status</p>
+                          </div>
+                          <p className="text-base font-bold text-white capitalize">{selectedTournament.status}</p>
+                        </div>
                       </div>
                     </div>
 
-                    {/* CTA Buttons */}
+                    {/* Redesigned CTA Buttons */}
                     <div className="flex flex-wrap gap-4 pt-4">
                       <Link
                         href={`/tournaments/${selectedTournament.id}`}
-                        className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/50 overflow-hidden"
+                        onMouseEnter={() => setJoinButtonHover(true)}
+                        onMouseLeave={() => setJoinButtonHover(false)}
+                        className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 text-white font-bold rounded-xl transition-all duration-500 hover:shadow-2xl overflow-hidden"
+                        style={{
+                          background: joinButtonHover 
+                            ? 'linear-gradient(135deg, #ef4444 0%, #f97316 25%, #eab308 50%, #f97316 75%, #ef4444 100%)'
+                            : undefined,
+                          backgroundSize: joinButtonHover ? '200% 200%' : undefined,
+                          animation: joinButtonHover ? 'fire-gradient 2s ease infinite' : undefined,
+                          boxShadow: joinButtonHover ? '0 0 40px rgba(239, 68, 68, 0.6), 0 0 80px rgba(249, 115, 22, 0.4)' : undefined
+                        }}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
                         <span className="relative flex items-center gap-2">
                           {selectedTournament.status === "active" ? (
                             <>
+                              {joinButtonHover && <Flame className="w-5 h-5 animate-pulse" />}
                               <Play className="w-5 h-5" />
                               Join Tournament
+                              {joinButtonHover && <Flame className="w-5 h-5 animate-pulse" />}
                             </>
                           ) : selectedTournament.status === "upcoming" ? (
                             <>
@@ -396,9 +406,12 @@ export default function TournamentsPage() {
 
                       <button
                         onClick={() => openTournamentModal(selectedTournament)}
-                        className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white font-bold rounded-xl transition-all duration-300 border border-white/20 hover:border-white/40 hover:scale-105"
+                        className="group px-8 py-4 bg-white hover:bg-slate-100 text-slate-900 font-bold rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                       >
-                        Learn More
+                        <span className="flex items-center gap-2">
+                          <Info className="w-5 h-5" />
+                          Learn More
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -432,14 +445,12 @@ export default function TournamentsPage() {
           )}
         </div>
 
-        {/* Tournament Carousel - 1/3 of viewport height */}
+        {/* Tournament Carousel - 1/3 */}
         <div className="relative h-[34vh] bg-gradient-to-b from-slate-900 to-slate-950 border-t border-slate-800/50">
           
-          {/* Filter Bar */}
           <div className="absolute top-0 left-0 right-0 z-30 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/50">
             <div className="container mx-auto px-6 lg:px-12 py-4">
               <div className="flex items-center justify-between gap-4">
-                {/* Search */}
                 <div className="relative flex-1 max-w-md">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                   <input
@@ -451,7 +462,6 @@ export default function TournamentsPage() {
                   />
                 </div>
 
-                {/* Filter Toggle & Count */}
                 <div className="flex items-center gap-4">
                   <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-xl border border-slate-700/50">
                     <span className="text-slate-400 text-sm font-medium">{filteredTournaments.length} Tournaments</span>
@@ -470,7 +480,6 @@ export default function TournamentsPage() {
                 </div>
               </div>
 
-              {/* Filter Options */}
               {showFilters && (
                 <div className="mt-4 p-4 bg-slate-800/50 backdrop-blur-xl rounded-xl border border-slate-700/50 animate-in slide-in-from-top-2 duration-300">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -525,96 +534,106 @@ export default function TournamentsPage() {
             </div>
           </div>
 
-          {/* Horizontal Scrolling Carousel */}
+          {/* Horizontal Scrolling Carousel with Manual Controls */}
           <div className={`h-full ${showFilters ? 'pt-40' : 'pt-20'} transition-all duration-300`}>
             <div className="container mx-auto px-6 lg:px-12 h-full">
               <div className="relative h-full" ref={carouselRef}>
                 
                 {filteredTournaments.length > 0 ? (
-                  <div className="flex gap-4 overflow-x-auto scrollbar-hide h-full pb-6 scroll-smooth">
-                    {filteredTournaments.map((tournament, index) => (
-                      <div
-                        key={tournament.id}
-                        data-tournament-id={tournament.id}
-                        onClick={() => {
-                          setSelectedTournament(tournament)
-                          setCurrentTournamentIndex(index)
-                        }}
-                        className={`group cursor-pointer transition-all duration-500 flex-shrink-0 w-80 ${
-                          selectedTournament?.id === tournament.id 
-                            ? "scale-105 ring-2 ring-blue-500 ring-offset-4 ring-offset-slate-900" 
-                            : "hover:scale-102"
-                        }`}
-                      >
-                        <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700/50 overflow-hidden transition-all duration-500 h-full shadow-xl hover:shadow-2xl hover:border-slate-600/50">
-                          
-                          {/* Thumbnail */}
-                          <div className="relative h-32 overflow-hidden">
-                            <img
-                              src={getTournamentImage(tournament)}
-                              alt={`${tournament.game} tournament`}
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"></div>
+                  <>
+                    {/* Manual Scroll Buttons */}
+                    <button
+                      onClick={() => scrollCarousel('left')}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-slate-800/90 hover:bg-slate-700 backdrop-blur-xl text-white rounded-full transition-all duration-300 border border-slate-700/50 hover:scale-110 shadow-xl"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => scrollCarousel('right')}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 bg-slate-800/90 hover:bg-slate-700 backdrop-blur-xl text-white rounded-full transition-all duration-300 border border-slate-700/50 hover:scale-110 shadow-xl"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+
+                    <div className="carousel-container flex gap-4 overflow-x-auto scrollbar-hide h-full pb-6 scroll-smooth px-12">
+                      {filteredTournaments.map((tournament, index) => (
+                        <div
+                          key={tournament.id}
+                          data-tournament-id={tournament.id}
+                          onClick={() => {
+                            setSelectedTournament(tournament)
+                            setCurrentTournamentIndex(index)
+                          }}
+                          className={`group cursor-pointer transition-all duration-300 flex-shrink-0 w-80 ${
+                            selectedTournament?.id === tournament.id 
+                              ? "scale-[1.02] ring-2 ring-blue-500 ring-offset-4 ring-offset-slate-950" 
+                              : "hover:scale-[1.01]"
+                          }`}
+                        >
+                          <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700/50 overflow-hidden transition-all duration-300 h-full shadow-xl hover:shadow-2xl hover:border-slate-600/50">
                             
-                            {/* Active Indicator */}
-                            {tournament.status === "active" && (
-                              <div className="absolute top-3 right-3">
-                                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/30 backdrop-blur-xl rounded-full border border-emerald-400/50">
-                                  <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-                                  <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">Live</span>
+                            {/* Thumbnail - Fixed Height */}
+                            <div className="relative h-36 overflow-hidden">
+                              <img
+                                src={getTournamentImage(tournament)}
+                                alt={`${tournament.game} tournament`}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"></div>
+                              
+                              {tournament.status === "active" && (
+                                <div className="absolute top-3 right-3">
+                                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/30 backdrop-blur-xl rounded-full border border-emerald-400/50">
+                                    <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                                    <span className="text-xs font-bold text-emerald-200 uppercase tracking-wide">Live</span>
+                                  </div>
                                 </div>
+                              )}
+                            </div>
+
+                            {/* Content - Fixed Layout */}
+                            <div className="p-4 space-y-3 h-[calc(100%-9rem)]">
+                              <div className="flex items-center gap-2">
+                                <Gamepad2 className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                                <span className="text-xs text-blue-300 font-semibold uppercase tracking-wider truncate">{tournament.game}</span>
+                              </div>
+
+                              <h4 className="text-base font-bold text-white line-clamp-2 leading-snug min-h-[2.5rem]">
+                                {tournament.title}
+                              </h4>
+
+                              <div className="flex items-center justify-between gap-3 pt-2">
+                                <div className="flex items-center gap-1.5">
+                                  <Trophy className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                                  <span className="text-sm font-bold text-white truncate">${tournament.prize_pool.toLocaleString()}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <Calendar className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                                  <span className="text-xs text-slate-300 truncate">{new Date(tournament.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                                </div>
+                              </div>
+
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  openTournamentModal(tournament)
+                                }}
+                                className="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 mt-auto"
+                              >
+                                View Details
+                              </button>
+                            </div>
+
+                            {selectedTournament?.id === tournament.id && (
+                              <div className="absolute inset-0 pointer-events-none">
+                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
                               </div>
                             )}
                           </div>
-
-                          {/* Content */}
-                          <div className="p-4 space-y-3">
-                            {/* Game Tag */}
-                            <div className="flex items-center gap-2">
-                              <Gamepad2 className="w-3.5 h-3.5 text-blue-400" />
-                              <span className="text-xs text-blue-300 font-semibold uppercase tracking-wider">{tournament.game}</span>
-                            </div>
-
-                            {/* Title */}
-                            <h4 className="text-base font-bold text-white line-clamp-2 leading-snug">
-                              {tournament.title}
-                            </h4>
-
-                            {/* Stats */}
-                            <div className="flex items-center justify-between gap-3 pt-2">
-                              <div className="flex items-center gap-1.5">
-                                <Trophy className="w-4 h-4 text-amber-400" />
-                                <span className="text-sm font-bold text-white">${tournament.prize_pool.toLocaleString()}</span>
-                              </div>
-                              <div className="flex items-center gap-1.5">
-                                <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                                <span className="text-xs text-slate-300">{new Date(tournament.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                              </div>
-                            </div>
-
-                            {/* View Button */}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                openTournamentModal(tournament)
-                              }}
-                              className="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30"
-                            >
-                              View Details
-                            </button>
-                          </div>
-
-                          {/* Selected Indicator */}
-                          {selectedTournament?.id === tournament.id && (
-                            <div className="absolute inset-0 pointer-events-none">
-                              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
-                            </div>
-                          )}
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  </>
                 ) : (
                   <div className="h-full flex items-center justify-center">
                     <div className="text-center max-w-md">
@@ -638,11 +657,10 @@ export default function TournamentsPage() {
                   </div>
                 )}
 
-                {/* Scroll Fade Effects */}
                 {filteredTournaments.length > 0 && (
                   <>
-                    <div className="absolute left-0 top-0 bottom-6 bg-gradient-to-r from-slate-950 to-transparent w-12 pointer-events-none"></div>
-                    <div className="absolute right-0 top-0 bottom-6 bg-gradient-to-l from-slate-950 to-transparent w-12 pointer-events-none"></div>
+                    <div className="absolute left-0 top-0 bottom-6 bg-gradient-to-r from-slate-950 to-transparent w-16 pointer-events-none"></div>
+                    <div className="absolute right-0 top-0 bottom-6 bg-gradient-to-l from-slate-950 to-transparent w-16 pointer-events-none"></div>
                   </>
                 )}
               </div>
@@ -656,7 +674,6 @@ export default function TournamentsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300">
           <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl border border-slate-700/50 shadow-2xl animate-in zoom-in-95 duration-300">
             
-            {/* Modal Header */}
             <div className="relative h-64 overflow-hidden">
               <img
                 src={getTournamentImage(selectedTournament)}
@@ -687,10 +704,8 @@ export default function TournamentsPage() {
               </div>
             </div>
 
-            {/* Modal Content */}
             <div className="p-8">
               
-              {/* Stats Grid */}
               <div className="grid md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-gradient-to-br from-amber-500/20 to-orange-600/20 rounded-2xl p-6 border border-amber-400/30">
                   <Trophy className="w-6 h-6 text-amber-400 mb-3" />
@@ -709,7 +724,6 @@ export default function TournamentsPage() {
                 </div>
               </div>
 
-              {/* Description */}
               <div className="space-y-6 mb-8">
                 <div>
                   <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
@@ -747,18 +761,17 @@ export default function TournamentsPage() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href={`/tournaments/${selectedTournament.id}`}
-                  className="flex-1 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold text-center rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105"
+                  className="flex-1 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold text-center rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5"
                 >
                   {selectedTournament.status === "active" ? "Join Tournament Now" : selectedTournament.status === "upcoming" ? "View Full Details" : "View Results"}
                 </Link>
 
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-8 py-4 bg-slate-800/50 hover:bg-slate-800 text-white font-bold rounded-xl transition-all duration-300 border border-slate-700/50"
+                  className="px-8 py-4 bg-white hover:bg-slate-100 text-slate-900 font-bold rounded-xl transition-all duration-300 hover:-translate-y-0.5"
                 >
                   Close
                 </button>
@@ -770,20 +783,24 @@ export default function TournamentsPage() {
 
       {/* Custom Styles */}
       <style jsx global>{`
-        @keyframes ken-burns {
-          0% {
-            transform: scale(1.05);
-          }
-          50% {
-            transform: scale(1.1);
-          }
-          100% {
-            transform: scale(1.05);
-          }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        @keyframes fire-gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
+        
+        @keyframes ken-burns {
+          0% { transform: scale(1.05); }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1.05); }
+        }
+        
         .animate-ken-burns {
           animation: ken-burns 20s ease-in-out infinite;
         }
+        
         @keyframes fade-in-up {
           from {
             opacity: 0;
@@ -794,28 +811,35 @@ export default function TournamentsPage() {
             transform: translateY(0);
           }
         }
+        
         .animate-fade-in-up {
           animation: fade-in-up 0.8s ease-out;
         }
+        
         .animate-fade-in-up-delay {
           animation: fade-in-up 0.8s ease-out 0.2s both;
         }
+        
         .animate-fade-in-up-delay-2 {
           animation: fade-in-up 0.8s ease-out 0.4s both;
         }
+        
         .line-clamp-2 {
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
+        
         .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
+        
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
+        
         @keyframes animate-in {
           from {
             opacity: 0;
@@ -826,23 +850,24 @@ export default function TournamentsPage() {
             transform: scale(1);
           }
         }
+        
         .animate-in {
           animation: animate-in 0.3s ease-out;
         }
+        
         .fade-in {
           animation: fade-in 0.3s ease-out;
         }
+        
         .zoom-in-95 {
           animation: zoom-in-95 0.3s ease-out;
         }
+        
         @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
+        
         @keyframes zoom-in-95 {
           from {
             opacity: 0;
@@ -853,9 +878,11 @@ export default function TournamentsPage() {
             transform: scale(1);
           }
         }
+        
         .slide-in-from-top-2 {
           animation: slide-in-from-top-2 0.3s ease-out;
         }
+        
         @keyframes slide-in-from-top-2 {
           from {
             opacity: 0;
@@ -865,9 +892,6 @@ export default function TournamentsPage() {
             opacity: 1;
             transform: translateY(0);
           }
-        }
-        .hover\:scale-102:hover {
-          transform: scale(1.02);
         }
       `}</style>
     </div>
