@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { UserNav } from "@/components/user-nav"
-import { Search, Filter, ChevronLeft, ChevronRight, Trophy, Calendar, Gamepad2, Clock, X, Info, Star, Sparkles } from "lucide-react"
+import { Search, Filter, ChevronLeft, ChevronRight, Trophy, Calendar, Gamepad2, Clock, X, Info, Sparkles } from "lucide-react"
 import Link from "next/link"
 
 interface Tournament {
@@ -64,6 +64,18 @@ const getDaysRemaining = (endDate: string) => {
   return `Ends in ${days} days`
 }
 
+const getTimeUntilStart = (startDate: string) => {
+  const start = new Date(startDate)
+  const now = new Date()
+  const diff = start.getTime() - now.getTime()
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
+  
+  if (days < 0) return "Started"
+  if (days === 0) return "Starts today"
+  if (days === 1) return "Starts in 1 day"
+  return `Starts in ${days} days`
+}
+
 export default function TournamentsPage() {
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   const [filteredTournaments, setFilteredTournaments] = useState<Tournament[]>([])
@@ -80,6 +92,7 @@ export default function TournamentsPage() {
   const [currentTournamentIndex, setCurrentTournamentIndex] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
   const [joinButtonHover, setJoinButtonHover] = useState(false)
+  const [learnMoreHover, setLearnMoreHover] = useState(false)
 
   useEffect(() => {
     fetchUser()
@@ -106,7 +119,7 @@ export default function TournamentsPage() {
         setSelectedTournament(filteredTournaments[nextIndex])
         return nextIndex
       })
-    }, 8000)
+    }, 18000) // Changed to 18 seconds
 
     return () => clearInterval(interval)
   }, [filteredTournaments])
@@ -151,6 +164,7 @@ export default function TournamentsPage() {
 
   useEffect(() => {
     setJoinButtonHover(false)
+    setLearnMoreHover(false)
   }, [selectedTournament?.id])
 
   const fetchUser = async () => {
@@ -305,10 +319,10 @@ export default function TournamentsPage() {
                       </p>
                     )}
 
-                    {/* Redesigned CTA Section with inline stats */}
+                    {/* Redesigned CTA Section with sleek stat cards */}
                     <div 
                       key={`cta-${selectedTournament.id}`}
-                      className="flex flex-wrap items-start gap-6 pt-4 animate-fade-in-up-delay-2"
+                      className="flex flex-wrap items-center gap-6 pt-6 animate-fade-in-up-delay-2"
                     >
                       {/* Action Buttons */}
                       <div className="flex flex-wrap gap-4">
@@ -316,7 +330,7 @@ export default function TournamentsPage() {
                           href={`/tournaments/${selectedTournament.id}`}
                           onMouseEnter={() => setJoinButtonHover(true)}
                           onMouseLeave={() => setJoinButtonHover(false)}
-                          className="group relative px-10 py-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white font-bold rounded-xl transition-all duration-500 overflow-hidden border-2 border-slate-700 hover:border-slate-600"
+                          className="group relative px-10 py-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white font-bold rounded-xl transition-all duration-500 overflow-hidden border-2 border-slate-700 hover:border-slate-600 shadow-lg hover:shadow-2xl"
                         >
                           {joinButtonHover && (
                             <>
@@ -324,12 +338,10 @@ export default function TournamentsPage() {
                               <div className="fire-particle fire-particle-2"></div>
                               <div className="fire-particle fire-particle-3"></div>
                               <div className="fire-particle fire-particle-4"></div>
-                              <div className="fire-particle fire-particle-5"></div>
-                              <div className="fire-particle fire-particle-6"></div>
                               <div className="ember ember-1"></div>
                               <div className="ember ember-2"></div>
                               <div className="ember ember-3"></div>
-                              <div className="ember ember-4"></div>
+                              <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 via-red-600/20 to-orange-600/20 animate-pulse"></div>
                             </>
                           )}
                           <span className="relative z-10">
@@ -339,51 +351,56 @@ export default function TournamentsPage() {
 
                         <button
                           onClick={() => openTournamentModal(selectedTournament)}
-                          className="px-10 py-4 bg-white hover:bg-slate-100 text-slate-900 font-bold rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                          onMouseEnter={() => setLearnMoreHover(true)}
+                          onMouseLeave={() => setLearnMoreHover(false)}
+                          className="group relative px-10 py-4 bg-gradient-to-br from-slate-100 to-white text-slate-900 font-bold rounded-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden shadow-lg hover:shadow-2xl"
                         >
-                          Learn More
+                          <div className={`absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 transition-opacity duration-300 ${learnMoreHover ? 'opacity-100' : 'opacity-0'}`}></div>
+                          <span className="relative z-10 flex items-center gap-2">
+                            <Info className="w-4 h-4" />
+                            Learn More
+                          </span>
                         </button>
                       </div>
 
-                      {/* Inline Tournament Stats */}
-                      <div className="flex flex-wrap gap-6 items-center text-sm">
-                        <div className="flex items-center gap-2">
-                          <div className="p-2 bg-amber-500/20 rounded-lg backdrop-blur-xl border border-amber-500/30">
-                            <Trophy className="w-4 h-4 text-amber-400" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-slate-400 uppercase tracking-wider">Prize Pool</p>
-                            <p className="text-lg font-bold text-white">${selectedTournament.prize_pool.toLocaleString()}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <div className="p-2 bg-blue-500/20 rounded-lg backdrop-blur-xl border border-blue-500/30">
-                            <Calendar className="w-4 h-4 text-blue-400" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-slate-400 uppercase tracking-wider">Starts</p>
-                            <p className="text-sm font-semibold text-white">{new Date(selectedTournament.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                      {/* Sleek Tournament Stats Cards - Only Prize Pool and Time */}
+                      <div className="flex flex-wrap gap-4">
+                        {/* Prize Pool Card */}
+                        <div className="group relative bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 hover:border-amber-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-amber-500/20">
+                          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-orange-500/0 group-hover:from-amber-500/10 group-hover:to-orange-500/10 rounded-2xl transition-all duration-300"></div>
+                          <div className="relative flex items-center gap-4">
+                            <div className="p-3 bg-amber-500/20 rounded-xl border border-amber-500/30">
+                              <Trophy className="w-6 h-6 text-amber-400" />
+                            </div>
+                            <div>
+                              <p className="text-xs text-amber-300/70 uppercase tracking-[0.15em] font-bold mb-1">Prize Pool</p>
+                              <p className="text-2xl font-black text-white">${selectedTournament.prize_pool.toLocaleString()}</p>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                          <div className="p-2 bg-purple-500/20 rounded-lg backdrop-blur-xl border border-purple-500/30">
-                            <Clock className="w-4 h-4 text-purple-400" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-slate-400 uppercase tracking-wider">Ends</p>
-                            <p className="text-sm font-semibold text-white">{new Date(selectedTournament.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <div className="p-2 bg-emerald-500/20 rounded-lg backdrop-blur-xl border border-emerald-500/30">
-                            <Star className="w-4 h-4 text-emerald-400" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-slate-400 uppercase tracking-wider">Status</p>
-                            <p className="text-sm font-semibold text-white capitalize">{selectedTournament.status}</p>
+                        {/* Time Card - Dynamic based on status */}
+                        <div className="group relative bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-blue-500/20">
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/10 group-hover:to-indigo-500/10 rounded-2xl transition-all duration-300"></div>
+                          <div className="relative flex items-center gap-4">
+                            <div className="p-3 bg-blue-500/20 rounded-xl border border-blue-500/30">
+                              {selectedTournament.status === "upcoming" ? (
+                                <Calendar className="w-6 h-6 text-blue-400" />
+                              ) : (
+                                <Clock className="w-6 h-6 text-blue-400" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-xs text-blue-300/70 uppercase tracking-[0.15em] font-bold mb-1">
+                                {selectedTournament.status === "upcoming" ? "Starts" : "Ends"}
+                              </p>
+                              <p className="text-lg font-black text-white">
+                                {selectedTournament.status === "upcoming" 
+                                  ? getTimeUntilStart(selectedTournament.start_date)
+                                  : getDaysRemaining(selectedTournament.end_date)
+                                }
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -546,14 +563,14 @@ export default function TournamentsPage() {
                               : "hover:scale-[1.01]"
                           }`}
                         >
-                          <div className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border overflow-hidden transition-all duration-300 h-full shadow-xl hover:shadow-2xl ${
+                          <div className={`relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border overflow-hidden transition-all duration-300 shadow-xl hover:shadow-2xl flex flex-col ${
                             selectedTournament?.id === tournament.id
                               ? "border-blue-500/60 shadow-blue-500/20"
                               : "border-slate-700/50 hover:border-slate-600/50"
-                          }`}>
+                          }`} style={{ height: 'calc(100% - 1.5rem)' }}>
                             
-                            {/* Thumbnail - No overlay badge */}
-                            <div className="relative h-40 overflow-hidden">
+                            {/* Thumbnail */}
+                            <div className="relative h-36 overflow-hidden flex-shrink-0">
                               <img
                                 src={getTournamentImage(tournament)}
                                 alt={`${tournament.game} tournament`}
@@ -562,46 +579,48 @@ export default function TournamentsPage() {
                               <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"></div>
                             </div>
 
-                            {/* Content */}
-                            <div className="p-4 space-y-3">
-                              <div className="flex items-center gap-2">
+                            {/* Content - Fixed layout to prevent text cutoff */}
+                            <div className="p-4 flex flex-col flex-1">
+                              {/* Game Tag */}
+                              <div className="flex items-center gap-2 mb-3">
                                 <Gamepad2 className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
                                 <span className="text-xs text-blue-300 font-semibold uppercase tracking-wider truncate">{tournament.game}</span>
                               </div>
 
-                              <h4 className="text-base font-bold text-white line-clamp-2 leading-snug min-h-[2.5rem]">
+                              {/* Title */}
+                              <h4 className="text-base font-bold text-white leading-snug mb-auto line-clamp-2">
                                 {tournament.title}
                               </h4>
 
-                              {/* New Details Section */}
-                              <div className="space-y-2 pt-2 border-t border-slate-700/50">
-                                <div className="flex items-center justify-between text-xs">
-                                  <div className="flex items-center gap-1.5">
+                              {/* Info Section - Fixed at bottom */}
+                              <div className="space-y-3 pt-3 mt-3 border-t border-slate-700/50">
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-1.5 flex-1 min-w-0">
                                     <Trophy className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
-                                    <span className="text-slate-300 font-medium">${tournament.prize_pool.toLocaleString()}</span>
+                                    <span className="text-sm font-bold text-white truncate">${tournament.prize_pool.toLocaleString()}</span>
                                   </div>
-                                  <div className="px-2 py-0.5 bg-slate-700/50 rounded text-slate-300 font-medium">
+                                  <div className="px-2.5 py-1 bg-slate-700/50 rounded text-xs text-slate-300 font-semibold whitespace-nowrap">
                                     {getDaysRemaining(tournament.end_date)}
                                   </div>
                                 </div>
                                 
                                 {tournament.status === "active" && (
-                                  <div className="flex items-center gap-1.5 text-xs">
-                                    <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-                                    <span className="text-emerald-300 font-semibold">Active Tournament</span>
+                                  <div className="flex items-center gap-1.5">
+                                    <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse flex-shrink-0"></div>
+                                    <span className="text-xs text-emerald-300 font-semibold">Active Tournament</span>
                                   </div>
                                 )}
-                              </div>
 
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  openTournamentModal(tournament)
-                                }}
-                                className="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 mt-2"
-                              >
-                                View Details
-                              </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    openTournamentModal(tournament)
+                                  }}
+                                  className="w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white text-sm font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30"
+                                >
+                                  View Details
+                                </button>
+                              </div>
                             </div>
 
                             {selectedTournament?.id === tournament.id && (
@@ -765,110 +784,74 @@ export default function TournamentsPage() {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
-        /* Fire Effect Particles */
+        /* Improved Fire Effect Particles */
         .fire-particle {
           position: absolute;
-          width: 4px;
-          height: 8px;
+          width: 5px;
+          height: 10px;
           border-radius: 50%;
           opacity: 0;
-          filter: blur(1px);
+          filter: blur(1.5px);
         }
         
         .fire-particle-1 {
-          left: 10%;
+          left: 15%;
           bottom: 0;
-          background: linear-gradient(to top, #ff6b00, #ff0000);
-          animation: fire-rise-1 1.5s ease-out infinite;
+          background: linear-gradient(to top, #ff6b00, #ff0000, #ff4400);
+          animation: fire-rise-1 2s ease-out infinite;
         }
         
         .fire-particle-2 {
-          left: 30%;
+          left: 40%;
           bottom: 0;
-          background: linear-gradient(to top, #ff8800, #ff0000);
-          animation: fire-rise-2 1.3s ease-out infinite 0.2s;
+          background: linear-gradient(to top, #ff8800, #ff2200, #ff5500);
+          animation: fire-rise-2 1.8s ease-out infinite 0.3s;
         }
         
         .fire-particle-3 {
-          left: 50%;
+          right: 40%;
           bottom: 0;
-          background: linear-gradient(to top, #ffaa00, #ff4400);
-          animation: fire-rise-3 1.6s ease-out infinite 0.4s;
+          background: linear-gradient(to top, #ffaa00, #ff4400, #ff6600);
+          animation: fire-rise-1 1.9s ease-out infinite 0.5s;
         }
         
         .fire-particle-4 {
-          right: 30%;
+          right: 15%;
           bottom: 0;
-          background: linear-gradient(to top, #ff6b00, #ff0000);
-          animation: fire-rise-1 1.4s ease-out infinite 0.3s;
+          background: linear-gradient(to top, #ff6b00, #ff0000, #ff3300);
+          animation: fire-rise-2 2.1s ease-out infinite 0.2s;
         }
         
-        .fire-particle-5 {
-          right: 10%;
-          bottom: 0;
-          background: linear-gradient(to top, #ff8800, #ff2200);
-          animation: fire-rise-2 1.7s ease-out infinite 0.5s;
-        }
-        
-        .fire-particle-6 {
-          left: 70%;
-          bottom: 0;
-          background: linear-gradient(to top, #ffaa00, #ff5500);
-          animation: fire-rise-3 1.5s ease-out infinite 0.1s;
-        }
-        
-        /* Ember particles (smaller, faster) */
+        /* Ember particles */
         .ember {
           position: absolute;
-          width: 2px;
-          height: 2px;
+          width: 2.5px;
+          height: 2.5px;
           border-radius: 50%;
           background: #ffdd00;
           opacity: 0;
+          box-shadow: 0 0 4px #ffdd00;
         }
         
         .ember-1 {
-          left: 20%;
+          left: 25%;
           bottom: 0;
-          animation: ember-float 2s ease-out infinite;
+          animation: ember-float-1 2.5s ease-out infinite;
         }
         
         .ember-2 {
-          left: 60%;
+          left: 55%;
           bottom: 0;
-          animation: ember-float 2.2s ease-out infinite 0.3s;
+          animation: ember-float-2 2.8s ease-out infinite 0.4s;
         }
         
         .ember-3 {
-          left: 40%;
+          right: 35%;
           bottom: 0;
-          animation: ember-float 1.8s ease-out infinite 0.6s;
-        }
-        
-        .ember-4 {
-          right: 25%;
-          bottom: 0;
-          animation: ember-float 2.1s ease-out infinite 0.4s;
+          animation: ember-float-3 2.3s ease-out infinite 0.7s;
         }
         
         @keyframes fire-rise-1 {
-          0% {
-            opacity: 0;
-            transform: translateY(0) translateX(0) scale(1);
-          }
-          20% {
-            opacity: 1;
-          }
-          80% {
-            opacity: 0.8;
-          }
-          100% {
-            opacity: 0;
-            transform: translateY(-50px) translateX(-8px) scale(0.5);
-          }
-        }
-        
-        @keyframes fire-rise-2 {
           0% {
             opacity: 0;
             transform: translateY(0) translateX(0) scale(1);
@@ -881,11 +864,11 @@ export default function TournamentsPage() {
           }
           100% {
             opacity: 0;
-            transform: translateY(-45px) translateX(10px) scale(0.4);
+            transform: translateY(-45px) translateX(-10px) scale(0.4);
           }
         }
         
-        @keyframes fire-rise-3 {
+        @keyframes fire-rise-2 {
           0% {
             opacity: 0;
             transform: translateY(0) translateX(0) scale(1);
@@ -894,15 +877,15 @@ export default function TournamentsPage() {
             opacity: 1;
           }
           80% {
-            opacity: 0.9;
+            opacity: 0.6;
           }
           100% {
             opacity: 0;
-            transform: translateY(-55px) translateX(-12px) scale(0.3);
+            transform: translateY(-40px) translateX(12px) scale(0.3);
           }
         }
         
-        @keyframes ember-float {
+        @keyframes ember-float-1 {
           0% {
             opacity: 0;
             transform: translateY(0) translateX(0);
@@ -912,7 +895,35 @@ export default function TournamentsPage() {
           }
           100% {
             opacity: 0;
-            transform: translateY(-60px) translateX(${Math.random() > 0.5 ? '' : '-'}${Math.random() * 20}px);
+            transform: translateY(-55px) translateX(-15px);
+          }
+        }
+        
+        @keyframes ember-float-2 {
+          0% {
+            opacity: 0;
+            transform: translateY(0) translateX(0);
+          }
+          30% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-50px) translateX(10px);
+          }
+        }
+        
+        @keyframes ember-float-3 {
+          0% {
+            opacity: 0;
+            transform: translateY(0) translateX(0);
+          }
+          30% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-60px) translateX(5px);
           }
         }
         
