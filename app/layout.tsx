@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Rajdhani } from 'next/font/google'
+import { Inter, Rajdhani, Outfit, Space_Grotesk } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -8,6 +8,16 @@ const rajdhani = Rajdhani({
   subsets: ["latin"], 
   weight: ['400', '500', '600', '700'],
   variable: '--font-rajdhani' 
+});
+const outfit = Outfit({ 
+  subsets: ["latin"], 
+  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-outfit' 
+});
+const spaceGrotesk = Space_Grotesk({ 
+  subsets: ["latin"], 
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-space-grotesk' 
 });
 
 export const metadata: Metadata = {
@@ -23,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${rajdhani.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${rajdhani.variable} ${outfit.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>
