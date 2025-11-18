@@ -89,7 +89,7 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
     .in("submission_id", submissionIds)
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 font-gaming">
       <UserNav userName={userData?.display_name || "User"} />
 
       <main className="container mx-auto px-4 py-8 max-w-7xl">
