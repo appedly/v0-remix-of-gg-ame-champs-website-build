@@ -302,24 +302,68 @@ export default function DashboardPage() {
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
         
-        <div className="relative z-10 text-center">
-          <div className="mb-8 animate-in fade-in duration-500">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-blue-600/20 rounded-2xl mb-6 animate-pulse">
-              <Gamepad2 className="w-12 h-12 text-blue-500 animate-spin" />
+        {/* Animated scan lines effect */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-pulse" />
+          <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-pulse" style={{ animationDelay: '200ms' }} />
+        </div>
+        
+        <div className="relative z-10 text-center max-w-2xl px-6">
+          {/* Logo animation */}
+          <div className="mb-12 animate-in fade-in duration-500">
+            <div className="inline-flex items-center justify-center w-28 h-28 bg-blue-600/20 rounded-2xl mb-8 relative">
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-600/30 to-transparent animate-spin opacity-50" style={{ animationDuration: '3s' }} />
+              <Gamepad2 className="w-14 h-14 text-blue-500" />
             </div>
           </div>
-          <div className="animate-in fade-in duration-700 delay-200">
-            <h2 className="text-white text-2xl font-bold mb-2">Entering Tournament</h2>
-            <p className="text-slate-400 text-base">Initializing your dashboard...</p>
+
+          {/* Story/Gameplay text sequence */}
+          <div className="space-y-6">
+            {/* Step 1 */}
+            <div className="animate-in fade-in duration-700" style={{ animationDelay: '300ms' }}>
+              <h2 className="text-blue-500 text-sm font-semibold uppercase tracking-widest">System Status</h2>
+              <p className="text-slate-300 text-base mt-2">Authenticating user credentials...</p>
+              <div className="mt-2 h-1 bg-slate-700 rounded-full overflow-hidden">
+                <div className="h-full bg-blue-500 rounded-full" style={{ width: '33%', animation: 'pulse 1s infinite' }} />
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="animate-in fade-in duration-700" style={{ animationDelay: '800ms' }}>
+              <h2 className="text-blue-500 text-sm font-semibold uppercase tracking-widest">Loading Tournament Data</h2>
+              <p className="text-slate-300 text-base mt-2">Synchronizing with competition servers...</p>
+              <div className="mt-2 h-1 bg-slate-700 rounded-full overflow-hidden">
+                <div className="h-full bg-blue-500 rounded-full" style={{ width: '66%', animation: 'pulse 1s infinite 200ms' }} />
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="animate-in fade-in duration-700" style={{ animationDelay: '1300ms' }}>
+              <h2 className="text-blue-500 text-sm font-semibold uppercase tracking-widest">Initializing Dashboard</h2>
+              <p className="text-slate-300 text-base mt-2">Preparing your competitive arena...</p>
+              <div className="mt-2 h-1 bg-slate-700 rounded-full overflow-hidden">
+                <div className="h-full bg-blue-500 rounded-full" style={{ width: '100%', animation: 'pulse 1s infinite 400ms' }} />
+              </div>
+            </div>
           </div>
-          <div className="mt-8 flex gap-2 justify-center animate-in fade-in duration-700 delay-300">
+
+          {/* Loading indicator */}
+          <div className="mt-12 flex gap-2 justify-center animate-in fade-in duration-700" style={{ animationDelay: '1800ms' }}>
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="w-3 h-3 rounded-full bg-blue-500 animate-bounce"
-                style={{ animationDelay: `${i * 150}ms` }}
+                className="w-2 h-2 rounded-full bg-blue-500"
+                style={{
+                  animation: 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                  animationDelay: `${i * 200}ms`
+                }}
               />
             ))}
+          </div>
+
+          {/* Final message */}
+          <div className="mt-8 animate-in fade-in duration-700" style={{ animationDelay: '2200ms' }}>
+            <p className="text-slate-500 text-sm">Welcome to the arena, competitor</p>
           </div>
         </div>
       </div>
