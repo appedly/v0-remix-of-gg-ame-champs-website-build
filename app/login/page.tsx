@@ -12,6 +12,7 @@ import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { loginWithGoogle } from "./oauth-actions"
 import { Eye, EyeOff } from "lucide-react"
+import { GameEntryPortal } from "@/components/game-entry-portal"
 
 // Force dynamic rendering since this page uses client-side Supabase
 export const dynamic = 'force-dynamic'
@@ -21,6 +22,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [showPortal, setShowPortal] = useState(false)
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,9 +57,12 @@ export default function LoginPage() {
       }
 
       if (data.session) {
-        console.log("[v0] Login successful, redirecting to dashboard")
-        router.push("/dashboard")
-        router.refresh()
+        console.log("[v0] Login successful, showing portal...")
+        setShowPortal(true)
+        setTimeout(() => {
+          router.push("/dashboard")
+          router.refresh()
+        }, 1800)
       }
     } catch (error: unknown) {
       console.error("[v0] Login error:", error)
@@ -79,24 +84,33 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1428] to-[#0a0f1e] flex items-center justify-center p-4">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#4A6CFF]/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#00D9FF]/5 rounded-full blur-3xl" />
-      </div>
-
-      <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <Image src="/logo.png" alt="GGameChamps" width={120} height={120} className="w-30 h-30 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-white/60">Sign in to compete and win</p>
+    <>
+      <GameEntryPortal isOpen={showPortal} onComplete={() => setShowPortal(false)} />
+      <div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,#1a2845_25%,#0a0f1e_25%,#0a0f1e_50%,#1a2845_50%,#1a2845_75%,#0a0f1e_75%,#0a0f1e)] bg-[length:60px_60px] opacity-30" />
+        </div>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#FFD700]/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#FF6347]/5 rounded-full blur-3xl" />
         </div>
 
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
+        <div className="w-full max-w-md relative z-10 animate-game-entry">
+        <div className="text-center mb-8 animate-minecraft-slide delay-100" style={{ animationDelay: '0.1s' }}>
+          <div className="relative mb-4">
+            <Image src="/logo.png" alt="GGameChamps" width={120} height={120} className="w-30 h-30 mx-auto" />
+          </div>
+          <h1 className="text-4xl font-minecraft font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FF6347] mb-2 tracking-wider">
+            ► LOGIN ◄
+          </h1>
+          <p className="text-cyan-400 text-lg font-minecraft tracking-wide">RESPAWN TO COMPETE</p>
+        </div>
+
+        <div className="bg-[#1a2845]/60 backdrop-blur-xl rounded-2xl border-2 border-cyan-400/30 p-8 shadow-2xl shadow-cyan-500/10 hover:border-cyan-400/50 hover:shadow-cyan-500/20 transition-all duration-300">
           <Button
             onClick={handleGoogleLogin}
             disabled={isGoogleLoading}
-            className="w-full bg-white hover:bg-white/90 text-black h-12 rounded-lg font-medium text-base mb-6 flex items-center justify-center gap-2 transition-all"
+            className="w-full bg-gradient-to-r from-[#FFD700] to-[#FFA500] hover:from-[#FFC700] hover:to-[#FF9500] text-black h-12 rounded-lg font-minecraft font-bold text-base mb-6 flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/50 border border-yellow-300/30"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -116,22 +130,22 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            {isGoogleLoading ? "Signing in..." : "Sign in with Google"}
+            {isGoogleLoading ? "⏳ LOADING..." : "➤ GOOGLE LOGIN ◄"}
           </Button>
 
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#2a3342]" />
+              <div className="w-full border-t border-cyan-400/20" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-[#1a2332]/80 text-white/40">Or continue with email</span>
+              <span className="px-2 bg-[#1a2845]/80 text-cyan-400/60 font-minecraft tracking-wider">◆ OR ◆</span>
             </div>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <Label htmlFor="email" className="text-white">
-                Email
+              <Label htmlFor="email" className="text-cyan-400 font-minecraft tracking-wider text-sm">
+                EMAIL ADDRESS
               </Label>
               <Input
                 id="email"
@@ -139,13 +153,13 @@ export default function LoginPage() {
                 type="email"
                 placeholder="your@email.com"
                 required
-                className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40"
+                className="mt-2 bg-[#0B1020] border-2 border-cyan-400/20 text-white placeholder:text-cyan-400/30 rounded-xl focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all font-minecraft"
               />
             </div>
 
             <div>
-              <Label htmlFor="password" className="text-white">
-                Password
+              <Label htmlFor="password" className="text-cyan-400 font-minecraft tracking-wider text-sm">
+                PASSWORD
               </Label>
               <div className="relative mt-2">
                 <Input
@@ -153,12 +167,12 @@ export default function LoginPage() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
-                  className="bg-[#0B1020] border-[#2a3342] text-white pr-10"
+                  className="bg-[#0B1020] border-2 border-cyan-400/20 text-white rounded-xl focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all pr-10 font-minecraft"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400/60 hover:text-cyan-400 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -166,37 +180,38 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-400 text-sm">{error}</p>
+              <div className="p-4 bg-red-500/20 border-2 border-red-500/50 rounded-lg animate-minecraft-pop">
+                <p className="text-red-300 text-sm font-minecraft">⚠ {error}</p>
               </div>
             )}
 
-            <Button type="submit" className="w-full bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign In"}
+            <Button type="submit" className="w-full bg-gradient-to-r from-[#00D9FF] to-[#4fc3f7] hover:from-[#00E9FF] hover:to-[#5FDCFF] text-black font-minecraft font-bold text-base rounded-xl h-12 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/50 border border-cyan-300/30 disabled:opacity-50" disabled={isLoading}>
+              {isLoading ? "⏳ RESPAWNING..." : "► ENTER GAME ◄"}
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-white/60 text-sm">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-[#4A6CFF] hover:text-[#6A5CFF] transition-colors">
-                Sign up
+          <div className="mt-6 text-center space-y-3">
+            <p className="text-cyan-400/80 text-sm font-minecraft tracking-wider">
+              NO ACCOUNT YET?{" "}
+              <Link href="/signup" className="text-[#FFD700] hover:text-[#FFA500] transition-colors font-bold">
+                CREATE ONE
               </Link>
             </p>
-            <p className="text-white/60 text-sm mt-2">
-              <Link href="/forgot-password" className="text-[#4A6CFF] hover:text-[#6A5CFF] transition-colors">
-                Forgot password?
+            <p className="text-cyan-400/60 text-xs font-minecraft tracking-wider">
+              <Link href="/forgot-password" className="text-cyan-300 hover:text-cyan-200 transition-colors">
+                ◆ FORGOT PASSWORD? ◆
               </Link>
             </p>
           </div>
         </div>
 
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-white/60 hover:text-white text-sm transition-colors">
-            ← Back to home
-          </Link>
+          <div className="mt-6 text-center">
+            <Link href="/" className="text-white/60 hover:text-white text-sm transition-colors">
+              ← Back to home
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

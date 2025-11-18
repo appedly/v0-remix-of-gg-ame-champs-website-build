@@ -37,16 +37,16 @@ export function Hero() {
           </div>
 
           <h1
-            className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-8 text-balance leading-[1.1] tracking-tight transition-all duration-700 delay-100 ${
+            className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-minecraft font-bold text-white mb-8 text-balance leading-[1.1] tracking-wider transition-all duration-700 delay-100 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            Compete. Dominate.{" "}
+            ◆ COMPETE ◆{" "}
             <span className="relative inline-block">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#29b6f6]">
-                Win Prizes.
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FF6347] animate-glitch">
+                DOMINATE ◆
               </span>
-              <div className="absolute -bottom-2 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#4fc3f7] to-transparent" />
+              <div className="absolute -bottom-2 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#FFD700] to-transparent" />
             </span>
           </h1>
 
@@ -66,16 +66,16 @@ export function Hero() {
           >
             <a
               href="#early-access"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#4fc3f7] to-[#00C2FF] text-[#0a0f1e] rounded-full font-semibold text-lg hover:shadow-[0_0_40px_rgba(79,195,247,0.3)] transition-all duration-300 hover:scale-105 shadow-lg"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FF6347] text-black rounded-xl font-minecraft font-bold text-lg hover:shadow-[0_0_40px_rgba(255,215,0,0.5)] transition-all duration-300 hover:scale-110 shadow-lg hover:-translate-y-1 border-2 border-yellow-400/30"
             >
-              Get Early Access
-              <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
+              ► ENTER GAME
+              <span className="inline-block group-hover:translate-x-1 transition-transform">➤</span>
             </a>
             <a
               href="#how-it-works"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#1a2845]/80 border-2 border-cyan-400/50 text-cyan-400 rounded-xl font-minecraft font-bold text-lg hover:bg-[#1a2845] hover:border-cyan-400 hover:text-cyan-300 transition-all duration-300 backdrop-blur-sm hover:-translate-y-1"
             >
-              How It Works
+              ◆ HOW TO PLAY ◆
               <span className="inline-block group-hover:translate-y-1 transition-transform">↓</span>
             </a>
           </div>
