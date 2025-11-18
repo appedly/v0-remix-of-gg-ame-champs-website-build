@@ -319,10 +319,10 @@ export default function TournamentsPage() {
                       </p>
                     )}
 
-                    {/* Redesigned CTA Section with sleek stat cards */}
-                    <div 
+                    {/* Redesigned CTA Section with enhanced stat cards */}
+                    <div
                       key={`cta-${selectedTournament.id}`}
-                      className="flex flex-wrap items-center gap-6 pt-6 animate-fade-in-up-delay-2"
+                      className="flex flex-col gap-8 pt-6 animate-fade-in-up-delay-2"
                     >
                       {/* Action Buttons */}
                       <div className="flex flex-wrap gap-4">
@@ -363,42 +363,78 @@ export default function TournamentsPage() {
                         </button>
                       </div>
 
-                      {/* Sleek Tournament Stats Cards - Only Prize Pool and Time */}
-                      <div className="flex flex-wrap gap-4">
+                      {/* Enhanced Tournament Stats Cards Grid */}
+                      <div className="grid grid-cols-2 gap-4 max-w-2xl">
                         {/* Prize Pool Card */}
-                        <div className="group relative bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 hover:border-amber-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-amber-500/20">
-                          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-orange-500/0 group-hover:from-amber-500/10 group-hover:to-orange-500/10 rounded-2xl transition-all duration-300"></div>
-                          <div className="relative flex items-center gap-4">
-                            <div className="p-3 bg-amber-500/20 rounded-xl border border-amber-500/30">
-                              <Trophy className="w-6 h-6 text-amber-400" />
+                        <div className="group relative overflow-hidden rounded-2xl transition-all duration-300">
+                          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          <div className="relative bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 group-hover:border-amber-500/40 transition-all duration-300 shadow-xl group-hover:shadow-2xl group-hover:shadow-amber-500/10 group-hover:-translate-y-1">
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="p-2.5 bg-gradient-to-br from-amber-500/30 to-orange-500/20 rounded-xl border border-amber-500/30 group-hover:border-amber-400/50 transition-colors">
+                                <Trophy className="w-5 h-5 text-amber-400" />
+                              </div>
+                              <span className="inline-block px-2.5 py-1 bg-amber-500/20 border border-amber-500/30 rounded-lg text-xs font-bold text-amber-300 uppercase tracking-wider">Prize</span>
                             </div>
                             <div>
-                              <p className="text-xs text-amber-300/70 uppercase tracking-[0.15em] font-bold mb-1">Prize Pool</p>
-                              <p className="text-2xl font-black text-white">${selectedTournament.prize_pool.toLocaleString()}</p>
+                              <p className="text-3xl font-black text-white mb-1">${selectedTournament.prize_pool.toLocaleString()}</p>
+                              <p className="text-xs text-amber-300/60 font-semibold uppercase tracking-[0.1em]">Total Prize Pool</p>
                             </div>
                           </div>
                         </div>
 
-                        {/* Time Card - Dynamic based on status */}
-                        <div className="group relative bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-blue-500/20">
-                          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/10 group-hover:to-indigo-500/10 rounded-2xl transition-all duration-300"></div>
-                          <div className="relative flex items-center gap-4">
-                            <div className="p-3 bg-blue-500/20 rounded-xl border border-blue-500/30">
-                              {selectedTournament.status === "upcoming" ? (
-                                <Calendar className="w-6 h-6 text-blue-400" />
-                              ) : (
-                                <Clock className="w-6 h-6 text-blue-400" />
-                              )}
+                        {/* Status Card - Dynamic based on tournament status */}
+                        <div className="group relative overflow-hidden rounded-2xl transition-all duration-300">
+                          <div className={`absolute inset-0 bg-gradient-to-br ${
+                            selectedTournament.status === "active" ? "from-emerald-500/20 via-teal-500/10" :
+                            selectedTournament.status === "upcoming" ? "from-blue-500/20 via-cyan-500/10" :
+                            "from-slate-500/20 via-slate-500/10"
+                          } to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                          <div className={`relative bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border transition-all duration-300 shadow-xl group-hover:shadow-2xl group-hover:-translate-y-1 ${
+                            selectedTournament.status === "active" ? "border-slate-700/50 group-hover:border-emerald-500/40 group-hover:shadow-emerald-500/10" :
+                            selectedTournament.status === "upcoming" ? "border-slate-700/50 group-hover:border-blue-500/40 group-hover:shadow-blue-500/10" :
+                            "border-slate-700/50 group-hover:border-slate-500/40 group-hover:shadow-slate-500/10"
+                          }`}>
+                            <div className="flex items-start justify-between mb-3">
+                              <div className={`p-2.5 rounded-xl border transition-colors ${
+                                selectedTournament.status === "active" ? "bg-emerald-500/30 border-emerald-500/30 group-hover:border-emerald-400/50" :
+                                selectedTournament.status === "upcoming" ? "bg-blue-500/30 border-blue-500/30 group-hover:border-blue-400/50" :
+                                "bg-slate-500/30 border-slate-500/30 group-hover:border-slate-400/50"
+                              }`}>
+                                {selectedTournament.status === "upcoming" ? (
+                                  <Calendar className={`w-5 h-5 ${
+                                    selectedTournament.status === "active" ? "text-emerald-400" :
+                                    selectedTournament.status === "upcoming" ? "text-blue-400" :
+                                    "text-slate-400"
+                                  }`} />
+                                ) : (
+                                  <Clock className={`w-5 h-5 ${
+                                    selectedTournament.status === "active" ? "text-emerald-400" :
+                                    selectedTournament.status === "upcoming" ? "text-blue-400" :
+                                    "text-slate-400"
+                                  }`} />
+                                )}
+                              </div>
+                              <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider border transition-colors ${
+                                selectedTournament.status === "active" ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-300" :
+                                selectedTournament.status === "upcoming" ? "bg-blue-500/20 border-blue-500/30 text-blue-300" :
+                                "bg-slate-500/20 border-slate-500/30 text-slate-300"
+                              }`}>
+                                {selectedTournament.status}
+                              </span>
                             </div>
                             <div>
-                              <p className="text-xs text-blue-300/70 uppercase tracking-[0.15em] font-bold mb-1">
-                                {selectedTournament.status === "upcoming" ? "Starts" : "Ends"}
-                              </p>
-                              <p className="text-lg font-black text-white">
-                                {selectedTournament.status === "upcoming" 
+                              <p className="text-2xl font-black text-white mb-1">
+                                {selectedTournament.status === "upcoming"
                                   ? getTimeUntilStart(selectedTournament.start_date)
                                   : getDaysRemaining(selectedTournament.end_date)
                                 }
+                              </p>
+                              <p className={`text-xs font-semibold uppercase tracking-[0.1em] ${
+                                selectedTournament.status === "active" ? "text-emerald-300/60" :
+                                selectedTournament.status === "upcoming" ? "text-blue-300/60" :
+                                "text-slate-300/60"
+                              }`}>
+                                {selectedTournament.status === "upcoming" ? "Starts" : "Ends"}
                               </p>
                             </div>
                           </div>
