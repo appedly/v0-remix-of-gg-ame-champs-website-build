@@ -177,7 +177,6 @@ export default function DashboardPage() {
     joinedTournaments: 0,
   })
   const [isLoading, setIsLoading] = useState(true)
-  const [showTransition, setShowTransition] = useState(true)
   const [contentVisible, setContentVisible] = useState(false)
 
   useEffect(() => {
@@ -282,11 +281,10 @@ export default function DashboardPage() {
 
         setIsLoading(false)
         
-        // Trigger transition sequence
+        // Trigger content animation after loading finishes
         setTimeout(() => {
-          setShowTransition(false)
-          setTimeout(() => setContentVisible(true), 100)
-        }, 800)
+          setContentVisible(true)
+        }, 100)
       } catch (err: any) {
         console.error("[v0] Dashboard error:", err)
         router.push("/login")
@@ -329,16 +327,12 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className={`min-h-screen bg-slate-900 transition-all duration-700 ${showTransition ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}>
-      {showTransition && (
-        <div className="fixed inset-0 bg-slate-900 z-50 pointer-events-none animate-pulse" />
-      )}
-      
+    <div className="min-h-screen bg-slate-900">
       <UserNav userName={userData?.display_name || user?.email?.split("@")[0] || "User"} />
 
       <main className={`container mx-auto px-4 py-8 transition-all duration-1000 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         {/* Hero Section with Quick Actions and Recent Activity */}
-        <div className="mb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className={`mb-12 grid grid-cols-1 lg:grid-cols-3 gap-6 transition-all duration-700 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           {/* Main Welcome Card */}
           <div className="lg:col-span-2">
             <div className="bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-800 p-8 relative overflow-hidden transition-all duration-300 hover:border-slate-700 hover:shadow-lg hover:shadow-blue-500/5 h-full">
