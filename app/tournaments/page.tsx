@@ -115,7 +115,7 @@ export default function TournamentsPage() {
         setSelectedTournament(filteredTournaments[nextIndex])
         return nextIndex
       })
-    }, 18000) // Changed to 18 seconds
+    }, 20000)
 
     return () => clearInterval(interval)
   }, [filteredTournaments])
