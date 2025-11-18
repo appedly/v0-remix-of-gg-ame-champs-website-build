@@ -16,7 +16,7 @@ export function UserNav({ userName }: { userName: string }) {
   ]
 
   return (
-    <nav className="bg-slate-900/95 backdrop-blur-sm border-b border-slate-800 sticky top-0 z-50">
+    <nav className="bg-slate-900/95 backdrop-blur-sm border-b border-slate-800 sticky top-0 z-50 font-gaming">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
@@ -32,9 +32,9 @@ export function UserNav({ userName }: { userName: string }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2 rounded-lg border border-transparent text-sm font-semibold uppercase tracking-[0.18em] transition-all duration-200 ${
                     pathname === item.href 
-                      ? "bg-blue-600/20 text-blue-500 border border-blue-600/30" 
+                      ? "bg-blue-600/20 text-blue-400 border-blue-600/30 shadow-lg shadow-blue-500/10" 
                       : "text-slate-400 hover:text-white hover:bg-slate-800"
                   }`}
                 >
