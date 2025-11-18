@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { signup } from "./actions"
 import { signupWithGoogle } from "./oauth-actions"
 import { Eye, EyeOff } from "lucide-react"
@@ -23,6 +23,11 @@ export default function SignupPage() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -58,7 +63,6 @@ export default function SignupPage() {
     setIsGoogleLoading(true)
     setError(null)
     try {
-      // Google signup now redirects to waitlist-confirmation without requiring access code upfront
       await signupWithGoogle()
     } catch (error: unknown) {
       console.error("[v0] Google signup error:", error)
@@ -68,24 +72,32 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1428] to-[#0a0f1e] flex items-center justify-center p-4">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#4A6CFF]/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#00D9FF]/5 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Tournament-style background patterns */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#475569_1px,transparent_1px),linear-gradient(to_bottom,#475569_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-5" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <Image src="/logo.png" alt="GC" width={100} height={100} className="w-24 h-24 mx-auto mb-6" />
-          <h1 className="text-4xl font-bold text-white mb-3">Create Account</h1>
-          <p className="text-white/50 text-base">Sign up to compete and win</p>
+      <div className={`w-full max-w-md relative z-10 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className="text-center mb-10">
+          <div className={`inline-flex items-center justify-center mb-6 transition-all duration-700 delay-100 ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
+            <Image src="/logo.png" alt="GGameChamps" width={70} height={70} className="w-16 h-16" />
+          </div>
+          <h1 className={`text-4xl font-bold text-white mb-2 transition-all duration-700 delay-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+            Create Account
+          </h1>
+          <p className={`text-slate-400 transition-all duration-700 delay-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+            Join the competition, join the glory
+          </p>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
+        <div className={`bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700 p-8 shadow-2xl transition-all duration-700 delay-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
           <Button
             onClick={handleGoogleSignup}
             disabled={isGoogleLoading}
-            className="w-full bg-white hover:bg-white/90 text-black h-12 rounded-xl font-medium text-base mb-6 flex items-center justify-center gap-2 transition-all"
+            className="w-full bg-white hover:bg-slate-100 text-black h-12 rounded-xl font-semibold text-base mb-6 flex items-center justify-center gap-3 transition-all duration-300 hover:shadow-lg"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -105,21 +117,21 @@ export default function SignupPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            {isGoogleLoading ? "Signing up..." : "Sign up with Google"}
+            {isGoogleLoading ? "Signing up..." : "Continue with Google"}
           </Button>
 
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10" />
+              <div className="w-full border-t border-slate-600" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-[#151b2e]/50 text-white/40">Or continue with email</span>
+              <span className="px-3 bg-slate-800/50 text-slate-400 text-xs font-semibold uppercase tracking-wide">Or use email</span>
             </div>
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-5">
+          <form onSubmit={handleSignup} className="space-y-4">
             <div>
-              <Label htmlFor="displayName" className="text-white/80 text-sm font-medium mb-2 block">
+              <Label htmlFor="displayName" className="text-white text-sm font-semibold mb-2 block">
                 Display Name
               </Label>
               <Input
@@ -128,13 +140,13 @@ export default function SignupPage() {
                 type="text"
                 placeholder="Your gamer tag"
                 required
-                className="bg-[#0a0f1e] border-white/10 text-white placeholder:text-white/30 h-12 rounded-xl focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all"
+                className="w-full bg-slate-900 border-slate-600 text-white placeholder:text-slate-500 h-11 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all"
               />
             </div>
 
             <div>
-              <Label htmlFor="email" className="text-white/80 text-sm font-medium mb-2 block">
-                Email
+              <Label htmlFor="email" className="text-white text-sm font-semibold mb-2 block">
+                Email Address
               </Label>
               <Input
                 id="email"
@@ -142,12 +154,12 @@ export default function SignupPage() {
                 type="email"
                 placeholder="your@email.com"
                 required
-                className="bg-[#0a0f1e] border-white/10 text-white placeholder:text-white/30 h-12 rounded-xl focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all"
+                className="w-full bg-slate-900 border-slate-600 text-white placeholder:text-slate-500 h-11 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all"
               />
             </div>
 
             <div>
-              <Label htmlFor="password" className="text-white/80 text-sm font-medium mb-2 block">
+              <Label htmlFor="password" className="text-white text-sm font-semibold mb-2 block">
                 Password
               </Label>
               <div className="relative">
@@ -156,12 +168,13 @@ export default function SignupPage() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
-                  className="bg-[#0a0f1e] border-white/10 text-white h-12 rounded-xl focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all pr-10"
+                  placeholder="••••••••"
+                  className="w-full bg-slate-900 border-slate-600 text-white placeholder:text-slate-500 h-11 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -169,7 +182,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <Label htmlFor="confirmPassword" className="text-white/80 text-sm font-medium mb-2 block">
+              <Label htmlFor="confirmPassword" className="text-white text-sm font-semibold mb-2 block">
                 Confirm Password
               </Label>
               <div className="relative">
@@ -177,14 +190,15 @@ export default function SignupPage() {
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   required
+                  placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="bg-[#0a0f1e] border-white/10 text-white h-12 rounded-xl focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all pr-10"
+                  className="w-full bg-slate-900 border-slate-600 text-white placeholder:text-slate-500 h-11 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors"
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -192,7 +206,7 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <Label htmlFor="accessCode" className="text-white/80 text-sm font-medium mb-2 block">
+              <Label htmlFor="accessCode" className="text-white text-sm font-semibold mb-2 block">
                 Access Code (optional)
               </Label>
               <Input
@@ -201,41 +215,41 @@ export default function SignupPage() {
                 placeholder="Enter your access code"
                 value={accessCode}
                 onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
-                className="bg-[#0a0f1e] border-white/10 text-white placeholder:text-white/30 h-12 rounded-xl focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all"
+                className="w-full bg-slate-900 border-slate-600 text-white placeholder:text-slate-500 h-11 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all uppercase"
               />
-              <p className="text-white/40 text-xs mt-2">
-                Have an access code? Enter it here to join immediately. Otherwise, you'll be added to the waitlist.
+              <p className="text-slate-500 text-xs mt-2">
+                Have an access code? You'll join immediately. Otherwise, you'll be on the waitlist.
               </p>
             </div>
 
             {error && (
-              <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-                <p className="text-red-400 text-sm">{error}</p>
+              <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl animate-in fade-in">
+                <p className="text-red-400 text-sm font-medium">{error}</p>
               </div>
             )}
 
             <Button
               type="submit"
-              className="w-full bg-[#4A6CFF] hover:bg-[#5A7CFF] text-white h-12 rounded-xl font-medium text-base shadow-lg shadow-[#4A6CFF]/20 transition-all"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12 rounded-xl font-semibold text-base shadow-lg shadow-blue-600/30 transition-all duration-300 hover:shadow-blue-600/50 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
               disabled={isLoading}
             >
               {isLoading ? "Creating account..." : "Create Account"}
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-white/50 text-sm">
+          <div className="mt-8 text-center">
+            <p className="text-slate-400 text-sm">
               Already have an account?{" "}
-              <Link href="/login" className="text-[#4A6CFF] hover:text-[#5A7CFF] transition-colors font-medium">
+              <Link href="/login" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
                 Sign in
               </Link>
             </p>
           </div>
         </div>
 
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-white/40 hover:text-white/60 text-sm transition-colors">
-            ← Back to home
+        <div className="mt-8 text-center">
+          <Link href="/" className="text-slate-400 hover:text-slate-300 text-sm transition-colors inline-flex items-center gap-2">
+            <span>←</span> Back to home
           </Link>
         </div>
       </div>

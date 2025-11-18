@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { loginWithGoogle } from "./oauth-actions"
@@ -21,7 +21,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -56,7 +61,7 @@ export default function LoginPage() {
 
       if (data.session) {
         console.log("[v0] Login successful, redirecting to dashboard")
-        router.push("/dashboard")
+        router.push("/dashboard?transition=enter")
         router.refresh()
       }
     } catch (error: unknown) {
@@ -79,24 +84,32 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#0f1428] to-[#0a0f1e] flex items-center justify-center p-4">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#4A6CFF]/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#00D9FF]/5 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Tournament-style background patterns */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#475569_1px,transparent_1px),linear-gradient(to_bottom,#475569_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-5" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
-          <Image src="/logo.png" alt="GGameChamps" width={120} height={120} className="w-30 h-30 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-white/60">Sign in to compete and win</p>
+      <div className={`w-full max-w-md relative z-10 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className="text-center mb-10">
+          <div className={`inline-flex items-center justify-center mb-6 transition-all duration-700 delay-100 ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
+            <Image src="/logo.png" alt="GGameChamps" width={80} height={80} className="w-20 h-20" />
+          </div>
+          <h1 className={`text-4xl font-bold text-white mb-2 transition-all duration-700 delay-200 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+            Welcome Back
+          </h1>
+          <p className={`text-slate-400 transition-all duration-700 delay-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+            Sign in to your account and compete
+          </p>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-8 shadow-2xl">
+        <div className={`bg-slate-800/50 backdrop-blur-xl rounded-2xl border border-slate-700 p-8 shadow-2xl transition-all duration-700 delay-300 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
           <Button
             onClick={handleGoogleLogin}
             disabled={isGoogleLoading}
-            className="w-full bg-white hover:bg-white/90 text-black h-12 rounded-lg font-medium text-base mb-6 flex items-center justify-center gap-2 transition-all"
+            className="w-full bg-white hover:bg-slate-100 text-black h-12 rounded-xl font-semibold text-base mb-6 flex items-center justify-center gap-3 transition-all duration-300 hover:shadow-lg"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -116,22 +129,22 @@ export default function LoginPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            {isGoogleLoading ? "Signing in..." : "Sign in with Google"}
+            {isGoogleLoading ? "Signing in..." : "Continue with Google"}
           </Button>
 
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#2a3342]" />
+              <div className="w-full border-t border-slate-600" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-[#1a2332]/80 text-white/40">Or continue with email</span>
+              <span className="px-3 bg-slate-800/50 text-slate-400 text-xs font-semibold uppercase tracking-wide">Or use email</span>
             </div>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <Label htmlFor="email" className="text-white">
-                Email
+              <Label htmlFor="email" className="text-white text-sm font-semibold mb-2 block">
+                Email Address
               </Label>
               <Input
                 id="email"
@@ -139,61 +152,68 @@ export default function LoginPage() {
                 type="email"
                 placeholder="your@email.com"
                 required
-                className="mt-2 bg-[#0B1020] border-[#2a3342] text-white placeholder:text-white/40"
+                className="w-full bg-slate-900 border-slate-600 text-white placeholder:text-slate-500 h-12 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all"
               />
             </div>
 
             <div>
-              <Label htmlFor="password" className="text-white">
+              <Label htmlFor="password" className="text-white text-sm font-semibold mb-2 block">
                 Password
               </Label>
-              <div className="relative mt-2">
+              <div className="relative">
                 <Input
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
-                  className="bg-[#0B1020] border-[#2a3342] text-white pr-10"
+                  placeholder="••••••••"
+                  className="w-full bg-slate-900 border-slate-600 text-white placeholder:text-slate-500 h-12 rounded-xl focus:border-blue-500 focus:ring-blue-500 transition-all pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
             </div>
 
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-400 text-sm">{error}</p>
+              <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl animate-in fade-in">
+                <p className="text-red-400 text-sm font-medium">{error}</p>
               </div>
             )}
 
-            <Button type="submit" className="w-full bg-[#4A6CFF] hover:bg-[#6A5CFF] text-white" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white h-12 rounded-xl font-semibold text-base shadow-lg shadow-blue-600/30 transition-all duration-300 hover:shadow-blue-600/50 disabled:opacity-50 disabled:cursor-not-allowed" 
+              disabled={isLoading}
+            >
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-white/60 text-sm">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-[#4A6CFF] hover:text-[#6A5CFF] transition-colors">
-                Sign up
-              </Link>
-            </p>
-            <p className="text-white/60 text-sm mt-2">
-              <Link href="/forgot-password" className="text-[#4A6CFF] hover:text-[#6A5CFF] transition-colors">
+          <div className="mt-8 space-y-3 text-center">
+            <div>
+              <p className="text-slate-400 text-sm">
+                Don't have an account?{" "}
+                <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
+                  Create account
+                </Link>
+              </p>
+            </div>
+            <div>
+              <Link href="/forgot-password" className="text-slate-400 hover:text-slate-300 text-sm transition-colors">
                 Forgot password?
               </Link>
-            </p>
+            </div>
           </div>
         </div>
 
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-white/60 hover:text-white text-sm transition-colors">
-            ← Back to home
+        <div className="mt-8 text-center">
+          <Link href="/" className="text-slate-400 hover:text-slate-300 text-sm transition-colors inline-flex items-center gap-2">
+            <span>←</span> Back to home
           </Link>
         </div>
       </div>
