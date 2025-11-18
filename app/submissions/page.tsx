@@ -18,6 +18,8 @@ import {
   Target,
   Sparkles,
   Award,
+  Heart,
+  Medal,
 } from "lucide-react"
 
 export default async function MySubmissionsPage() {
@@ -38,17 +40,51 @@ export default async function MySubmissionsPage() {
     .select(
       `
       *,
-      tournament:tournaments(title, game, status),
-      votes:votes(count)
+      tournament:tournaments(id, title, game, status),
+      votes:votes(rank),
+      likes:likes(count)
     `,
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
 
-  const approvedCount = submissions?.filter((s) => s.status === "approved").length || 0
-  const pendingCount = submissions?.filter((s) => s.status === "pending").length || 0
-  const rejectedCount = submissions?.filter((s) => s.status === "rejected").length || 0
-  const totalVotes = submissions?.reduce((sum, s) => sum + (s.votes?.length || 0), 0) || 0
+  // For each submission, get its position in the tournament
+  const submissionsWithDetails = await Promise.all(
+    (submissions || []).map(async (submission) => {
+      // Get all submissions for this tournament, ordered by score
+      const { data: tournamentSubmissions } = await supabase
+        .from("submissions")
+        .select("id, score")
+        .eq("tournament_id", submission.tournament_id)
+        .eq("status", "approved")
+        .order("score", { ascending: false })
+
+      // Find position
+      const position = tournamentSubmissions?.findIndex((s) => s.id === submission.id) ?? -1
+      const tournamentPosition = position >= 0 ? position + 1 : null
+
+      // Calculate vote points based on ranks
+      const votePoints = (submission.votes || []).reduce((sum: number, vote: any) => {
+        if (vote.rank === 1) return sum + 3
+        if (vote.rank === 2) return sum + 2
+        if (vote.rank === 3) return sum + 1
+        return sum
+      }, 0)
+
+      return {
+        ...submission,
+        tournamentPosition,
+        votePoints,
+        likesCount: submission.likes?.length || 0,
+      }
+    })
+  )
+
+  const approvedCount = submissionsWithDetails?.filter((s) => s.status === "approved").length || 0
+  const pendingCount = submissionsWithDetails?.filter((s) => s.status === "pending").length || 0
+  const rejectedCount = submissionsWithDetails?.filter((s) => s.status === "rejected").length || 0
+  const totalVotes = submissionsWithDetails?.reduce((sum, s) => sum + (s.votes?.length || 0), 0) || 0
+  const totalLikes = submissionsWithDetails?.reduce((sum, s) => sum + s.likesCount, 0) || 0
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -69,8 +105,8 @@ export default async function MySubmissionsPage() {
         </div>
 
         {/* Stats Grid */}
-        {submissions && submissions.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {submissionsWithDetails && submissionsWithDetails.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
             <Card className="border-slate-700 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-3">
@@ -82,7 +118,7 @@ export default async function MySubmissionsPage() {
                   </Badge>
                 </div>
                 <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Total Submissions</h3>
-                <p className="text-3xl font-bold text-white">{submissions.length}</p>
+                <p className="text-3xl font-bold text-white">{submissionsWithDetails.length}</p>
               </CardContent>
             </Card>
 
@@ -130,11 +166,26 @@ export default async function MySubmissionsPage() {
                 <p className="text-3xl font-bold text-white">{totalVotes}</p>
               </CardContent>
             </Card>
+
+            <Card className="border-slate-700 hover:shadow-lg hover:shadow-pink-500/10 transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center">
+                    <Heart className="text-pink-500" size={24} />
+                  </div>
+                  <Badge variant="outline" className="bg-pink-500/10 text-pink-400 border-pink-500/30">
+                    Likes
+                  </Badge>
+                </div>
+                <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Total Likes</h3>
+                <p className="text-3xl font-bold text-white">{totalLikes}</p>
+              </CardContent>
+            </Card>
           </div>
         )}
 
         {/* Submissions List */}
-        {submissions && submissions.length > 0 ? (
+        {submissionsWithDetails && submissionsWithDetails.length > 0 ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
@@ -149,7 +200,7 @@ export default async function MySubmissionsPage() {
               </Button>
             </div>
 
-            {submissions.map((submission) => {
+            {submissionsWithDetails.map((submission) => {
               const voteCount = submission.votes?.length || 0
               const submittedDate = new Date(submission.created_at).toLocaleDateString("en-US", {
                 month: "short",
@@ -178,6 +229,38 @@ export default async function MySubmissionsPage() {
               const status = statusConfig[submission.status as keyof typeof statusConfig] || statusConfig.pending
               const StatusIcon = status.icon
 
+              // Position badge styling
+              const getPositionBadge = (pos: number | null) => {
+                if (!pos) return null
+                if (pos === 1)
+                  return (
+                    <Badge className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white border-0">
+                      <Medal className="w-3 h-3 mr-1" />
+                      1st Place
+                    </Badge>
+                  )
+                if (pos === 2)
+                  return (
+                    <Badge className="bg-gradient-to-r from-slate-400 to-slate-500 text-white border-0">
+                      <Medal className="w-3 h-3 mr-1" />
+                      2nd Place
+                    </Badge>
+                  )
+                if (pos === 3)
+                  return (
+                    <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0">
+                      <Medal className="w-3 h-3 mr-1" />
+                      3rd Place
+                    </Badge>
+                  )
+                return (
+                  <Badge variant="outline" className="bg-slate-700/50 text-slate-300 border-slate-600">
+                    <Medal className="w-3 h-3 mr-1" />
+                    {pos}th Place
+                  </Badge>
+                )
+              }
+
               return (
                 <Card
                   key={submission.id}
@@ -186,12 +269,15 @@ export default async function MySubmissionsPage() {
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-3">
+                        <div className="flex items-center gap-3 mb-3 flex-wrap">
                           <h3 className="text-xl font-semibold text-white">{submission.title}</h3>
                           <Badge variant="outline" className={status.className}>
                             <StatusIcon className="w-3 h-3 mr-1" />
                             {status.label}
                           </Badge>
+                          {submission.status === "approved" &&
+                            submission.tournamentPosition &&
+                            getPositionBadge(submission.tournamentPosition)}
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3 text-slate-400 text-sm mb-3">
@@ -214,7 +300,7 @@ export default async function MySubmissionsPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 pt-4 border-t border-slate-800">
+                    <div className="flex items-center gap-3 pt-4 border-t border-slate-800 flex-wrap">
                       <Button asChild variant="outline" className="border-slate-600 hover:bg-slate-800">
                         <a
                           href={submission.clip_url}
@@ -229,8 +315,16 @@ export default async function MySubmissionsPage() {
 
                       <div className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 rounded-lg border border-purple-500/20">
                         <Trophy className="w-4 h-4 text-purple-400" />
-                        <span className="text-white font-medium">{voteCount}</span>
-                        <span className="text-slate-400 text-sm">votes</span>
+                        <span className="text-white font-medium">{submission.votePoints}</span>
+                        <span className="text-slate-400 text-sm">pts</span>
+                        <span className="text-slate-600 mx-1">•</span>
+                        <span className="text-slate-400 text-sm">{voteCount} votes</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 px-4 py-2 bg-pink-500/10 rounded-lg border border-pink-500/20">
+                        <Heart className="w-4 h-4 text-pink-400" />
+                        <span className="text-white font-medium">{submission.likesCount}</span>
+                        <span className="text-slate-400 text-sm">likes</span>
                       </div>
 
                       <Button asChild variant="outline" className="ml-auto border-slate-600 hover:bg-slate-800">

@@ -10,6 +10,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { signup } from "./actions"
 import { signupWithGoogle } from "./oauth-actions"
+import { Eye, EyeOff } from "lucide-react"
 
 // Force dynamic rendering since this page uses auth functionality
 export const dynamic = 'force-dynamic'
@@ -20,6 +21,8 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -147,27 +150,45 @@ export default function SignupPage() {
               <Label htmlFor="password" className="text-white/80 text-sm font-medium mb-2 block">
                 Password
               </Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="bg-[#0a0f1e] border-white/10 text-white h-12 rounded-xl focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className="bg-[#0a0f1e] border-white/10 text-white h-12 rounded-xl focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <div>
               <Label htmlFor="confirmPassword" className="text-white/80 text-sm font-medium mb-2 block">
                 Confirm Password
               </Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="bg-[#0a0f1e] border-white/10 text-white h-12 rounded-xl focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all"
-              />
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="bg-[#0a0f1e] border-white/10 text-white h-12 rounded-xl focus:border-[#4A6CFF] focus:ring-1 focus:ring-[#4A6CFF] transition-all pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <div>
