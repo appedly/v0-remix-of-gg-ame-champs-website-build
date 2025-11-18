@@ -37,13 +37,13 @@ export function Hero() {
           </div>
 
           <h1
-            className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-8 text-balance leading-[1.1] tracking-tight transition-all duration-700 delay-100 ${
+            className={`font-outfit text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white mb-8 text-balance leading-[1.05] tracking-tighter transition-all duration-700 delay-100 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
             Compete. Dominate.{" "}
             <span className="relative inline-block">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#29b6f6]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#29b6f6] animate-gradient">
                 Win Prizes.
               </span>
               <div className="absolute -bottom-2 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#4fc3f7] to-transparent" />
