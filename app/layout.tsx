@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Inter, Rajdhani } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
+const rajdhani = Rajdhani({ 
+  subsets: ["latin"], 
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-rajdhani' 
+});
 
 export const metadata: Metadata = {
   title: "GGamechamps : Your Clips are worth more than you think",
@@ -19,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      <body className={`${inter.variable} ${rajdhani.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>

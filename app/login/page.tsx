@@ -11,6 +11,7 @@ import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { loginWithGoogle } from "./oauth-actions"
+import { Eye, EyeOff } from "lucide-react"
 
 // Force dynamic rendering since this page uses client-side Supabase
 export const dynamic = 'force-dynamic'
@@ -19,6 +20,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -145,13 +147,22 @@ export default function LoginPage() {
               <Label htmlFor="password" className="text-white">
                 Password
               </Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="mt-2 bg-[#0B1020] border-[#2a3342] text-white"
-              />
+              <div className="relative mt-2">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className="bg-[#0B1020] border-[#2a3342] text-white pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             {error && (

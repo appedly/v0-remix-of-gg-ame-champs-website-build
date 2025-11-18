@@ -266,7 +266,7 @@ export default function TournamentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white flex flex-col" style={{ fontFamily: 'system-ui, -apple-system, "Inter", sans-serif' }}>
+    <div className="min-h-screen bg-slate-900 text-white flex flex-col font-gaming">
       <UserNav userName={userData?.display_name || "User"} />
 
       <div className="flex-1 flex flex-col">
