@@ -177,6 +177,8 @@ export default function DashboardPage() {
     joinedTournaments: 0,
   })
   const [isLoading, setIsLoading] = useState(true)
+  const [showTransition, setShowTransition] = useState(true)
+  const [contentVisible, setContentVisible] = useState(false)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -279,6 +281,12 @@ export default function DashboardPage() {
         })
 
         setIsLoading(false)
+        
+        // Trigger transition sequence
+        setTimeout(() => {
+          setShowTransition(false)
+          setTimeout(() => setContentVisible(true), 100)
+        }, 800)
       } catch (err: any) {
         console.error("[v0] Dashboard error:", err)
         router.push("/login")
@@ -290,21 +298,45 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <LoadingSpinner size="lg" className="mx-auto mb-6" />
-          <div className="text-white text-lg font-medium">Loading your dashboard...</div>
-          <div className="text-slate-400 text-sm mt-2">Preparing your stats</div>
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center relative overflow-hidden">
+        {/* Game entry animation background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#475569_1px,transparent_1px),linear-gradient(to_bottom,#475569_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-5" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        
+        <div className="relative z-10 text-center">
+          <div className="mb-8 animate-in fade-in duration-500">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-blue-600/20 rounded-2xl mb-6 animate-pulse">
+              <Gamepad2 className="w-12 h-12 text-blue-500 animate-spin" />
+            </div>
+          </div>
+          <div className="animate-in fade-in duration-700 delay-200">
+            <h2 className="text-white text-2xl font-bold mb-2">Entering Tournament</h2>
+            <p className="text-slate-400 text-base">Initializing your dashboard...</p>
+          </div>
+          <div className="mt-8 flex gap-2 justify-center animate-in fade-in duration-700 delay-300">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="w-3 h-3 rounded-full bg-blue-500 animate-bounce"
+                style={{ animationDelay: `${i * 150}ms` }}
+              />
+            ))}
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className={`min-h-screen bg-slate-900 transition-all duration-700 ${showTransition ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}>
+      {showTransition && (
+        <div className="fixed inset-0 bg-slate-900 z-50 pointer-events-none animate-pulse" />
+      )}
+      
       <UserNav userName={userData?.display_name || user?.email?.split("@")[0] || "User"} />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className={`container mx-auto px-4 py-8 transition-all duration-1000 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         {/* Hero Section with Quick Actions and Recent Activity */}
         <div className="mb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Welcome Card */}
@@ -382,65 +414,75 @@ export default function DashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
-          <Card className="hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
-                  <FileText className="text-blue-500" size={24} />
+          <div className={`transition-all duration-700 delay-200 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <Card className="hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                    <FileText className="text-blue-500" size={24} />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Total Submissions</h3>
-              <p className="text-3xl font-bold text-white">{userStats.totalSubmissions}</p>
-            </CardContent>
-          </Card>
+                <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Total Submissions</h3>
+                <p className="text-3xl font-bold text-white">{userStats.totalSubmissions}</p>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Card className="hover:shadow-lg hover:shadow-green-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
-                  <CheckCircle2 className="text-green-500" size={24} />
+          <div className={`transition-all duration-700 delay-300 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <Card className="hover:shadow-lg hover:shadow-green-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                    <CheckCircle2 className="text-green-500" size={24} />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Approved Clips</h3>
-              <p className="text-3xl font-bold text-white">{userStats.approvedSubmissions}</p>
-            </CardContent>
-          </Card>
+                <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Approved Clips</h3>
+                <p className="text-3xl font-bold text-white">{userStats.approvedSubmissions}</p>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Card className="hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
-                  <Clock className="text-amber-500" size={24} />
+          <div className={`transition-all duration-700 delay-400 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <Card className="hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                    <Clock className="text-amber-500" size={24} />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Pending Review</h3>
-              <p className="text-3xl font-bold text-white">{userStats.pendingSubmissions}</p>
-            </CardContent>
-          </Card>
+                <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Pending Review</h3>
+                <p className="text-3xl font-bold text-white">{userStats.pendingSubmissions}</p>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Card className="hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
-                  <Gamepad2 className="text-purple-500" size={24} />
+          <div className={`transition-all duration-700 delay-500 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <Card className="hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                    <Gamepad2 className="text-purple-500" size={24} />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Tournaments Joined</h3>
-              <p className="text-3xl font-bold text-white">{userStats.joinedTournaments}</p>
-            </CardContent>
-          </Card>
+                <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Tournaments Joined</h3>
+                <p className="text-3xl font-bold text-white">{userStats.joinedTournaments}</p>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Card className="hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
-                  <Trophy className="text-red-500" size={24} />
+          <div className={`transition-all duration-700 delay-600 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <Card className="hover:shadow-lg hover:shadow-red-500/10 transition-all duration-300 hover:-translate-y-1 border-slate-700">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center transition-all duration-300">
+                    <Trophy className="text-red-500" size={24} />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Votes Received</h3>
-              <p className="text-3xl font-bold text-white">{userStats.totalVotes}</p>
-            </CardContent>
-          </Card>
+                <h3 className="text-slate-400 text-xs mb-1 uppercase tracking-wide">Votes Received</h3>
+                <p className="text-3xl font-bold text-white">{userStats.totalVotes}</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Active Tournaments - Horizontal Scroller */}
