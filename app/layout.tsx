@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Rajdhani } from 'next/font/google'
+import { Inter, Rajdhani, Press_Start_2P } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -8,6 +8,11 @@ const rajdhani = Rajdhani({
   subsets: ["latin"], 
   weight: ['400', '500', '600', '700'],
   variable: '--font-rajdhani' 
+});
+const pressStart2P = Press_Start_2P({ 
+  subsets: ["latin"], 
+  weight: ['400'],
+  variable: '--font-minecraft' 
 });
 
 export const metadata: Metadata = {
@@ -23,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${rajdhani.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${rajdhani.variable} ${pressStart2P.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>
