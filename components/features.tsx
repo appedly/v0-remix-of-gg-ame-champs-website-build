@@ -87,7 +87,7 @@ export function Features() {
               Dominate
             </span>
           </h2>
-          <p className="text-xs md:text-sm font-minecraft text-white/60 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-3xl mx-auto">
             Built for competitive gamers who want to showcase their skills and win real prizes.
           </p>
         </div>
@@ -114,14 +114,14 @@ export function Features() {
 
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-base font-minecraft font-black text-white group-hover:text-[#FFD166] transition-colors duration-300">
+                      <h3 className="text-xl font-bold text-white group-hover:text-[#FFD166] transition-colors duration-300">
                         {feature.title}
                       </h3>
                       <div className="px-3 py-1 bg-gradient-to-r from-[#FFD166]/20 to-[#FF7A1A]/20 border border-[#FFD166]/30 rounded-full">
-                        <span className="text-[#FFD166] text-[10px] font-minecraft font-bold uppercase tracking-wider">Featured</span>
+                        <span className="text-[#FFD166] text-[10px] font-bold uppercase tracking-wider">Featured</span>
                       </div>
                     </div>
-                    <p className="text-white/70 leading-relaxed text-xs font-minecraft group-hover:text-white/90 transition-colors duration-300">
+                    <p className="text-white/70 leading-relaxed text-base group-hover:text-white/90 transition-colors duration-300">
                       {feature.description}
                     </p>
                   </div>
@@ -166,10 +166,10 @@ export function Features() {
                 </div>
 
                 <div className="space-y-3">
-                  <h3 className="text-sm font-minecraft font-bold text-white group-hover:text-[#4A6CFF] transition-colors duration-300">
+                  <h3 className="text-lg font-bold text-white group-hover:text-[#4A6CFF] transition-colors duration-300">
                     {feature.title}
                   </h3>
-                  <p className="text-white/60 leading-relaxed text-[10px] font-minecraft group-hover:text-white/80 transition-colors duration-300">
+                  <p className="text-white/60 leading-relaxed text-sm group-hover:text-white/80 transition-colors duration-300">
                     {feature.description}
                   </p>
                 </div>
@@ -189,7 +189,7 @@ export function Features() {
               <div className="w-2 h-2 bg-[#4A6CFF] rounded-full animate-pulse lightning-pulse" style={{ animationDelay: "0.3s" }} />
               <div className="w-2 h-2 bg-[#4fc3f7] rounded-full animate-pulse lightning-pulse" style={{ animationDelay: "0.6s" }} />
             </div>
-            <span className="text-white/70 text-xs font-minecraft font-semibold">And much more coming soon</span>
+            <span className="text-white/70 text-sm font-semibold">And much more coming soon</span>
             <div className="flex gap-1">
               <div className="w-2 h-2 bg-[#4A6CFF] rounded-full animate-pulse lightning-pulse" style={{ animationDelay: "0.9s" }} />
               <div className="w-2 h-2 bg-[#4fc3f7] rounded-full animate-pulse lightning-pulse" style={{ animationDelay: "1.2s" }} />

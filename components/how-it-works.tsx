@@ -112,13 +112,13 @@ export function HowItWorks() {
 
       <div className="container relative mx-auto px-4">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10 px-5 py-2 text-[10px] font-minecraft font-semibold tracking-[0.4em] text-[#00C2FF]/80">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10 px-5 py-2 text-xs font-semibold tracking-[0.4em] text-[#00C2FF]/80">
             HOW IT WORKS
           </div>
-          <h2 className="mt-8 text-2xl font-minecraft font-semibold text-white md:text-3xl leading-relaxed">
+          <h2 className="mt-8 text-3xl font-minecraft font-semibold text-white md:text-5xl leading-relaxed">
             Start Competing in 4 Simple Steps
           </h2>
-          <p className="mt-4 text-xs font-minecraft text-white/70 md:text-sm leading-relaxed">
+          <p className="mt-4 text-lg text-white/70 md:text-xl leading-relaxed">
             Every tournament is engineered for momentum. Scroll through the four stages to see how players turn raw clips
             into championship payouts.
           </p>
@@ -292,7 +292,7 @@ export function HowItWorks() {
                             </div>
                             <div className="flex-1">
                               <h3 className={cn(
-                                "text-base md:text-lg font-minecraft font-semibold text-white",
+                                "text-xl md:text-2xl font-semibold text-white",
                                 step.isMoneyCard && "bg-gradient-to-r from-yellow-400 to-amber-600 bg-clip-text text-transparent"
                               )}>
                                 {step.title}
@@ -310,7 +310,7 @@ export function HowItWorks() {
                           </div>
                           
                           {/* Description */}
-                          <p className="text-xs md:text-sm font-minecraft leading-relaxed text-white/70 text-left">
+                          <p className="text-base md:text-lg leading-relaxed text-white/70 text-left">
                             {step.description}
                           </p>
                         </div>

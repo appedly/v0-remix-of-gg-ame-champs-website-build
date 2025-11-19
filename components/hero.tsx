@@ -1,13 +1,24 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 
 export function Hero() {
   const [mounted, setMounted] = useState(false)
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 40 })
 
   useEffect(() => {
     setMounted(true)
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth) * 100
+      const y = (e.clientY / window.innerHeight) * 100
+      setMousePosition({ x, y })
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
 
   return (
@@ -17,10 +28,30 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/60 via-[#0B1020]/80 to-[#0B1020]" />
       </div>
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f620_1px,transparent_1px),linear-gradient(to_bottom,#3b82f620_1px,transparent_1px)] bg-[size:2rem_2rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_40%,#000_40%,transparent_100%)] z-0" />
+      {/* Dynamic parabolic grid pattern that follows cursor */}
+      <div 
+        className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f620_1px,transparent_1px),linear-gradient(to_bottom,#3b82f620_1px,transparent_1px)] bg-[size:2rem_2rem] z-0 transition-all duration-300 ease-out"
+        style={{
+          maskImage: `radial-gradient(ellipse 90% 60% at ${mousePosition.x}% ${mousePosition.y}%, #000 30%, transparent 100%)`,
+          WebkitMaskImage: `radial-gradient(ellipse 90% 60% at ${mousePosition.x}% ${mousePosition.y}%, #000 30%, transparent 100%)`
+        }}
+      />
 
-      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none z-0 animate-pulse-slow" />
-      <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none z-0 animate-pulse-slow" style={{ animationDelay: '2s' }} />
+      {/* Animated gradient orbs that follow cursor subtly */}
+      <div 
+        className="absolute w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none z-0 transition-all duration-700 ease-out"
+        style={{
+          left: `${20 + (mousePosition.x - 50) * 0.1}%`,
+          top: `${30 + (mousePosition.y - 40) * 0.15}%`
+        }}
+      />
+      <div 
+        className="absolute w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none z-0 transition-all duration-700 ease-out"
+        style={{
+          right: `${20 - (mousePosition.x - 50) * 0.1}%`,
+          bottom: `${30 - (mousePosition.y - 40) * 0.15}%`
+        }}
+      />
 
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
@@ -51,7 +82,7 @@ export function Hero() {
           </h1>
 
           <p
-            className={`text-sm sm:text-base md:text-lg font-minecraft text-slate-300 mb-10 text-pretty max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
+            className={`text-lg sm:text-xl md:text-2xl text-slate-300 mb-10 text-pretty max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
@@ -64,19 +95,33 @@ export function Hero() {
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            <a
-              href="#early-access"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#4fc3f7] to-[#00C2FF] text-[#0a0f1e] rounded-full font-minecraft font-semibold text-xs sm:text-sm hover:shadow-[0_0_40px_rgba(79,195,247,0.3)] transition-all duration-300 hover:scale-105 shadow-lg uppercase"
+            <Link
+              href="/signup"
+              className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#29b6f6] text-white rounded-full font-bold text-base sm:text-lg overflow-hidden transition-all duration-300 hover:scale-105 shadow-[0_0_30px_rgba(79,195,247,0.3)] hover:shadow-[0_0_50px_rgba(79,195,247,0.5)]"
             >
-              Get Early Access
-              <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
-            </a>
+              <span className="absolute inset-0 bg-gradient-to-r from-[#29b6f6] via-[#00C2FF] to-[#4fc3f7] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              <span className="relative flex items-center gap-3">
+                <span className="relative">
+                  <span className="absolute inset-0 blur-lg bg-white/30 group-hover:bg-white/50 transition-all"></span>
+                  <span className="relative">JOIN WAITLIST</span>
+                </span>
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+              <div className="absolute inset-0 -top-full group-hover:top-0 bg-white/20 transition-all duration-300 skew-y-12"></div>
+            </Link>
             <a
               href="#how-it-works"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-minecraft font-semibold text-xs sm:text-sm hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm uppercase"
+              className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 bg-slate-800/50 border-2 border-blue-400/30 text-white rounded-full font-bold text-base sm:text-lg hover:bg-slate-800/70 hover:border-blue-400/50 transition-all duration-300 backdrop-blur-sm overflow-hidden"
             >
-              How It Works
-              <span className="inline-block group-hover:translate-y-1 transition-transform">↓</span>
+              <span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              <span className="relative flex items-center gap-3">
+                <span>HOW IT WORKS</span>
+                <svg className="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+              </span>
             </a>
           </div>
         </div>

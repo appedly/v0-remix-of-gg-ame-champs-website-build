@@ -67,8 +67,8 @@ export function TournamentsSection() {
           </div>
 
           <div className="space-y-3 max-w-2xl mx-auto px-4">
-            <p className="text-sm sm:text-base md:text-lg font-minecraft font-bold text-white leading-relaxed">Tournaments for all games coming soon</p>
-            <p className="text-xs sm:text-sm md:text-base font-minecraft text-white/60 leading-relaxed">
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-relaxed">Tournaments for all games coming soon</p>
+            <p className="text-base sm:text-lg md:text-xl text-white/60 leading-relaxed">
               Compete in epic tournaments across your favorite games, showcase your best clips, and climb the leaderboards for real prizes and recognition.
             </p>
           </div>
@@ -77,8 +77,8 @@ export function TournamentsSection() {
         {/* Games Showcase */}
         <div className="mb-20">
           <div className="text-center mb-8 sm:mb-12">
-            <h3 className="text-base sm:text-lg font-minecraft font-bold text-white mb-3 sm:mb-4">Supported Games</h3>
-            <p className="text-xs sm:text-sm font-minecraft text-white/60">Compete across the most popular gaming titles</p>
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">Supported Games</h3>
+            <p className="text-sm sm:text-base text-white/60">Compete across the most popular gaming titles</p>
           </div>
           
           <div ref={scrollRef} className="flex gap-4 sm:gap-5 md:gap-6 overflow-x-hidden px-2 sm:px-4" style={{ scrollBehavior: "auto" }}>
@@ -105,7 +105,7 @@ export function TournamentsSection() {
         <div className="flex justify-center items-center">
           <Link
             href="/signup"
-            className="group inline-flex items-center gap-2 px-8 sm:px-10 py-4 sm:py-5 bg-gradient-to-r from-[#4fc3f7] to-[#4A6CFF] text-white rounded-full font-minecraft font-semibold text-xs sm:text-sm hover:from-[#4fc3f7]/90 hover:to-[#4A6CFF]/90 transition-all hover:scale-105 shadow-xl hover:shadow-[0_0_40px_rgba(79,195,247,0.4)] uppercase"
+            className="group inline-flex items-center gap-2 px-8 sm:px-10 py-4 sm:py-5 bg-gradient-to-r from-[#4fc3f7] to-[#4A6CFF] text-white rounded-full font-semibold text-base sm:text-lg hover:from-[#4fc3f7]/90 hover:to-[#4A6CFF]/90 transition-all hover:scale-105 shadow-xl hover:shadow-[0_0_40px_rgba(79,195,247,0.4)]"
           >
             Pre Register Now
             <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
