@@ -51,7 +51,7 @@ export function Hero() {
           </h1>
 
           <p
-            className={`text-lg sm:text-xl md:text-2xl text-slate-300 mb-10 text-pretty max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
+            className={`text-sm sm:text-base md:text-lg font-minecraft text-slate-300 mb-10 text-pretty max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
@@ -66,14 +66,14 @@ export function Hero() {
           >
             <a
               href="#early-access"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#4fc3f7] to-[#00C2FF] text-[#0a0f1e] rounded-full font-semibold text-lg hover:shadow-[0_0_40px_rgba(79,195,247,0.3)] transition-all duration-300 hover:scale-105 shadow-lg"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#4fc3f7] to-[#00C2FF] text-[#0a0f1e] rounded-full font-minecraft font-semibold text-xs sm:text-sm hover:shadow-[0_0_40px_rgba(79,195,247,0.3)] transition-all duration-300 hover:scale-105 shadow-lg uppercase"
             >
               Get Early Access
               <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
             </a>
             <a
               href="#how-it-works"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-minecraft font-semibold text-xs sm:text-sm hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm uppercase"
             >
               How It Works
               <span className="inline-block group-hover:translate-y-1 transition-transform">↓</span>
@@ -84,7 +84,7 @@ export function Hero() {
 
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce">
         <div className="flex flex-col items-center gap-2 text-white/40 hover:text-white/60 transition-colors cursor-pointer">
-          <span className="text-xs font-medium tracking-wider">SCROLL TO EXPLORE</span>
+          <span className="text-[10px] font-minecraft font-medium tracking-wider">SCROLL TO EXPLORE</span>
           <svg
             className="w-6 h-6"
             fill="none"
