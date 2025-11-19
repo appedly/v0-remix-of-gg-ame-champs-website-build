@@ -77,8 +77,8 @@ export function TournamentsSection() {
         {/* Games Showcase */}
         <div className="mb-20">
           <div className="text-center mb-8 sm:mb-12">
-            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">Supported Games</h3>
-            <p className="text-sm sm:text-base text-white/60">Compete across the most popular gaming titles</p>
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-minecraft font-bold text-white mb-3 sm:mb-4 leading-relaxed">Supported Games</h3>
+            <p className="text-sm sm:text-base text-white/60 leading-relaxed">Compete across the most popular gaming titles</p>
           </div>
           
           <div ref={scrollRef} className="flex gap-4 sm:gap-5 md:gap-6 overflow-x-hidden px-2 sm:px-4" style={{ scrollBehavior: "auto" }}>
