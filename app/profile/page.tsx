@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { User, Lock, Trophy, TrendingUp, CheckCircle2, Users, Crown, Gift } from "lucide-react"
+import { User, Lock, Trophy, TrendingUp, CheckCircle2, Users, Crown, Gift, Link as LinkIcon } from "lucide-react"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -18,6 +18,9 @@ export default function ProfilePage() {
   const [user, setUser] = useState<any>(null)
   const [displayName, setDisplayName] = useState("")
   const [bio, setBio] = useState("")
+  const [twitterUrl, setTwitterUrl] = useState("")
+  const [discordUsername, setDiscordUsername] = useState("")
+  const [youtubeUrl, setYoutubeUrl] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [isLoading, setIsLoading] = useState(true)
@@ -64,6 +67,9 @@ export default function ProfilePage() {
       if (userData) {
         setDisplayName(userData.display_name || "")
         setBio(userData.bio || "")
+        setTwitterUrl(userData.twitter_url || "")
+        setDiscordUsername(userData.discord_username || "")
+        setYoutubeUrl(userData.youtube_url || "")
         setIsFoundingMember(userData.founding_member || false)
       }
 
@@ -125,6 +131,9 @@ export default function ProfilePage() {
       .update({
         display_name: displayName,
         bio: bio || null,
+        twitter_url: twitterUrl || null,
+        discord_username: discordUsername || null,
+        youtube_url: youtubeUrl || null,
       })
       .eq("id", user.id)
       .select()
@@ -330,6 +339,74 @@ export default function ProfilePage() {
                 <Button 
                   type="submit" 
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300" 
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Saving..." : "Save Changes"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Social Media Links */}
+          <Card className="border-slate-700">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                  <LinkIcon className="text-green-500" size={20} />
+                </div>
+                <div>
+                  <CardTitle>Social Media</CardTitle>
+                  <CardDescription>Connect your social profiles</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleUpdateProfile} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="twitterUrl" className="text-slate-300 text-sm">
+                    Twitter/X URL
+                  </Label>
+                  <Input
+                    id="twitterUrl"
+                    type="url"
+                    value={twitterUrl}
+                    onChange={(e) => setTwitterUrl(e.target.value)}
+                    placeholder="https://twitter.com/username"
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="discordUsername" className="text-slate-300 text-sm">
+                    Discord Username
+                  </Label>
+                  <Input
+                    id="discordUsername"
+                    type="text"
+                    value={discordUsername}
+                    onChange={(e) => setDiscordUsername(e.target.value)}
+                    placeholder="username#1234"
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="youtubeUrl" className="text-slate-300 text-sm">
+                    YouTube URL
+                  </Label>
+                  <Input
+                    id="youtubeUrl"
+                    type="url"
+                    value={youtubeUrl}
+                    onChange={(e) => setYoutubeUrl(e.target.value)}
+                    placeholder="https://youtube.com/@channel"
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-400"
+                  />
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-green-600 hover:bg-green-700 text-white transition-all duration-300" 
                   disabled={isSaving}
                 >
                   {isSaving ? "Saving..." : "Save Changes"}
