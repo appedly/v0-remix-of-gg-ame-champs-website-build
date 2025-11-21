@@ -10,29 +10,27 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
+  const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
+      const windowHeight = document.documentElement.scrollHeight - window.innerHeight
+      const progress = (currentScrollY / windowHeight) * 100
+      setScrollProgress(progress)
       
-      // Don't hide navbar if it's at the top of the page
       if (currentScrollY < 10) {
         setIsVisible(true)
         setLastScrollY(currentScrollY)
         return
       }
       
-      // Calculate scroll difference to determine if it's significant enough
       const scrollDifference = Math.abs(currentScrollY - lastScrollY)
       
-      // Only react if scroll difference is significant (reduces jumpy behavior)
       if (scrollDifference > 5) {
-        // Determine scroll direction
         if (currentScrollY > lastScrollY) {
-          // Scrolling down - hide navbar
           setIsVisible(false)
         } else {
-          // Scrolling up - show navbar
           setIsVisible(true)
         }
         
@@ -40,14 +38,13 @@ export function Navbar() {
       }
     }
 
-    // Add scroll event listener with throttling for performance
     let timeoutId: NodeJS.Timeout
     const throttledHandleScroll = () => {
       if (timeoutId) return
       timeoutId = setTimeout(() => {
         handleScroll()
         timeoutId = null
-      }, 16) // ~60fps
+      }, 16)
     }
 
     window.addEventListener('scroll', throttledHandleScroll, { passive: true })
@@ -70,80 +67,114 @@ export function Navbar() {
   }
 
   return (
-    <nav className={`fixed top-4 left-0 right-0 z-50 px-4 transition-all duration-300 ease-in-out ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
-      <div className="max-w-7xl mx-auto bg-[#0B1020]/60 backdrop-blur-md border border-white/10 rounded-full px-6 py-3">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <Image src="/logo.png" alt="GGameChamps" width={40} height={40} className="w-10 h-10" />
-            <span className="text-lg font-bold text-white hidden sm:block">GGameChamps</span>
-          </Link>
+    <>
+      {/* Scroll progress bar */}
+      <div className="fixed top-0 left-0 right-0 z-[60] h-0.5 bg-slate-900/50">
+        <div 
+          className="h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 transition-all duration-300"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
 
-          {/* Desktop Navigation - Center */}
-          <div className="hidden lg:flex items-center gap-8 flex-1 justify-center">
-            <NavLink href="#tournaments" onClick={handleNavClick}>
-              Tournaments
-            </NavLink>
-            <NavLink href="#how-it-works" onClick={handleNavClick}>
-              How It Works
-            </NavLink>
-            <NavLink href="#features" onClick={handleNavClick}>
-              Features
-            </NavLink>
-            <NavLink href="#faq" onClick={handleNavClick}>
-              FAQ
-            </NavLink>
-            <NavLink href="#contact" onClick={handleNavClick}>
-              Contact
-            </NavLink>
-          </div>
-
-          {/* CTA Button - Right Side */}
-          <div className="hidden lg:flex items-center flex-shrink-0">
-            <Link
-              href="/login"
-              className="px-6 py-2 bg-white text-[#0B1020] rounded-full hover:bg-white/90 transition-colors font-semibold text-sm"
-            >
-              Pre Register
+      <nav 
+        className={`fixed top-4 left-0 right-0 z-50 px-4 transition-all duration-300 ease-in-out ${
+          isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        }`}
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <div className="max-w-7xl mx-auto bg-slate-900/90 backdrop-blur-xl border border-slate-700/50 rounded-full px-6 py-3.5 shadow-lg">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2.5 flex-shrink-0 group" aria-label="GGameChamps Home">
+              <div className="relative">
+                <Image 
+                  src="/logo.png" 
+                  alt="GGameChamps Logo" 
+                  width={36} 
+                  height={36} 
+                  className="w-9 h-9 transition-transform group-hover:scale-105" 
+                />
+              </div>
+              <span className="text-lg font-bold text-white hidden sm:block group-hover:text-blue-400 transition-colors">
+                GGameChamps
+              </span>
             </Link>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden text-white">
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="lg:hidden pt-4 mt-4 border-t border-white/10">
-            <div className="flex flex-col gap-3 pb-2">
-              <NavLink href="#tournaments" mobile onClick={handleNavClick}>
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-8 flex-1 justify-center">
+              <NavLink href="#tournaments" onClick={handleNavClick}>
                 Tournaments
               </NavLink>
-              <NavLink href="#how-it-works" mobile onClick={handleNavClick}>
+              <NavLink href="#how-it-works" onClick={handleNavClick}>
                 How It Works
               </NavLink>
-              <NavLink href="#features" mobile onClick={handleNavClick}>
+              <NavLink href="#features" onClick={handleNavClick}>
                 Features
               </NavLink>
-              <NavLink href="#faq" mobile onClick={handleNavClick}>
+              <NavLink href="#faq" onClick={handleNavClick}>
                 FAQ
               </NavLink>
-              <NavLink href="#contact" mobile onClick={handleNavClick}>
+              <NavLink href="#contact" onClick={handleNavClick}>
                 Contact
               </NavLink>
+            </div>
+
+            {/* CTA Button */}
+            <div className="hidden lg:flex items-center flex-shrink-0">
               <Link
                 href="/login"
-                className="px-4 py-2 bg-white text-[#0B1020] rounded-full hover:bg-white/90 transition-colors text-center font-semibold text-sm mt-2"
-                onClick={() => setIsOpen(false)}
+                className="group relative px-6 py-2.5 bg-blue-600 text-white rounded-full font-semibold text-sm transition-all duration-200 hover:bg-blue-500 active:scale-95"
+                aria-label="Pre Register for GGameChamps"
               >
                 Pre Register
               </Link>
             </div>
+
+            {/* Mobile Menu Button */}
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="lg:hidden text-white p-2 hover:bg-slate-800 rounded-full transition-colors"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
+            >
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
-        )}
-      </div>
-    </nav>
+
+          {/* Mobile Navigation */}
+          {isOpen && (
+            <div className="lg:hidden pt-4 mt-4 border-t border-slate-700/50">
+              <div className="flex flex-col gap-2 pb-2">
+                <NavLink href="#tournaments" mobile onClick={handleNavClick}>
+                  Tournaments
+                </NavLink>
+                <NavLink href="#how-it-works" mobile onClick={handleNavClick}>
+                  How It Works
+                </NavLink>
+                <NavLink href="#features" mobile onClick={handleNavClick}>
+                  Features
+                </NavLink>
+                <NavLink href="#faq" mobile onClick={handleNavClick}>
+                  FAQ
+                </NavLink>
+                <NavLink href="#contact" mobile onClick={handleNavClick}>
+                  Contact
+                </NavLink>
+                <Link
+                  href="/login"
+                  className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all text-center font-semibold text-sm mt-2"
+                  onClick={() => setIsOpen(false)}
+                  aria-label="Pre Register for GGameChamps"
+                >
+                  Pre Register
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </nav>
+    </>
   )
 }
 
@@ -163,15 +194,15 @@ function NavLink({
       href={href}
       onClick={(e) => onClick?.(e, href)}
       className={`
-        relative text-white/80 hover:text-white transition-colors text-sm font-medium
-        ${mobile ? "px-2 py-1" : ""}
+        relative text-slate-300 hover:text-white transition-colors text-sm font-medium
+        ${mobile ? "px-4 py-2.5 hover:bg-slate-800/50 rounded-lg" : ""}
         group
       `}
+      aria-label={typeof children === 'string' ? children : undefined}
     >
       {children}
-      {/* Flame border effect on hover - desktop only */}
       {!mobile && (
-        <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-gradient-to-r from-[#FF7A1A] to-[#FFD166] scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+        <span className="absolute inset-x-0 -bottom-1 h-[2px] bg-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
       )}
     </Link>
   )

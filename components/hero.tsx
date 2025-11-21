@@ -1,57 +1,101 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useEffect, useState } from "react"
+import { Sparkles, ArrowRight, ChevronDown } from "lucide-react"
 
 export function Hero() {
   const [mounted, setMounted] = useState(false)
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 40 })
 
   useEffect(() => {
     setMounted(true)
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth) * 100
+      const y = (e.clientY / window.innerHeight) * 100
+      setMousePosition({ x, y })
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [])
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-32 overflow-hidden">
+      {/* Background layers */}
       <div className="absolute inset-0 z-0">
         <Image src="/hero-bg.png" alt="Gaming Background" fill className="object-cover opacity-30" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0B1020]/60 via-[#0B1020]/80 to-[#0B1020]" />
       </div>
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b0a_1px,transparent_1px),linear-gradient(to_bottom,#1e293b0a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] z-0" />
+      {/* Dynamic parabolic grid pattern that follows cursor */}
+      <div 
+        className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f620_1px,transparent_1px),linear-gradient(to_bottom,#3b82f620_1px,transparent_1px)] bg-[size:2rem_2rem] z-0 transition-all duration-300 ease-out"
+        style={{
+          maskImage: `radial-gradient(ellipse 90% 60% at ${mousePosition.x}% ${mousePosition.y}%, #000 30%, transparent 100%)`,
+          WebkitMaskImage: `radial-gradient(ellipse 90% 60% at ${mousePosition.x}% ${mousePosition.y}%, #000 30%, transparent 100%)`
+        }}
+      />
 
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#4fc3f7]/5 rounded-full blur-[120px] pointer-events-none z-0" />
-      <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-[#4A6CFF]/5 rounded-full blur-[120px] pointer-events-none z-0" />
+      {/* Animated gradient orbs that follow cursor subtly */}
+      <div 
+        className="absolute w-[600px] h-[600px] bg-blue-500/15 rounded-full blur-[120px] pointer-events-none z-0 transition-all duration-700 ease-out animate-pulse-slow"
+        style={{
+          left: `${20 + (mousePosition.x - 50) * 0.15}%`,
+          top: `${30 + (mousePosition.y - 40) * 0.2}%`
+        }}
+      />
+      <div 
+        className="absolute w-[600px] h-[600px] bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none z-0 transition-all duration-700 ease-out animate-pulse-slow"
+        style={{
+          right: `${20 - (mousePosition.x - 50) * 0.15}%`,
+          bottom: `${30 - (mousePosition.y - 40) * 0.2}%`,
+          animationDelay: '1s'
+        }}
+      />
+      
+      {/* Additional interactive orbs */}
+      <div 
+        className="absolute w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none z-0 transition-all duration-500 ease-out"
+        style={{
+          left: `${mousePosition.x * 0.3}%`,
+          top: `${mousePosition.y * 0.4}%`
+        }}
+      />
 
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
+          {/* Badge */}
           <div
-            className={`inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#FFD166]/10 to-[#4fc3f7]/10 border border-[#FFD166]/20 rounded-full mb-8 backdrop-blur-sm transition-all duration-700 ${
+            className={`inline-flex items-center gap-2 px-5 py-2 bg-blue-500/10 border border-blue-400/30 rounded-full mb-8 backdrop-blur-sm transition-all duration-700 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
             }`}
           >
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFD166] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFD166]"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400"></span>
             </span>
-            <span className="text-[#FFD166] text-sm font-semibold tracking-wide">PRE-LAUNCH • EARLY ACCESS AVAILABLE</span>
+            <span className="text-blue-300 text-sm font-semibold tracking-wide">PRE-LAUNCH • EARLY ACCESS AVAILABLE</span>
+            <Sparkles className="w-4 h-4 text-blue-400" />
           </div>
 
           <h1
-            className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-8 text-balance leading-[1.1] tracking-tight transition-all duration-700 delay-100 ${
+            className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white mb-8 text-balance leading-[1.1] tracking-tight transition-all duration-700 delay-100 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
             Compete. Dominate.{" "}
             <span className="relative inline-block">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#29b6f6]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500">
                 Win Prizes.
               </span>
-              <div className="absolute -bottom-2 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#4fc3f7] to-transparent" />
             </span>
           </h1>
 
           <p
-            className={`text-lg sm:text-xl md:text-2xl text-slate-300 mb-10 text-pretty max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
+            className={`text-xl sm:text-2xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
@@ -64,35 +108,32 @@ export function Hero() {
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            <a
-              href="#early-access"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#4fc3f7] to-[#00C2FF] text-[#0a0f1e] rounded-full font-semibold text-lg hover:shadow-[0_0_40px_rgba(79,195,247,0.3)] transition-all duration-300 hover:scale-105 shadow-lg"
+            {/* Primary CTA Button */}
+            <Link
+              href="/signup"
+              className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-base overflow-hidden transition-all duration-200 hover:bg-blue-500 hover:-translate-y-1 active:translate-y-0 shadow-lg hover:shadow-xl"
             >
-              Get Early Access
-              <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
-            </a>
+              <span className="relative z-10">JOIN WAITLIST</span>
+              <ArrowRight className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+            </Link>
+
+            {/* Secondary Button */}
             <a
               href="#how-it-works"
-              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/20 transition-all duration-300 backdrop-blur-sm"
+              className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-800 border border-slate-700 text-white rounded-full font-bold text-base transition-all duration-200 hover:bg-slate-700 hover:border-slate-600 hover:-translate-y-1 active:translate-y-0"
             >
-              How It Works
-              <span className="inline-block group-hover:translate-y-1 transition-transform">↓</span>
+              <span>HOW IT WORKS</span>
+              <ChevronDown className="w-5 h-5 transition-transform group-hover:translate-y-1" />
             </a>
           </div>
         </div>
       </div>
 
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-        <div className="flex flex-col items-center gap-2 text-white/40 hover:text-white/60 transition-colors cursor-pointer">
-          <span className="text-xs font-medium tracking-wider">SCROLL TO EXPLORE</span>
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
+        <div className="flex flex-col items-center gap-2 text-slate-500 hover:text-slate-400 transition-colors cursor-pointer">
+          <span className="text-xs font-medium tracking-wide">SCROLL TO EXPLORE</span>
+          <ChevronDown className="w-5 h-5" />
         </div>
       </div>
     </section>

@@ -75,16 +75,16 @@ export function CTASection() {
                 </div>
 
                 <div className="space-y-4">
-                  <h2 className="text-4xl font-bold text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                  <h2 className="text-3xl font-black text-white sm:text-4xl md:text-5xl lg:text-6xl leading-tight">
                     Clip It.<span className="text-transparent">_</span>
-                    <span className="bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#4A6CFF] bg-clip-text text-transparent">
+                    <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
                       Submit It.
                     </span>
                     <br />
                     Win It.
                   </h2>
 
-                  <p className="text-base text-slate-300 sm:text-lg md:text-xl">
+                  <p className="text-lg text-slate-400 sm:text-xl leading-relaxed">
                     Turn your best moments into a competitive edge. Crafted for players who want their clips to carry weight.
                   </p>
                 </div>

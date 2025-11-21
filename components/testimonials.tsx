@@ -33,11 +33,11 @@ export function Testimonials() {
     <section className="py-20 sm:py-24 md:py-32 relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16 md:mb-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
             Trusted by{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD166] to-[#FF7A1A]">gamers</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">gamers</span>
             <br className="hidden sm:block" />
-            <span className="sm:inline"> landing sponsorships and winning prizes</span>
+            <span className="text-slate-400 text-2xl sm:text-3xl md:text-4xl font-normal"> landing sponsorships and winning prizes</span>
           </h2>
         </div>
 
