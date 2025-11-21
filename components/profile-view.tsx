@@ -3,8 +3,10 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Trophy, Heart, Award, CheckCircle2, Calendar, FileVideo, Play } from "lucide-react"
+import { Trophy, Heart, Award, Calendar, FileVideo, Play, Crown, Twitter, Youtube, UserPlus, Share2 } from "lucide-react"
 import { VideoPlayer } from "./video-player"
+import { Button } from "./ui/button"
+import Link from "next/link"
 
 type Submission = {
   id: string
@@ -25,6 +27,9 @@ type ProfileUser = {
   email: string
   created_at: string
   founding_member: boolean
+  twitter_url?: string | null
+  discord_username?: string | null
+  youtube_url?: string | null
 }
 
 interface ProfileViewProps {
@@ -52,67 +57,167 @@ export function ProfileView({
   }
 
   return (
-    <main className="container mx-auto px-0 pb-8 max-w-3xl">
-      {/* Header/Cover Section - X Style */}
-      <div className="relative mb-16">
-        {/* Cover Image - Simple gradient */}
-        <div className="h-48 bg-gradient-to-b from-slate-800 to-slate-900 border-b border-slate-700" />
+    <main className="container mx-auto px-0 pb-8 max-w-4xl">
+      {/* Header/Cover Section */}
+      <div className="relative mb-8">
+        {/* Cover Image - Gradient pattern background */}
+        <div className="h-48 relative overflow-hidden border-b border-slate-700">
+          {/* Geometric pattern background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-slate-900 to-purple-900/20" />
+          <div 
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgb(59 130 246 / 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgb(59 130 246 / 0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: '40px 40px'
+            }}
+          />
+          {/* Radial gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/50 to-slate-900" />
+        </div>
 
         {/* Profile Info Section */}
-        <div className="px-4">
+        <div className="px-6">
           <div className="relative">
-            {/* Avatar - X style positioning */}
-            <div className="absolute -top-16 left-0">
-              <div className="w-32 h-32 rounded-full border-4 border-slate-900 bg-slate-800 flex items-center justify-center">
+            {/* Avatar - Overlapping cover with thicker border */}
+            <div className="absolute -top-20 left-0">
+              <div className="w-32 h-32 rounded-full border-[6px] border-slate-900 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center shadow-xl">
                 <span className="text-4xl font-bold text-white">
                   {profileUser.display_name.charAt(0).toUpperCase()}
                 </span>
               </div>
             </div>
 
+            {/* Action Buttons - Right Side */}
+            <div className="absolute -top-3 right-0 flex items-center gap-2">
+              {isOwnProfile ? (
+                <Link href="/profile">
+                  <Button className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 transition-all duration-200">
+                    Edit Profile
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 flex items-center gap-2"
+                    onClick={() => {
+                      // Follow functionality to be implemented
+                      alert('Follow feature coming soon!')
+                    }}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    Follow
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 transition-all duration-200"
+                    onClick={() => {
+                      // Share profile
+                      if (navigator.share) {
+                        navigator.share({
+                          title: `${profileUser.display_name}'s Profile`,
+                          url: window.location.href
+                        })
+                      } else {
+                        navigator.clipboard.writeText(window.location.href)
+                        alert('Profile link copied to clipboard!')
+                      }
+                    }}
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </Button>
+                </>
+              )}
+            </div>
+
             {/* User Info */}
-            <div className="pt-20">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <h1 className="text-xl font-bold text-white">{profileUser.display_name}</h1>
-                    {profileUser.founding_member && (
-                      <CheckCircle2 className="w-5 h-5 text-blue-400 fill-blue-400" />
-                    )}
-                  </div>
-                </div>
+            <div className="pt-16">
+              {/* Username */}
+              <div className="mb-2">
+                <h1 className="text-2xl font-bold text-white">{profileUser.display_name}</h1>
               </div>
+
+              {/* Founding Member Badge - Under Cover */}
+              {profileUser.founding_member && (
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-full border border-yellow-500/30 shadow-lg shadow-yellow-500/10 mb-3">
+                  <Crown className="w-4 h-4 text-yellow-400" />
+                  <span className="text-yellow-400 font-bold text-xs uppercase tracking-wide">Founding Member</span>
+                </div>
+              )}
 
               {/* Bio */}
               {profileUser.bio && (
-                <p className="text-slate-300 text-[15px] leading-normal mb-3">{profileUser.bio}</p>
+                <p className="text-slate-300 text-[15px] leading-relaxed mb-3">{profileUser.bio}</p>
               )}
 
-              {/* Meta info - X style */}
-              <div className="flex items-center gap-4 text-slate-500 text-sm mb-4">
-                <div className="flex items-center gap-1">
+              {/* Meta info */}
+              <div className="flex items-center gap-4 text-slate-500 text-sm mb-3">
+                <div className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4" />
                   <span>Joined {formatDate(profileUser.created_at)}</span>
                 </div>
               </div>
 
-              {/* Stats - X style inline */}
-              <div className="flex items-center gap-5 text-sm">
-                <div>
+              {/* Social Media Links */}
+              {(profileUser.twitter_url || profileUser.discord_username || profileUser.youtube_url) && (
+                <div className="flex items-center gap-2 mb-4">
+                  {profileUser.twitter_url && (
+                    <a
+                      href={profileUser.twitter_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-800 border border-slate-700 hover:bg-blue-500/20 hover:border-blue-500/50 transition-all duration-200 group"
+                    >
+                      <Twitter className="w-4 h-4 text-slate-400 group-hover:text-blue-400 transition-colors" />
+                    </a>
+                  )}
+                  {profileUser.discord_username && (
+                    <div
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 hover:bg-indigo-500/20 hover:border-indigo-500/50 transition-all duration-200"
+                      title={profileUser.discord_username}
+                    >
+                      <svg className="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
+                      </svg>
+                      <span className="text-xs text-slate-400">{profileUser.discord_username}</span>
+                    </div>
+                  )}
+                  {profileUser.youtube_url && (
+                    <a
+                      href={profileUser.youtube_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center w-9 h-9 rounded-full bg-slate-800 border border-slate-700 hover:bg-red-500/20 hover:border-red-500/50 transition-all duration-200 group"
+                    >
+                      <Youtube className="w-4 h-4 text-slate-400 group-hover:text-red-400 transition-colors" />
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {/* Stats - Inline with icons */}
+              <div className="flex items-center gap-5 text-sm border-t border-slate-700 pt-3">
+                <div className="flex items-center gap-1.5">
+                  <FileVideo className="w-4 h-4 text-blue-400" />
                   <span className="font-bold text-white">{submissions.length}</span>
-                  <span className="text-slate-500 ml-1">Submissions</span>
+                  <span className="text-slate-500">Clips</span>
                 </div>
-                <div>
+                <div className="flex items-center gap-1.5">
+                  <Trophy className="w-4 h-4 text-amber-400" />
                   <span className="font-bold text-white">{totalVotes}</span>
-                  <span className="text-slate-500 ml-1">Votes</span>
+                  <span className="text-slate-500">Votes</span>
                 </div>
-                <div>
+                <div className="flex items-center gap-1.5">
+                  <Heart className="w-4 h-4 text-pink-400" />
                   <span className="font-bold text-white">{totalLikes}</span>
-                  <span className="text-slate-500 ml-1">Likes</span>
+                  <span className="text-slate-500">Likes</span>
                 </div>
-                <div>
+                <div className="flex items-center gap-1.5">
+                  <Award className="w-4 h-4 text-purple-400" />
                   <span className="font-bold text-white">{totalPoints}</span>
-                  <span className="text-slate-500 ml-1">Points</span>
+                  <span className="text-slate-500">Points</span>
                 </div>
               </div>
             </div>
@@ -120,26 +225,26 @@ export function ProfileView({
         </div>
       </div>
 
-      {/* Tabs Section - X style underline tabs */}
+      {/* Tabs Section - Full Width */}
       <Tabs defaultValue="clips" className="w-full">
         <div className="border-b border-slate-700">
-          <TabsList className="w-full h-auto p-0 bg-transparent border-0 justify-start px-4">
+          <TabsList className="w-full h-auto p-0 bg-transparent rounded-none justify-start">
             <TabsTrigger
               value="clips"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:text-white text-slate-500 px-4 py-4 font-medium hover:bg-slate-800/50 transition-colors"
+              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:text-white text-slate-400 px-8 py-4 font-semibold hover:bg-slate-800/50 transition-all duration-200"
             >
               Clips
             </TabsTrigger>
             <TabsTrigger
               value="stats"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:text-white text-slate-500 px-4 py-4 font-medium hover:bg-slate-800/50 transition-colors"
+              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:text-white text-slate-400 px-8 py-4 font-semibold hover:bg-slate-800/50 transition-all duration-200"
             >
               Stats
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="clips" className="mt-0 px-4">
+        <TabsContent value="clips" className="mt-0 px-6 py-4">
           {submissions.length === 0 ? (
             <div className="py-12 text-center border-b border-slate-700">
               <FileVideo className="w-12 h-12 text-slate-600 mx-auto mb-3" />
@@ -156,7 +261,7 @@ export function ProfileView({
                 return (
                   <div
                     key={submission.id}
-                    className="py-4 hover:bg-slate-800/30 transition-colors cursor-pointer -mx-4 px-4"
+                    className="py-4 hover:bg-slate-800/30 transition-colors cursor-pointer -mx-6 px-6"
                     onClick={() => setSelectedSubmission(submission)}
                   >
                     <div className="flex gap-3">
@@ -198,11 +303,11 @@ export function ProfileView({
           )}
         </TabsContent>
 
-        <TabsContent value="stats" className="mt-0 px-4">
+        <TabsContent value="stats" className="mt-0 px-6 py-4">
           <div className="divide-y divide-slate-700">
             {/* Top Performing */}
             {submissions.length > 0 && (
-              <div className="py-6">
+              <div className="py-4">
                 <h3 className="text-white font-semibold text-sm mb-3">Top Performing Clip</h3>
                 {(() => {
                   const topSubmission = [...submissions].sort((a, b) => (b.score || 0) - (a.score || 0))[0]
@@ -225,27 +330,33 @@ export function ProfileView({
               </div>
             )}
 
-            {/* Averages */}
-            <div className="py-6">
+            {/* Averages - Compact */}
+            <div className="py-4">
               <h3 className="text-white font-semibold text-sm mb-3">Average Performance</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-800/30 rounded-lg p-4 border border-slate-700/50">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-slate-800/30 rounded-lg p-3 border border-slate-700/50 text-center">
                   <div className="text-slate-400 text-xs mb-1">Avg. Points</div>
-                  <div className="text-white font-bold text-xl">
+                  <div className="text-white font-bold text-lg">
                     {submissions.length > 0 ? (totalPoints / submissions.length).toFixed(1) : 0}
                   </div>
                 </div>
-                <div className="bg-slate-800/30 rounded-lg p-4 border border-slate-700/50">
+                <div className="bg-slate-800/30 rounded-lg p-3 border border-slate-700/50 text-center">
                   <div className="text-slate-400 text-xs mb-1">Avg. Likes</div>
-                  <div className="text-white font-bold text-xl">
+                  <div className="text-white font-bold text-lg">
                     {submissions.length > 0 ? (totalLikes / submissions.length).toFixed(1) : 0}
+                  </div>
+                </div>
+                <div className="bg-slate-800/30 rounded-lg p-3 border border-slate-700/50 text-center">
+                  <div className="text-slate-400 text-xs mb-1">Avg. Votes</div>
+                  <div className="text-white font-bold text-lg">
+                    {submissions.length > 0 ? (totalVotes / submissions.length).toFixed(1) : 0}
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Tournaments */}
-            <div className="py-6">
+            <div className="py-4">
               <h3 className="text-white font-semibold text-sm mb-3">Tournaments</h3>
               <div className="text-white text-2xl font-bold mb-1">
                 {new Set(submissions.map((s) => s.tournament?.title).filter(Boolean)).size}
