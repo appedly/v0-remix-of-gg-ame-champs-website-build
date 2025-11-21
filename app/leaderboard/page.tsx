@@ -37,7 +37,7 @@ export default async function LeaderboardPage() {
           </div>
 
           {currentUserEntry && (
-            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-lg border border-blue-500/40 p-6 mb-6">
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 p-6 mb-6">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-slate-400 text-sm mb-1">Your Rank</div>
@@ -88,7 +88,7 @@ export default async function LeaderboardPage() {
                       return (
                         <tr
                           key={entry.user_id}
-                          className={`${index < 3 ? "bg-amber-400/5" : ""} ${isCurrentUser ? "bg-blue-600/10" : ""} hover:bg-slate-700 transition-colors`}
+                          className={`${isCurrentUser ? "bg-slate-700/50" : ""} hover:bg-slate-700/30 transition-colors`}
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-2">
