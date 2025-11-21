@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Trophy, Heart, Award, CheckCircle2, Calendar, FileVideo, Play, Crown, Twitter, Youtube } from "lucide-react"
+import { Trophy, Heart, Award, Calendar, FileVideo, Play, Crown, Twitter, Youtube, UserPlus, Share2 } from "lucide-react"
 import { VideoPlayer } from "./video-player"
 import { Button } from "./ui/button"
 import Link from "next/link"
@@ -57,9 +57,9 @@ export function ProfileView({
   }
 
   return (
-    <main className="container mx-auto px-0 pb-8 max-w-3xl">
-      {/* Header/Cover Section - X Style */}
-      <div className="relative mb-16">
+    <main className="container mx-auto px-0 pb-8 max-w-4xl">
+      {/* Header/Cover Section */}
+      <div className="relative mb-8">
         {/* Cover Image - Gradient pattern background */}
         <div className="h-48 relative overflow-hidden border-b border-slate-700">
           {/* Geometric pattern background */}
@@ -79,7 +79,7 @@ export function ProfileView({
         </div>
 
         {/* Profile Info Section */}
-        <div className="px-4">
+        <div className="px-6">
           <div className="relative">
             {/* Avatar - Overlapping cover with thicker border */}
             <div className="absolute -top-20 left-0">
@@ -90,8 +90,8 @@ export function ProfileView({
               </div>
             </div>
 
-            {/* Edit Profile Button or Founding Member Badge */}
-            <div className="absolute -top-3 right-0">
+            {/* Action Buttons - Right Side */}
+            <div className="absolute -top-3 right-0 flex items-center gap-2">
               {isOwnProfile ? (
                 <Link href="/profile">
                   <Button className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 transition-all duration-200">
@@ -99,36 +99,70 @@ export function ProfileView({
                   </Button>
                 </Link>
               ) : (
-                profileUser.founding_member && (
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30 shadow-lg shadow-yellow-500/10">
-                    <Crown className="w-5 h-5 text-yellow-400" />
-                    <span className="text-yellow-400 font-bold text-sm uppercase tracking-wide">Founding Member</span>
-                  </div>
-                )
+                <>
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 flex items-center gap-2"
+                    onClick={() => {
+                      // Follow functionality to be implemented
+                      alert('Follow feature coming soon!')
+                    }}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    Follow
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 transition-all duration-200"
+                    onClick={() => {
+                      // Share profile
+                      if (navigator.share) {
+                        navigator.share({
+                          title: `${profileUser.display_name}'s Profile`,
+                          url: window.location.href
+                        })
+                      } else {
+                        navigator.clipboard.writeText(window.location.href)
+                        alert('Profile link copied to clipboard!')
+                      }
+                    }}
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </Button>
+                </>
               )}
             </div>
 
             {/* User Info */}
             <div className="pt-16">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h1 className="text-2xl font-bold text-white">{profileUser.display_name}</h1>
-                    {profileUser.founding_member && (
-                      <CheckCircle2 className="w-6 h-6 text-blue-400 fill-blue-400" />
-                    )}
-                  </div>
-                </div>
+              {/* Username */}
+              <div className="mb-2">
+                <h1 className="text-2xl font-bold text-white">{profileUser.display_name}</h1>
               </div>
+
+              {/* Founding Member Badge - Under Cover */}
+              {profileUser.founding_member && (
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-full border border-yellow-500/30 shadow-lg shadow-yellow-500/10 mb-3">
+                  <Crown className="w-4 h-4 text-yellow-400" />
+                  <span className="text-yellow-400 font-bold text-xs uppercase tracking-wide">Founding Member</span>
+                </div>
+              )}
 
               {/* Bio */}
               {profileUser.bio && (
-                <p className="text-slate-300 text-[15px] leading-relaxed mb-4">{profileUser.bio}</p>
+                <p className="text-slate-300 text-[15px] leading-relaxed mb-3">{profileUser.bio}</p>
               )}
+
+              {/* Meta info */}
+              <div className="flex items-center gap-4 text-slate-500 text-sm mb-3">
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4" />
+                  <span>Joined {formatDate(profileUser.created_at)}</span>
+                </div>
+              </div>
 
               {/* Social Media Links */}
               {(profileUser.twitter_url || profileUser.discord_username || profileUser.youtube_url) && (
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-2 mb-4">
                   {profileUser.twitter_url && (
                     <a
                       href={profileUser.twitter_url}
@@ -163,20 +197,12 @@ export function ProfileView({
                 </div>
               )}
 
-              {/* Meta info - X style */}
-              <div className="flex items-center gap-4 text-slate-500 text-sm mb-4">
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4" />
-                  <span>Joined {formatDate(profileUser.created_at)}</span>
-                </div>
-              </div>
-
-              {/* Stats - X style inline with icons */}
-              <div className="flex items-center gap-5 text-sm">
+              {/* Stats - Inline with icons */}
+              <div className="flex items-center gap-5 text-sm border-t border-slate-700 pt-3">
                 <div className="flex items-center gap-1.5">
                   <FileVideo className="w-4 h-4 text-blue-400" />
                   <span className="font-bold text-white">{submissions.length}</span>
-                  <span className="text-slate-500">Submissions</span>
+                  <span className="text-slate-500">Clips</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Trophy className="w-4 h-4 text-amber-400" />
@@ -199,26 +225,26 @@ export function ProfileView({
         </div>
       </div>
 
-      {/* Tabs Section - Pill style tabs with filled active state */}
+      {/* Tabs Section - Full Width */}
       <Tabs defaultValue="clips" className="w-full">
-        <div className="border-b border-slate-700 px-4 mb-2">
-          <TabsList className="w-auto h-auto p-1 bg-slate-800/50 border border-slate-700 rounded-lg">
+        <div className="border-b border-slate-700">
+          <TabsList className="w-full h-auto p-0 bg-transparent rounded-none justify-start">
             <TabsTrigger
               value="clips"
-              className="rounded-md data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400 px-6 py-2.5 font-semibold hover:bg-slate-700/50 transition-all duration-200 data-[state=active]:shadow-lg data-[state=active]:shadow-blue-500/20"
+              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:text-white text-slate-400 px-8 py-4 font-semibold hover:bg-slate-800/50 transition-all duration-200"
             >
               Clips
             </TabsTrigger>
             <TabsTrigger
               value="stats"
-              className="rounded-md data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-400 px-6 py-2.5 font-semibold hover:bg-slate-700/50 transition-all duration-200 data-[state=active]:shadow-lg data-[state=active]:shadow-blue-500/20"
+              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:text-white text-slate-400 px-8 py-4 font-semibold hover:bg-slate-800/50 transition-all duration-200"
             >
               Stats
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="clips" className="mt-0 px-4">
+        <TabsContent value="clips" className="mt-0 px-6 py-4">
           {submissions.length === 0 ? (
             <div className="py-12 text-center border-b border-slate-700">
               <FileVideo className="w-12 h-12 text-slate-600 mx-auto mb-3" />
@@ -235,7 +261,7 @@ export function ProfileView({
                 return (
                   <div
                     key={submission.id}
-                    className="py-4 hover:bg-slate-800/30 transition-colors cursor-pointer -mx-4 px-4"
+                    className="py-4 hover:bg-slate-800/30 transition-colors cursor-pointer -mx-6 px-6"
                     onClick={() => setSelectedSubmission(submission)}
                   >
                     <div className="flex gap-3">
@@ -277,11 +303,11 @@ export function ProfileView({
           )}
         </TabsContent>
 
-        <TabsContent value="stats" className="mt-0 px-4">
+        <TabsContent value="stats" className="mt-0 px-6 py-4">
           <div className="divide-y divide-slate-700">
             {/* Top Performing */}
             {submissions.length > 0 && (
-              <div className="py-6">
+              <div className="py-4">
                 <h3 className="text-white font-semibold text-sm mb-3">Top Performing Clip</h3>
                 {(() => {
                   const topSubmission = [...submissions].sort((a, b) => (b.score || 0) - (a.score || 0))[0]
@@ -305,7 +331,7 @@ export function ProfileView({
             )}
 
             {/* Averages - Compact */}
-            <div className="py-6">
+            <div className="py-4">
               <h3 className="text-white font-semibold text-sm mb-3">Average Performance</h3>
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-slate-800/30 rounded-lg p-3 border border-slate-700/50 text-center">
@@ -330,7 +356,7 @@ export function ProfileView({
             </div>
 
             {/* Tournaments */}
-            <div className="py-6">
+            <div className="py-4">
               <h3 className="text-white font-semibold text-sm mb-3">Tournaments</h3>
               <div className="text-white text-2xl font-bold mb-1">
                 {new Set(submissions.map((s) => s.tournament?.title).filter(Boolean)).size}
