@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { UserNav } from "@/components/user-nav"
-import { Trophy } from "lucide-react"
+import { Trophy, CheckCircle2 } from "lucide-react"
 
 export default async function LeaderboardPage() {
   const supabase = await createClient()
@@ -122,7 +122,15 @@ export default async function LeaderboardPage() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-2">
-                              <div className="text-sm font-medium text-white">{entry.display_name}</div>
+                              <a
+                                href={isCurrentUser ? "/profile" : `/profile/${entry.user_id}`}
+                                className="text-sm font-medium text-white hover:text-blue-400 transition-colors cursor-pointer"
+                              >
+                                {entry.display_name}
+                              </a>
+                              {entry.founding_member && (
+                                <CheckCircle2 className="w-4 h-4 text-blue-400 fill-blue-400" title="Verified - Founding Member" />
+                              )}
                               {isCurrentUser && (
                                 <span className="px-2 py-0.5 bg-blue-600/20 text-blue-400 text-xs font-medium rounded-full border border-blue-500/30">
                                   You

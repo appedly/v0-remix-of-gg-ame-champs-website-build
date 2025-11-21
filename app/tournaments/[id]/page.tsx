@@ -43,7 +43,7 @@ export default async function TournamentDetailPage({ params }: { params: { id: s
     .select(
       `
       *,
-      user:users(display_name, id)
+      user:users(display_name, id, founding_member)
     `,
     )
     .eq("tournament_id", tournament.id)
