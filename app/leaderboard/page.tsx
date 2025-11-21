@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import { UserNav } from "@/components/user-nav"
-import { Trophy } from "lucide-react"
+import { Trophy, CheckCircle2 } from "lucide-react"
 
 export default async function LeaderboardPage() {
   const supabase = await createClient()
@@ -37,7 +37,7 @@ export default async function LeaderboardPage() {
           </div>
 
           {currentUserEntry && (
-            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-lg border border-blue-500/40 p-6 mb-6">
+            <div className="bg-slate-800/50 rounded-lg border border-slate-700 p-6 mb-6">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-slate-400 text-sm mb-1">Your Rank</div>
@@ -88,7 +88,7 @@ export default async function LeaderboardPage() {
                       return (
                         <tr
                           key={entry.user_id}
-                          className={`${index < 3 ? "bg-amber-400/5" : ""} ${isCurrentUser ? "bg-blue-600/10" : ""} hover:bg-slate-700 transition-colors`}
+                          className={`${isCurrentUser ? "bg-slate-700/50" : ""} hover:bg-slate-700/30 transition-colors`}
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-2">
@@ -122,7 +122,15 @@ export default async function LeaderboardPage() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-2">
-                              <div className="text-sm font-medium text-white">{entry.display_name}</div>
+                              <a
+                                href={isCurrentUser ? "/profile" : `/profile/${entry.user_id}`}
+                                className="text-sm font-medium text-white hover:text-blue-400 transition-colors cursor-pointer"
+                              >
+                                {entry.display_name}
+                              </a>
+                              {entry.founding_member && (
+                                <CheckCircle2 className="w-4 h-4 text-blue-400 fill-blue-400" title="Verified - Founding Member" />
+                              )}
                               {isCurrentUser && (
                                 <span className="px-2 py-0.5 bg-blue-600/20 text-blue-400 text-xs font-medium rounded-full border border-blue-500/30">
                                   You

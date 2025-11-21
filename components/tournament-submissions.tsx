@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
-import { Heart, Trophy, Medal, Award, Play, User, Eye } from "lucide-react"
+import { Heart, Trophy, Medal, Award, Play, User, Eye, CheckCircle2 } from "lucide-react"
 import { VideoPlayer } from "./video-player"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,7 +15,7 @@ type Submission = {
   description: string | null
   score: number
   user_id: string
-  user: { display_name: string; id: string } | null
+  user: { display_name: string; id: string; founding_member?: boolean } | null
 }
 
 type Vote = {
@@ -186,7 +186,21 @@ export function TournamentSubmissions({
                     </div>
                     <div className="flex items-center gap-2 text-slate-400 text-sm mb-3">
                       <User className="w-4 h-4" />
-                      <span>by {submission.user?.display_name || "Unknown User"}</span>
+                      <span>by </span>
+                      {submission.user?.id ? (
+                        <a
+                          href={`/profile/${submission.user.id}`}
+                          className="text-slate-300 hover:text-blue-400 transition-colors font-medium flex items-center gap-1.5"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {submission.user?.display_name || "Unknown User"}
+                          {submission.user?.founding_member && (
+                            <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 fill-blue-400" title="Verified - Founding Member" />
+                          )}
+                        </a>
+                      ) : (
+                        <span>{submission.user?.display_name || "Unknown User"}</span>
+                      )}
                     </div>
                     {submission.description && (
                       <p className="text-slate-300 text-sm leading-relaxed">{submission.description}</p>
@@ -312,7 +326,20 @@ export function TournamentSubmissions({
                     <div className="flex items-center gap-3 text-slate-400 text-sm">
                       <div className="flex items-center gap-1">
                         <User className="w-4 h-4" />
-                        <span>By {selectedSubmission.user?.display_name || "Unknown User"}</span>
+                        <span>By </span>
+                        {selectedSubmission.user?.id ? (
+                          <a
+                            href={`/profile/${selectedSubmission.user.id}`}
+                            className="text-slate-300 hover:text-blue-400 transition-colors font-medium flex items-center gap-1.5"
+                          >
+                            {selectedSubmission.user?.display_name || "Unknown User"}
+                            {selectedSubmission.user?.founding_member && (
+                              <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 fill-blue-400" title="Verified - Founding Member" />
+                            )}
+                          </a>
+                        ) : (
+                          <span>{selectedSubmission.user?.display_name || "Unknown User"}</span>
+                        )}
                       </div>
                       {selectedSubmission.description && (
                         <p className="text-slate-300 mt-3 leading-relaxed">{selectedSubmission.description}</p>
