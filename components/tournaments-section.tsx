@@ -52,23 +52,23 @@ export function TournamentsSection() {
       <div className="container mx-auto relative z-10">
         {/* Header */}
         <div className="text-center space-y-6 sm:space-y-8 mb-12 sm:mb-16 md:mb-20">
-          <div className="inline-block px-4 py-2 bg-[#4A6CFF]/10 border border-[#4A6CFF]/30 rounded-full mb-4 sm:mb-6">
-            <span className="text-[#4A6CFF] text-xs sm:text-sm font-minecraft font-semibold">TOURNAMENTS</span>
+          <div className="inline-block px-5 py-2 bg-blue-600/10 border border-blue-500/30 rounded-full mb-4 sm:mb-6">
+            <span className="text-blue-400 text-sm font-semibold tracking-wide uppercase">TOURNAMENTS</span>
           </div>
 
           <div className="space-y-4 sm:space-y-6">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-minecraft font-bold text-white leading-relaxed">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight">
               Tournaments
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#10b981]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500">
                 Coming Soon
               </span>
             </h2>
           </div>
 
           <div className="space-y-3 max-w-2xl mx-auto px-4">
-            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-relaxed">Tournaments for all games coming soon</p>
-            <p className="text-base sm:text-lg md:text-xl text-white/60 leading-relaxed">
+            <p className="text-2xl sm:text-3xl font-bold text-white">Tournaments for all games coming soon</p>
+            <p className="text-lg sm:text-xl text-slate-400 leading-relaxed">
               Compete in epic tournaments across your favorite games, showcase your best clips, and climb the leaderboards for real prizes and recognition.
             </p>
           </div>
@@ -77,8 +77,8 @@ export function TournamentsSection() {
         {/* Games Showcase */}
         <div className="mb-20">
           <div className="text-center mb-8 sm:mb-12">
-            <h3 className="text-xl sm:text-2xl md:text-3xl font-minecraft font-bold text-white mb-3 sm:mb-4 leading-relaxed">Supported Games</h3>
-            <p className="text-sm sm:text-base text-white/60 leading-relaxed">Compete across the most popular gaming titles</p>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">Supported Games</h3>
+            <p className="text-base sm:text-lg text-slate-400">Compete across the most popular gaming titles</p>
           </div>
           
           <div ref={scrollRef} className="flex gap-4 sm:gap-5 md:gap-6 overflow-x-hidden px-2 sm:px-4" style={{ scrollBehavior: "auto" }}>

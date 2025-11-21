@@ -112,13 +112,13 @@ export function HowItWorks() {
 
       <div className="container relative mx-auto px-4">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#00C2FF]/30 bg-[#00C2FF]/10 px-5 py-2 text-xs font-semibold tracking-[0.4em] text-[#00C2FF]/80">
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-600/10 px-5 py-2 text-sm font-semibold tracking-wide text-blue-400 uppercase">
             HOW IT WORKS
           </div>
-          <h2 className="mt-8 text-3xl font-minecraft font-semibold text-white md:text-5xl leading-relaxed">
+          <h2 className="mt-8 text-4xl font-black text-white md:text-5xl lg:text-6xl leading-tight">
             Start Competing in 4 Simple Steps
           </h2>
-          <p className="mt-4 text-lg text-white/70 md:text-xl leading-relaxed">
+          <p className="mt-6 text-xl text-slate-400 leading-relaxed">
             Every tournament is engineered for momentum. Scroll through the four stages to see how players turn raw clips
             into championship payouts.
           </p>

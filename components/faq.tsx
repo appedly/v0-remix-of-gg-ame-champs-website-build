@@ -53,15 +53,15 @@ export function FAQ() {
               <span className="text-[#4fc3f7] text-xs sm:text-sm font-semibold tracking-wide">FREQUENTLY ASKED QUESTIONS</span>
             </div>
             
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-minecraft font-bold text-white mb-4 sm:mb-6 text-balance leading-relaxed">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-6 text-balance leading-tight">
               Got{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4A6CFF] via-[#4fc3f7] to-[#00C2FF] animate-gradient">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500">
                 Questions?
               </span>
             </h2>
-            <p className="text-lg sm:text-xl md:text-2xl text-white/60 leading-relaxed">
+            <p className="text-xl sm:text-2xl text-slate-400 leading-relaxed">
               We've Got{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD166] via-[#FF7A1A] to-[#FF6B6B] animate-gradient">
+              <span className="text-white font-bold">
                 Answers
               </span>
             </p>

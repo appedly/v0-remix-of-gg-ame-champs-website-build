@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { Sparkles } from "lucide-react"
+import { Sparkles, ArrowRight, ChevronDown } from "lucide-react"
 
 export function Hero() {
   const [mounted, setMounted] = useState(false)
@@ -67,36 +67,35 @@ export function Hero() {
 
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
-          {/* Enhanced badge */}
+          {/* Badge */}
           <div
-            className={`inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#FFD166]/20 via-[#4fc3f7]/20 to-[#FFD166]/20 border border-[#FFD166]/30 rounded-full mb-8 backdrop-blur-md transition-all duration-700 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,209,102,0.3)] ${
+            className={`inline-flex items-center gap-2 px-5 py-2 bg-blue-500/10 border border-blue-400/30 rounded-full mb-8 backdrop-blur-sm transition-all duration-700 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
             }`}
           >
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFD166] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#FFD166]"></span>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-400"></span>
             </span>
-            <span className="text-[#FFD166] text-sm font-bold tracking-wide uppercase">PRE-LAUNCH • EARLY ACCESS AVAILABLE</span>
-            <Sparkles className="w-4 h-4 text-[#4fc3f7] animate-pulse" />
+            <span className="text-blue-300 text-sm font-semibold tracking-wide">PRE-LAUNCH • EARLY ACCESS AVAILABLE</span>
+            <Sparkles className="w-4 h-4 text-blue-400" />
           </div>
 
           <h1
-            className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-minecraft text-white mb-8 text-balance leading-[1.4] tracking-tight transition-all duration-700 delay-100 ${
+            className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white mb-8 text-balance leading-[1.1] tracking-tight transition-all duration-700 delay-100 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
             Compete. Dominate.{" "}
             <span className="relative inline-block">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#29b6f6] animate-gradient">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500">
                 Win Prizes.
               </span>
-              <div className="absolute -bottom-2 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#4fc3f7] to-transparent animate-pulse-slow" />
             </span>
           </h1>
 
           <p
-            className={`text-lg sm:text-xl md:text-2xl text-slate-300 mb-10 text-pretty max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
+            className={`text-xl sm:text-2xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed transition-all duration-700 delay-200 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
@@ -109,64 +108,32 @@ export function Hero() {
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
-            {/* Sick Join Waitlist Button */}
+            {/* Primary CTA Button */}
             <Link
               href="/signup"
-              className="group relative inline-flex items-center justify-center gap-3 px-12 py-6 bg-gradient-to-r from-[#4fc3f7] via-[#00C2FF] to-[#29b6f6] text-white rounded-full font-black text-base sm:text-lg overflow-hidden transition-all duration-300 hover:scale-110 shadow-[0_0_40px_rgba(79,195,247,0.4),0_0_80px_rgba(79,195,247,0.2)] hover:shadow-[0_0_60px_rgba(79,195,247,0.6),0_0_120px_rgba(79,195,247,0.3)] uppercase tracking-wide"
+              className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-base overflow-hidden transition-all duration-200 hover:bg-blue-500 hover:-translate-y-1 active:translate-y-0 shadow-lg hover:shadow-xl"
             >
-              {/* Animated gradient overlay */}
-              <span className="absolute inset-0 bg-gradient-to-r from-[#29b6f6] via-[#00C2FF] to-[#4fc3f7] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-              
-              {/* Shimmer effect */}
-              <span className="absolute inset-0 -top-full group-hover:top-0 bg-gradient-to-b from-white/30 via-white/5 to-transparent transition-all duration-500"></span>
-              
-              {/* Pulse rings */}
-              <span className="absolute inset-0 rounded-full border-2 border-white/20 animate-ping opacity-0 group-hover:opacity-75"></span>
-              
-              <span className="relative flex items-center gap-3 z-10">
-                <span className="relative">
-                  <span className="absolute inset-0 blur-lg bg-white/40 group-hover:bg-white/60 transition-all"></span>
-                  <span className="relative drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">JOIN WAITLIST</span>
-                </span>
-                <svg className="w-6 h-6 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </span>
+              <span className="relative z-10">JOIN WAITLIST</span>
+              <ArrowRight className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
             </Link>
 
-            {/* Enhanced How It Works Button */}
+            {/* Secondary Button */}
             <a
               href="#how-it-works"
-              className="group relative inline-flex items-center justify-center gap-3 px-12 py-6 bg-slate-800/60 border-2 border-blue-400/40 text-white rounded-full font-bold text-base sm:text-lg hover:bg-slate-800/80 hover:border-blue-400/60 transition-all duration-300 backdrop-blur-md overflow-hidden uppercase tracking-wide hover:scale-105 shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_40px_rgba(59,130,246,0.4)]"
+              className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-800 border border-slate-700 text-white rounded-full font-bold text-base transition-all duration-200 hover:bg-slate-700 hover:border-slate-600 hover:-translate-y-1 active:translate-y-0"
             >
-              {/* Gradient overlay on hover */}
-              <span className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-              
-              {/* Scanning line effect */}
-              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700"></span>
-              
-              <span className="relative flex items-center gap-3 z-10">
-                <span className="group-hover:text-blue-300 transition-colors">HOW IT WORKS</span>
-                <svg className="w-6 h-6 group-hover:translate-y-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-              </span>
+              <span>HOW IT WORKS</span>
+              <ChevronDown className="w-5 h-5 transition-transform group-hover:translate-y-1" />
             </a>
           </div>
         </div>
       </div>
 
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-        <div className="flex flex-col items-center gap-2 text-white/40 hover:text-white/60 transition-colors cursor-pointer">
-          <span className="text-[10px] font-minecraft font-medium tracking-wider">SCROLL TO EXPLORE</span>
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
+        <div className="flex flex-col items-center gap-2 text-slate-500 hover:text-slate-400 transition-colors cursor-pointer">
+          <span className="text-xs font-medium tracking-wide">SCROLL TO EXPLORE</span>
+          <ChevronDown className="w-5 h-5" />
         </div>
       </div>
     </section>
